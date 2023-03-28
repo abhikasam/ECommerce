@@ -36,6 +36,8 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
+    options.LoginPath = "/login";
+    options.AccessDeniedPath="/accessdenied";
     options.ExpireTimeSpan = TimeSpan.FromMinutes(10);
 });
 

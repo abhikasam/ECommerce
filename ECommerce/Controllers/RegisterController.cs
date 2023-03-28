@@ -62,7 +62,7 @@ namespace ECommerce.Controllers
 
                         await userManager.AddClaimsAsync(user, claims);
 
-                        message.Message = "Registration successful.";
+                        message.Message = "Registration successful."+Environment.NewLine+"You will be redirected to Login Page.";
                         message.StatusCode = ResponseStatus.SUCCESS;
                     }
                     else

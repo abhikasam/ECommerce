@@ -1,6 +1,9 @@
 ﻿import { useState } from "react";
+import { useHistory } from 'react-router-dom';
 
 export default function Register() {
+
+    const history = useHistory()
 
     const validationMessages = {
         PasswordMismatch: "Passwords didn't match.",
@@ -127,12 +130,14 @@ export default function Register() {
         console.log(data)
         setFormResponseData({
             textClass: data.messageClass,
-            alertClass:data.alertMessageClass,
+            alertClass: data.alertMessageClass,
             message: data.message
         })
 
-        if (data.statusCode == 1) {
-            console.log('navigating to user login page')
+        if (data.statusCode===1) {
+            setTimeout(() => {
+                history.push('/login')
+            }, 3000)
         }
 
     }
