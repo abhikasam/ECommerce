@@ -13,6 +13,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNet.Identity.EntityFramework" Version="2.2.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="6.0.10" />
     <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="5.0.2">
       <PrivateAssets>all</PrivateAssets>
@@ -78,6 +80,7 @@
   <ItemGroup>
     <Folder Include="ClientApp\src\auth\login\" />
     <Folder Include="ClientApp\src\context\" />
+    <Folder Include="Models\AppUser\" />
   </ItemGroup>
 
   <ItemGroup>

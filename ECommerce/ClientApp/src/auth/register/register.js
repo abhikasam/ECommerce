@@ -29,6 +29,12 @@ export default function Register() {
         validationMessage: ''
     })
 
+    const [formResponseData, setFormResponseData] = useState({
+        textClass: '',
+        alertClass: '',
+        message: ''
+    })
+
     function arePasswordMatched() {
         return registerData.password === registerData.confirmPassword;
     }
@@ -117,9 +123,18 @@ export default function Register() {
                 }
             }
         )
-        console.log(response)
         const data = await response.json();
         console.log(data)
+        setFormResponseData({
+            textClass: data.messageClass,
+            alertClass:data.alertMessageClass,
+            message: data.message
+        })
+
+        if (data.statusCode == 1) {
+            console.log('navigating to user login page')
+        }
+
     }
 
 
@@ -129,6 +144,13 @@ export default function Register() {
             <h4>Register Here</h4>
             <form onSubmit={onFormSubmit}>
                 <div className="container">
+                    <div className="row rowpad5px align-items-center m-2">
+                        <div className="col-7">
+                            <div className={formResponseData.alertClass + " alert"} style={{ whiteSpace: "pre-wrap" }}>
+                                <div className={formResponseData.textClass}>{formResponseData.message}</div>
+                            </div>
+                        </div>
+                    </div>
                     <div className="row rowpad5px align-items-center m-2">
                         <div className="col-3 text-end">
                             First Name

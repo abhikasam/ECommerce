@@ -1,8 +1,12 @@
-﻿using ECommerce.Data.Authentication;
+﻿using DealManager.Models;
+using ECommerce.Data.Account;
+using ECommerce.Data.Authentication;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
+using System.Security.Claims;
 using System.Text.Json.Serialization;
 
 namespace ECommerce.Controllers
@@ -11,29 +15,73 @@ namespace ECommerce.Controllers
     [ApiController]
     public class RegisterController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-{
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
+        private readonly UserManager<User> userManager;
 
-        [HttpGet]
-        public IEnumerable<WeatherForecast> Get()
+        public RegisterController(UserManager<User> userManager)
         {
-
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
+            this.userManager = userManager;
         }
 
         [HttpPost]
-        public JsonResult Post([FromBody]object obj)
+        public async Task<IActionResult> Post([FromBody] object obj)
         {
-            var register = JsonConvert.DeserializeObject<Register>(obj.ToString());
-            return new JsonResult(new { });
+            ResponseMessage message = new ResponseMessage();
+            try
+            {
+                var register = JsonConvert.DeserializeObject<Register>(obj.ToString());
+
+                if (!ModelState.IsValid)
+                {
+                    message.Message = string.Join("; ", ModelState.Values
+                                            .SelectMany(x => x.Errors)
+                                            .Select(x => x.ErrorMessage));
+                    message.StatusCode = ResponseStatus.ERROR;
+                    return new JsonResult(message);
+                }
+                else
+                {
+                    var user = new User()
+                    {
+                        UserName = register.Email,
+                        Email = register.Email,
+                        EmailConfirmed = true,
+                        FirstName= register.FirstName,
+                        LastName= register.LastName
+                    };
+
+                    var result = await userManager.CreateAsync(user, register.Password);
+
+                    if (result.Succeeded)
+                    {
+                        var claims = new List<Claim>()
+                        {
+                            new Claim("FirstName", register.FirstName),
+                            new Claim("LastName", register.LastName),
+                            new Claim("FullName", register.FirstName + " " + register.LastName)
+                        };
+
+                        await userManager.AddClaimsAsync(user, claims);
+
+                        message.Message = "Registration successful.";
+                        message.StatusCode = ResponseStatus.SUCCESS;
+                    }
+                    else
+                    {
+                        foreach (var error in result.Errors)
+                        {
+                            message.Message += error.Description + Environment.NewLine;
+                        }
+                        message.StatusCode= ResponseStatus.ERROR;
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message.Message = ex.Message;
+                message.StatusCode = ResponseStatus.EXCEPTION;
+            }
+            return new JsonResult(message);
         }
 
     }
