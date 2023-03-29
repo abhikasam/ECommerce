@@ -1,4 +1,5 @@
 ﻿using DealManager.Models;
+using ECommerce.Data;
 using ECommerce.Data.Account;
 using ECommerce.Data.Authentication;
 using Microsoft.AspNetCore.Http;
@@ -16,10 +17,12 @@ namespace ECommerce.Controllers
     public class RegisterController : ControllerBase
     {
         private readonly UserManager<User> userManager;
+        private readonly AppUserContext appUserContext;
 
-        public RegisterController(UserManager<User> userManager)
+        public RegisterController(UserManager<User> userManager,AppUserContext appUserContext)
         {
             this.userManager = userManager;
+            this.appUserContext = appUserContext;
         }
 
         [HttpPost]
@@ -50,7 +53,7 @@ namespace ECommerce.Controllers
                     };
 
                     var result = await userManager.CreateAsync(user, register.Password);
-
+                    
                     if (result.Succeeded)
                     {
                         var claims = new List<Claim>()

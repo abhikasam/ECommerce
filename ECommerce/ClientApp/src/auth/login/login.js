@@ -1,10 +1,12 @@
 ﻿import { useContext, useState } from "react"
 import { useHistory } from "react-router-dom"
+import { AuthContext } from "../authContext"
 
 
 export default function Login() {
 
     const history = useHistory()
+    const authContext = useContext(AuthContext)
     
     const validationMessages = {
         InvalidEmailAddress: 'Invalid Email Address',
@@ -92,11 +94,17 @@ export default function Login() {
             message: data.message
         })
 
-        if (data.statusCode === 1)
-        {
+        if (data.statusCode === 1) {
             setTimeout(() => {
+                authContext.isAuthenticated = true
+                authContext.user = data.data
+
                 history.push('/')
             }, 3000)
+        }
+        else {
+            authContext.isAuthenticated = false;
+            authContext.user = null;
         }
     }
 

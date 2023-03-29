@@ -10,8 +10,6 @@ namespace ECommerce.Data.Account
 {
     public class User : IdentityUser
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int UserId { get; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
     }

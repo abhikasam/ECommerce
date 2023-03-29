@@ -13,10 +13,12 @@ namespace ECommerce.Controllers
     public class LoginController : ControllerBase
     {
         private readonly SignInManager<User> signInManager;
+        private readonly UserManager<User> userManager;
 
-        public LoginController(SignInManager<User> signInManager)
+        public LoginController(SignInManager<User> signInManager,UserManager<User> userManager)
         {
             this.signInManager = signInManager;
+            this.userManager = userManager;
         }
 
         [HttpPost]
@@ -47,6 +49,7 @@ namespace ECommerce.Controllers
                     {
                         message.Message = "Registration successful." + Environment.NewLine + "You will be redirected to Home Page.";
                         message.StatusCode = ResponseStatus.SUCCESS;
+                        message.Data=await userManager.FindByEmailAsync(login.Email);
                     }
                     else
                     {
