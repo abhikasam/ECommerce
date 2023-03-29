@@ -2,8 +2,8 @@ import { Route, Switch } from "react-router-dom";
 import Register from "./auth/register/register";
 import { Counter } from "./components/Counter";
 import { FetchData } from "./components/FetchData";
-import { Home } from "./components/Home";
 import Login from "./auth/login/login";
+import Home from "./components/Home";
 
 function AppRoutes() {
     return (

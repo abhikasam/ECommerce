@@ -78,6 +78,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="ClientApp\src\auth\context\" />
     <Folder Include="ClientApp\src\context\" />
     <Folder Include="Models\AppUser\" />
   </ItemGroup>

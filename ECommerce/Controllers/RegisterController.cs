@@ -74,7 +74,6 @@ namespace ECommerce.Controllers
                         message.StatusCode= ResponseStatus.ERROR;
                     }
                 }
-
             }
             catch (Exception ex)
             {

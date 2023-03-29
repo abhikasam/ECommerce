@@ -62,7 +62,6 @@ export default function Register() {
                 && arePasswordMatched()
         }
         )
-
     }
 
     function confirmPasswordHandler() {
@@ -94,8 +93,6 @@ export default function Register() {
             })
         }
     }
-
-
 
     function blurEvent() {
 
@@ -139,7 +136,6 @@ export default function Register() {
                 history.push('/login')
             }, 3000)
         }
-
     }
 
 

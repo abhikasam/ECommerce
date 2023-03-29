@@ -1,12 +1,8 @@
-import React, { Component } from 'react';
 
-export class Home extends Component {
-  static displayName = Home.name;
-
-  render() {
+export default function Home() {
+  
     return (
         <div>
-      </div>
+        </div>
     );
-  }
 }
