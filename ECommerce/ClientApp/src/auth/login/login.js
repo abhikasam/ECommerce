@@ -1,13 +1,13 @@
 ﻿import { useContext, useState } from "react"
+import { useDispatch } from "react-redux"
 import { useHistory } from "react-router-dom"
-import { AuthContext } from "../authContext"
 
 
 export default function Login() {
 
+    const dispatch = useDispatch();
     const history = useHistory()
-    const authContext = useContext(AuthContext)
-    
+
     const validationMessages = {
         InvalidEmailAddress: 'Invalid Email Address',
         ValidEmailAddress: 'Valid Email Address'
@@ -95,16 +95,15 @@ export default function Login() {
         })
 
         if (data.statusCode === 1) {
-            setTimeout(() => {
-                authContext.isAuthenticated = true
-                authContext.user = data.data
 
+            dispatch({
+                type: 'AUTHORIZE',
+                payload: data.user
+            });
+
+            setTimeout(() => {
                 history.push('/')
             }, 3000)
-        }
-        else {
-            authContext.isAuthenticated = false;
-            authContext.user = null;
         }
     }
 
@@ -158,7 +157,7 @@ export default function Login() {
                     </div>
                     <div className="row rowpad5px align-items-center m-2">
                         <div className="col-3 label text-end">
-                            Remember me 
+                            Remember me
                         </div>
                         <div className="col-3 input">
                             <input type="checkbox" className="form-check-input" name="rememberMe" />

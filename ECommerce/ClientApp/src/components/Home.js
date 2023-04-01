@@ -1,17 +1,16 @@
-import { useContext } from "react";
-import { AuthContext } from "../auth/authContext";
+import { useSelector,connect } from 'react-redux';
 
 export default function Home() {
 
-    const authenticator = useContext(AuthContext)
-    
+    const isAuthenticated= useSelector(state => state.isAuthenticated);
+
     return (
         <div>
-            {authenticator.isAuthenticated && <>
-                <div>User is authenticated</div>
+            {isAuthenticated && <>
+                user is authenticated
             </>}
-            {!authenticator.isAuthenticated && <>
-                <div>User is not authenticated!</div>
+            {!isAuthenticated && <>
+                user is not authenticated
             </>}
         </div>
     );
