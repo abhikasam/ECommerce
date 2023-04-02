@@ -1,17 +1,21 @@
-import React, { Component, useState } from 'react';
+import React, { useState } from 'react';
 import { Collapse, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink } from 'reactstrap';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import './NavMenu.css';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { authActions } from '../store/auth-slice';
 
 export default function NavMenu() {
 
     const dispatch = useDispatch();
+    const location = useLocation();
+
+    const isAuthenticated = useSelector(state => state.auth.isAuthenticated)
+
     const [collapsed, setCollapsed] = useState(false)
 
-    const toggleNavbar=()=>{
-        setCollapsed(prev=> !prev )
+    const toggleNavbar = () => {
+        setCollapsed(prev => !prev)
     }
 
     async function logoutHandler() {
@@ -38,18 +42,23 @@ export default function NavMenu() {
                         <NavItem>
                             <NavLink tag={Link} className="text-dark" to="/">Home</NavLink>
                         </NavItem>
-                        <NavItem>
-                            <NavLink tag={Link} className="text-dark" to="/register">Register</NavLink>
-                        </NavItem>
-                        <NavItem>
-                            <NavLink tag={Link} className="text-dark" to="/login">Login</NavLink>
-                        </NavItem>
-                        <NavItem>
-                            <NavLink tag={Link} className="text-dark" to="/login" onClick={logoutHandler}>Logout</NavLink>
-                        </NavItem>
-                        <NavItem>
-                            <NavLink tag={Link} className="text-dark" to="/fetch-data">Fetch data</NavLink>
-                        </NavItem>
+                        {isAuthenticated &&
+                            <NavItem>
+                                <NavLink tag={Link} className="text-dark" to="/login" onClick={logoutHandler}>Logout</NavLink>
+                            </NavItem>
+                        }
+                        {
+                            !isAuthenticated && location.pathname !== '/register' &&
+                            <NavItem>
+                                <NavLink tag={Link} className="text-dark" to="/register">Register</NavLink>
+                            </NavItem>
+                        }
+                        {
+                            !isAuthenticated && location.pathname !== '/login' && 
+                            <NavItem>
+                                <NavLink tag={Link} className="text-dark" to="/login">Login</NavLink>
+                            </NavItem>
+                        }
                     </ul>
                 </Collapse>
             </Navbar>

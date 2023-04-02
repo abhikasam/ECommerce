@@ -47,7 +47,7 @@ namespace ECommerce.Controllers
 
                     if (result.Succeeded)
                     {
-                        message.Message = "Registration successful." + Environment.NewLine + "You will be redirected to Home Page.";
+                        message.Message = "Login successful." + Environment.NewLine + "You will be redirected to Home Page.";
                         message.StatusCode = ResponseStatus.SUCCESS;
                         message.Data=await userManager.FindByEmailAsync(login.Email);
                     }
