@@ -1,5 +1,6 @@
 ﻿using DealManager.Models;
 using ECommerce.Data.Account;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,12 +11,13 @@ namespace ECommerce.Controllers
     [ApiController]
     public class LogoutController : ControllerBase
     {
-
+        private readonly Microsoft.AspNetCore.Identity.UserManager<User> userManager;
         private readonly Microsoft.AspNetCore.Identity.SignInManager<User> signInManager;
 
-        public LogoutController(SignInManager<User> signInManager)
+        public LogoutController(SignInManager<User> signInManager, Microsoft.AspNetCore.Identity.UserManager<User> userManager)
         {
             this.signInManager = signInManager;
+            this.userManager = userManager;
         }
 
 
@@ -25,6 +27,10 @@ namespace ECommerce.Controllers
             var message = new ResponseMessage();
             try
             {
+                var id = this.User.Identity.GetUserId();
+                var user = await userManager.FindByIdAsync(id);
+                var claims = await userManager.GetClaimsAsync(user);
+                await userManager.RemoveClaimsAsync(user,claims.Where(i=>i.Type=="expires_at"));
                 await signInManager.SignOutAsync();
                 message.Message = "Session expired!";
                 message.StatusCode = ResponseStatus.SUCCESS;

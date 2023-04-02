@@ -1,10 +1,13 @@
 ﻿using DealManager.Models;
 using ECommerce.Data.Account;
 using ECommerce.Data.Authentication;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Configuration;
+using System.Security.Claims;
 
 namespace ECommerce.Controllers
 {
@@ -13,12 +16,54 @@ namespace ECommerce.Controllers
     public class LoginController : ControllerBase
     {
         private readonly SignInManager<User> signInManager;
-        private readonly UserManager<User> userManager;
+        private readonly Microsoft.AspNetCore.Identity.UserManager<User> userManager;
+        private readonly IConfiguration configuration;
 
-        public LoginController(SignInManager<User> signInManager,UserManager<User> userManager)
+        public LoginController(SignInManager<User> signInManager, Microsoft.AspNetCore.Identity.UserManager<User> userManager,IConfiguration configuration)
         {
             this.signInManager = signInManager;
             this.userManager = userManager;
+            this.configuration = configuration;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Get()
+        {
+            try
+            {
+                var isAuthenticated = this.User.Identity.IsAuthenticated;
+                if(!isAuthenticated)
+                {
+                    return new JsonResult(new
+                    {
+                        IsAuthenticated=false,
+                        IsException=false
+                    });                    
+                }
+
+                var id = this.User.Identity.GetUserId();
+                var user= await userManager.FindByIdAsync(id);
+                var claims = await userManager.GetClaimsAsync(user);
+                var expiresAt=claims.Where(i => i.Type == "expires_at").FirstOrDefault().Value;
+
+                var expiresIn=DateTime.Parse(expiresAt);
+
+                var expireTimeSpan= expiresIn.Subtract(DateTime.Now);
+
+                return new JsonResult(new { 
+                    isAuthenticated=true,
+                    User=user,
+                    expiresIn=expireTimeSpan.TotalSeconds
+                });
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new {
+                    IsAuthenticated = false,
+                    IsException=true,
+                    Message=ex.Message
+                });
+            }
         }
 
         [HttpPost]
@@ -49,7 +94,22 @@ namespace ECommerce.Controllers
                     {
                         message.Message = "Login successful." + Environment.NewLine + "You will be redirected to Home Page.";
                         message.StatusCode = ResponseStatus.SUCCESS;
-                        message.Data=await userManager.FindByEmailAsync(login.Email);
+                        var user = await userManager.FindByEmailAsync(login.Email);
+                        var claims=await userManager.GetClaimsAsync(user);
+                        if (claims.Any(i => i.Type == "expires_at"))
+                        {
+                            await userManager.RemoveClaimsAsync(user, claims.Where(i => i.Type == "expires_at"));
+                        }
+
+                        var sessionExpiresIn = configuration.GetValue<Int32>("SessionExpireMinutes");
+                        
+                        var claim = new Claim("expires_at", DateTime.Now.AddMinutes(sessionExpiresIn).ToString());
+                        await userManager.AddClaimAsync(user,claim);
+                        message.Data = new
+                        {
+                            User = user,
+                            expiresIn=sessionExpiresIn*60
+                        };
                     }
                     else
                     {

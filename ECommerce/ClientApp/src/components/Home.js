@@ -1,4 +1,5 @@
-import { useSelector,connect } from 'react-redux';
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 
 export default function Home() {
 
@@ -6,11 +7,11 @@ export default function Home() {
 
     return (
         <div>
+            {!authStore.isAuthenticated && <>
+                Please login to the application.
+            </>}
             {authStore.isAuthenticated && <>
                 user is authenticated
-            </>}
-            {!authStore.isAuthenticated && <>
-                user is not authenticated
             </>}
         </div>
     );

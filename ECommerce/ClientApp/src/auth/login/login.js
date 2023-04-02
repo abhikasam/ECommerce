@@ -2,6 +2,7 @@
 import { useDispatch } from "react-redux"
 import { useHistory } from "react-router-dom"
 import { authActions } from "../../store/auth-slice";
+import { setUser } from "../../store/auth-actions";
 
 
 export default function Login() {
@@ -15,7 +16,7 @@ export default function Login() {
     }
 
     const [formData, setFormData] = useState({
-        email: '', password: ''
+        email: '', password: '',rememberMe:false
     })
 
     const [formValid, setFormValid] = useState(false)
@@ -66,14 +67,19 @@ export default function Login() {
 
 
     function blurEvent() {
-
         if (isEmailValid()) {
             setEmailValidData({
                 className: '',
                 validationMessage: ''
             })
         }
+    }
 
+    function rememberMeChangeHandler() {
+        setFormData(prev =>{
+            prev.rememberMe = !prev.rememberMe;
+            return prev;
+        })
     }
 
     async function onFormSubmit(event) {
@@ -94,10 +100,8 @@ export default function Login() {
             message: data.message
         })
 
-        if (data.statusCode === 1) {
-
-            dispatch(authActions.login(data.data));
-
+        if (data.statusCode === 1) {            
+            dispatch(setUser(data.data));
             setTimeout(() => {
                 history.push('/')
             }, 1000)
@@ -157,7 +161,7 @@ export default function Login() {
                             Remember me
                         </div>
                         <div className="col-3 input">
-                            <input type="checkbox" className="form-check-input" name="rememberMe" />
+                            <input type="checkbox" className="form-check-input" onChange={rememberMeChangeHandler} name="rememberMe" />
                         </div>
                     </div>
                     <div className="row rowpad5px m-2">
