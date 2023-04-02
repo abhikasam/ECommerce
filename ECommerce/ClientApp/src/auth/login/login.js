@@ -1,6 +1,7 @@
 ﻿import { useContext, useState } from "react"
 import { useDispatch } from "react-redux"
 import { useHistory } from "react-router-dom"
+import { authActions } from "../../store/auth-slice";
 
 
 export default function Login() {
@@ -87,7 +88,6 @@ export default function Login() {
             }
         )
         const data = await response.json();
-        console.log(data)
         setFormResponseData({
             textClass: data.messageClass,
             alertClass: data.alertMessageClass,
@@ -96,10 +96,7 @@ export default function Login() {
 
         if (data.statusCode === 1) {
 
-            dispatch({
-                type: 'AUTHORIZE',
-                payload: data.user
-            });
+            dispatch(authActions.login(data.data));
 
             setTimeout(() => {
                 history.push('/')

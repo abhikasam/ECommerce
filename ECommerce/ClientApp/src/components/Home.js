@@ -2,14 +2,14 @@ import { useSelector,connect } from 'react-redux';
 
 export default function Home() {
 
-    const isAuthenticated= useSelector(state => state.isAuthenticated);
+    const authStore= useSelector(state => state.auth);
 
     return (
         <div>
-            {isAuthenticated && <>
+            {authStore.isAuthenticated && <>
                 user is authenticated
             </>}
-            {!isAuthenticated && <>
+            {!authStore.isAuthenticated && <>
                 user is not authenticated
             </>}
         </div>

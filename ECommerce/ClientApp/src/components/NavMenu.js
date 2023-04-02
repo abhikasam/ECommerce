@@ -3,7 +3,7 @@ import { Collapse, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink } from '
 import { Link } from 'react-router-dom';
 import './NavMenu.css';
 import { useDispatch } from 'react-redux';
-
+import { authActions } from '../store/auth-slice';
 
 export default function NavMenu() {
 
@@ -25,10 +25,7 @@ export default function NavMenu() {
             }
         )
 
-        dispatch({
-            type: 'UNAUTHORIZE',
-            payload: {}
-        });
+        dispatch(authActions.logout());
     }
 
     return (
