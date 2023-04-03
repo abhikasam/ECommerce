@@ -167,7 +167,6 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[AspNetUsers](
 	[Id] [nvarchar](450) NOT NULL,
-	[UserId] [int] identity(1,1) NOT NULL,
 	[UserName] [nvarchar](256) NULL,
 	[FirstName] [nvarchar](max) NULL,
 	[LastName] [nvarchar](max) NULL,
@@ -192,13 +191,6 @@ CREATE TABLE [dbo].[AspNetUsers](
 GO
 
 SET ANSI_PADDING ON
-GO
-
-/****** Object:  Index [UQ_UserID]    Script Date: 29-03-2023 19:10:41 ******/
-ALTER TABLE [dbo].[AspNetUsers] ADD  CONSTRAINT [UQ_UserID] UNIQUE NONCLUSTERED 
-(
-	[UserId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 100) ON [PRIMARY]
 GO
 
 /****** Object:  Table [dbo].[AspNetUserTokens]    Script Date: 26-03-2023 13:43:26 ******/

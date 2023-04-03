@@ -18,11 +18,13 @@ namespace ECommerce.Controllers
     {
         private readonly UserManager<User> userManager;
         private readonly AppUserContext appUserContext;
+        private readonly IConfiguration configuration;
 
-        public RegisterController(UserManager<User> userManager,AppUserContext appUserContext)
+        public RegisterController(UserManager<User> userManager,AppUserContext appUserContext,IConfiguration configuration)
         {
             this.userManager = userManager;
             this.appUserContext = appUserContext;
+            this.configuration = configuration;
         }
 
         [HttpPost]
@@ -60,8 +62,15 @@ namespace ECommerce.Controllers
                         {
                             new Claim("FirstName", register.FirstName),
                             new Claim("LastName", register.LastName),
-                            new Claim("FullName", register.FirstName + " " + register.LastName)
+                            new Claim("FullName", register.FirstName + " " + register.LastName),
+                            new Claim("Email",register.Email),
+                            new Claim("UserId",user.Id)
                         };
+
+                        if (user.Email == configuration.GetValue<string>("AdminMail"))
+                        {
+                            claims.Add(new Claim("Admin","true"));
+                        }
 
                         await userManager.AddClaimsAsync(user, claims);
 

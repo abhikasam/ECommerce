@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux"
 import { useHistory } from "react-router-dom"
 import { authActions } from "../../store/auth-slice";
 import { setUser } from "../../store/auth-actions";
+import { statusActions } from "../../store/status-slice";
 
 
 export default function Login() {
@@ -24,12 +25,6 @@ export default function Login() {
     const [emailValidData, setEmailValidData] = useState({
         className: '',
         validationMessage: ''
-    })
-
-    const [formResponseData, setFormResponseData] = useState({
-        textClass: '',
-        alertClass: '',
-        message: ''
     })
 
     function isEmailValid() {
@@ -84,7 +79,7 @@ export default function Login() {
 
     async function onFormSubmit(event) {
         event.preventDefault()
-        const response = await fetch('login'
+        await fetch('login'
             , {
                 method: 'POST',
                 body: JSON.stringify(formData),
@@ -93,19 +88,23 @@ export default function Login() {
                 }
             }
         )
-        const data = await response.json();
-        setFormResponseData({
-            textClass: data.messageClass,
-            alertClass: data.alertMessageClass,
-            message: data.message
-        })
+            .then(result => {
+                if (!result.ok) throw result;
+                return result.json();
+            })
+            .then(response => {
+                dispatch(statusActions.add(response))
 
-        if (data.statusCode === 1) {            
-            dispatch(setUser(data.data));
-            setTimeout(() => {
-                history.push('/')
-            }, 1000)
-        }
+                if (response.statusCode === 1) {
+                    dispatch(setUser(response.data));
+                    setTimeout(() => {
+                        history.push('/')
+                    }, 1000)
+                }
+            })
+            .catch(error =>
+                dispatch(statusActions.add(error))
+            )
     }
 
 
@@ -117,13 +116,6 @@ export default function Login() {
             </h4>
             <form onSubmit={onFormSubmit}>
                 <div className="container">
-                    <div className="row rowpad5px align-items-center m-2">
-                        <div className="col-7">
-                            <div className={formResponseData.alertClass + " alert"} style={{ whiteSpace: "pre-wrap" }}>
-                                <div className={formResponseData.textClass}>{formResponseData.message}</div>
-                            </div>
-                        </div>
-                    </div>
                     <div className="row rowpad5px align-items-center m-2">
                         <div className="col-3 label text-end">
                             Email

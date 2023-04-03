@@ -52,7 +52,7 @@ namespace ECommerce.Controllers
 
                 return new JsonResult(new { 
                     isAuthenticated=true,
-                    User=user,
+                    User= UserDetails.GetDetails(claims),
                     expiresIn=expireTimeSpan.TotalSeconds
                 });
             }
@@ -85,6 +85,15 @@ namespace ECommerce.Controllers
                 }
                 else
                 {
+                    var user=await userManager.FindByEmailAsync(login.Email);
+                    if(user == null)
+                    {
+                        message.Message = "User not exists.";
+                        message.StatusCode = ResponseStatus.ERROR;
+                        return new JsonResult(message);
+                    }
+
+
                     var result = await signInManager.PasswordSignInAsync(login.Email,
                                         login.Password,
                                         login.RememberMe,
@@ -94,7 +103,6 @@ namespace ECommerce.Controllers
                     {
                         message.Message = "Login successful." + Environment.NewLine + "You will be redirected to Home Page.";
                         message.StatusCode = ResponseStatus.SUCCESS;
-                        var user = await userManager.FindByEmailAsync(login.Email);
                         var claims=await userManager.GetClaimsAsync(user);
                         if (claims.Any(i => i.Type == "expires_at"))
                         {
@@ -105,9 +113,10 @@ namespace ECommerce.Controllers
                         
                         var claim = new Claim("expires_at", DateTime.Now.AddMinutes(sessionExpiresIn).ToString());
                         await userManager.AddClaimAsync(user,claim);
+                        claims = await userManager.GetClaimsAsync(user);
                         message.Data = new
                         {
-                            User = user,
+                            User = UserDetails.GetDetails(claims),
                             expiresIn=sessionExpiresIn*60
                         };
                     }

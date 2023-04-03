@@ -12,9 +12,9 @@ export default function NavMenu() {
     const dispatch = useDispatch();
     const location = useLocation();
 
-    const { isAuthenticated, expiresIn } = useSelector(state => state.auth)
+    const { isAuthenticated, expiresIn,user } = useSelector(state => state.auth)
     const [counter, setCounter] = useState(expiresIn);
-
+    
     useEffect(() => {
         setCounter(expiresIn)
     }, [expiresIn]);
@@ -24,7 +24,6 @@ export default function NavMenu() {
         
         if (counter > 0) {
             timer = setTimeout(() => {
-                console.log(counter)
                 setCounter(c => c - 1)
             }, 1000);
         }
@@ -35,7 +34,6 @@ export default function NavMenu() {
             }
         };
     }, [counter]);
-
 
     const [collapsed, setCollapsed] = useState(false)
 
@@ -61,17 +59,17 @@ export default function NavMenu() {
         <header>
             <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3" container light>
                 <NavbarBrand tag={Link} to="/">ECommerce</NavbarBrand>
-                {isAuthenticated &&
-                    <div>
-                        Session expires in : {format(counter)}
-                    </div>
-                }
                 <NavbarToggler onClick={toggleNavbar} className="mr-2" />
                 <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!collapsed} navbar>
+                    {isAuthenticated &&
+                        <div>
+                            {format(counter)}
+                        </div>
+                    }
                     <ul className="navbar-nav flex-grow">
-                        <NavItem>
-                            <NavLink tag={Link} className="text-dark" to="/">Home</NavLink>
-                        </NavItem>
+                        {isAuthenticated && user.isAdmin && 
+                            <NavLink tag={Link} className="text-dark" to="/products">Products</NavLink>
+                        }
                         {isAuthenticated &&
                             <NavItem>
                                 <NavLink tag={Link} className="text-dark" to="/login" onClick={logoutHandler}>Logout</NavLink>

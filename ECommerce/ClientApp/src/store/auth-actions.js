@@ -1,15 +1,24 @@
 ﻿import { authActions } from "./auth-slice"
+import { statusActions } from "./status-slice"
 
 export const fetchUser = () => {
     return async (dispatch) => {
 
         const userData = async () => {
-            const response = await fetch('/login')
-            const data = await response.json();
 
-            if (data.isAuthenticated) {
-                dispatch(setUser(data))
-            }
+            await fetch('/login')
+            .then(result => {
+                if (!result.ok) throw result;
+                return result.json();
+            })
+            .then(response => {
+                if (response.isAuthenticated) {
+                    dispatch(setUser(response))
+                }
+            })
+            .catch(error => {
+                dispatch(statusActions.add(error))
+            })
         }
 
         userData();

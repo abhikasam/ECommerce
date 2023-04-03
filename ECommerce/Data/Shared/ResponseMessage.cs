@@ -30,7 +30,7 @@ namespace DealManager.Models
             }
         }
 
-        public string AlertMessageClass
+        public string AlertClass
         {
             get
             {

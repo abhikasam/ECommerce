@@ -3,15 +3,15 @@ import { useSelector } from 'react-redux';
 
 export default function Home() {
 
-    const authStore= useSelector(state => state.auth);
+    const { isAuthenticated,user } = useSelector(state => state.auth);
 
     return (
         <div>
-            {!authStore.isAuthenticated && <>
+            {!isAuthenticated && <>
                 Please login to the application.
             </>}
-            {authStore.isAuthenticated && <>
-                user is authenticated
+            {isAuthenticated && <>
+                {user.fullName} {user.isAdmin?"true":"false"}
             </>}
         </div>
     );

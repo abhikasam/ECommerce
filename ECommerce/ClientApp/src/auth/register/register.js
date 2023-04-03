@@ -1,8 +1,11 @@
 ﻿import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { useHistory } from 'react-router-dom';
+import { statusActions } from "../../store/status-slice";
 
 export default function Register() {
 
+    const dispatch = useDispatch()
     const history = useHistory()
 
     const validationMessages = {
@@ -114,28 +117,29 @@ export default function Register() {
 
     async function onFormSubmit(event) {
         event.preventDefault()
-        const response = await fetch('register'
-            , {
-                method: 'POST',
-                body: JSON.stringify(registerData),
-                headers: {
-                    'Content-Type': 'application/json;'
-                }
+        await fetch('register', {
+            method: 'POST',
+            body: JSON.stringify(registerData),
+            headers: {
+                'Content-Type': 'application/json;'
             }
-        )
-        const data = await response.json();
-        console.log(data)
-        setFormResponseData({
-            textClass: data.messageClass,
-            alertClass: data.alertMessageClass,
-            message: data.message
         })
+            .then(result => {
+                if (!result.ok) throw result;
+                return result.json();
+            })
+            .then(response => {
+                dispatch(statusActions.add(response))
 
-        if (data.statusCode===1) {
-            setTimeout(() => {
-                history.push('/login')
-            }, 3000)
-        }
+                if (response.statusCode === 1) {
+                    setTimeout(() => {
+                        history.push('/login')
+                    }, 3000)
+                }
+            })
+            .catch(error =>
+                dispatch(statusActions.add(error))
+            )
     }
 
 
