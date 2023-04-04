@@ -21,7 +21,7 @@ function AppRoutes() {
                     <Route path='/login' component={Login} />
                     <Route path='/counter' component={Counter} />
                     <Route path='/register' component={Register} />
-                    {isAuthenticated && user.isAdmin && <Route path='/products' component={Products} />}
+                    {isAuthenticated && <Route path='/products' component={Products} />}
                     <Route component={NotFound} />
                 </Switch>
             )} />

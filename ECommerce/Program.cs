@@ -4,6 +4,7 @@ using System.Configuration;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ECommerce;
+using ECommerce.Models.Ecommerce;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,12 @@ builder.Services.AddDbContext<AppUserContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("AppUserDbConnectionString"));
 });
+
+builder.Services.AddDbContext<EcommerceContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("EcommerceDbConnectionString"));
+});
+
 
 //services.AddDbContext<NotesContext>(options =>
 //{

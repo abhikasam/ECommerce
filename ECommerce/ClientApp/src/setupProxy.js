@@ -9,6 +9,7 @@ const context =  [
     "/register",
     "/login",
     "/logout",
+    "/products",
 ];
 
 module.exports = function(app) {

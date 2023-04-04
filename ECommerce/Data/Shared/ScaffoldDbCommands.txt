@@ -8,3 +8,8 @@ Scaffold-DbContext -Connection "Data Source=hydws102855;Initial Catalog=Notes;In
 
 Scaffold-DbContext Name=NoteDbConnectionString -Provider Microsoft.EntityFrameworkCore.SqlServer -Force -OutputDir Models/Note
 
+Ecommerce:
+Scaffold-DbContext -Connection "Data Source=hydws102855;Initial Catalog=Ecommerce;Integrated Security=True;TrustServerCertificate=True" -Provider Microsoft.EntityFrameworkCore.SqlServer -Force -OutputDir Models/Ecommerce
+
+Scaffold-DbContext Name=EcommerceDbConnectionString -Provider Microsoft.EntityFrameworkCore.SqlServer -Force -OutputDir Models/Ecommerce
+
