@@ -1,5 +1,5 @@
 ﻿
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
 import classes from './list-select.module.css';
 
@@ -7,6 +7,25 @@ export default function ListSelect(props) {
 
     const dispatch = useDispatch()
     const [filteredItems, setFilteredItems] = useState(props.items)
+
+    const [selected, setSelected] = useState([])
+
+    useEffect(() => {
+        props.updateItems(selected)
+    }, [selected])
+
+    const selectedChangeEvent = (event) => {
+        if (event.target.checked) {
+            setSelected(prev => {
+                return [...prev, event.target.value];
+            })
+        }
+        else {
+            setSelected(prev => {
+                return prev.filter(id => id !== event.target.value)
+            })
+        }
+    }
 
     const filterItems = (event) => {
         setFilteredItems(props.items.filter(item => item.value.toLowerCase().includes(event.target.value.toLowerCase())))
@@ -22,7 +41,7 @@ export default function ListSelect(props) {
                             <input className="form-check-input me-1"
                                 type="checkbox" value={item.key}
                                 id={item.key}
-                                onChange={(event) => { props.updateItems(event.target.value) } } />
+                                onChange={(event) => { selectedChangeEvent(event) } } />
                             <label className={"form-check-label " + classes.label} htmlFor={item.key}>{item.value}</label>
                         </li>
                     )

@@ -1,7 +1,7 @@
 ﻿import { useEffect, useState } from "react";
 import { Collapse } from "bootstrap"
 
-export default function CollapseElement({ displayName,component }: props) {
+export default function CollapseElement({ classNames, displayName, component }: props) {
     var [toggle, setToggle] = useState(false);
 
     useEffect(() => {
@@ -12,7 +12,7 @@ export default function CollapseElement({ displayName,component }: props) {
 
     return (
         <div className="py-2">
-            <button className="btn btn-primary" onClick={() => setToggle(toggle => !toggle)}>
+            <button className={"btn " + classNames} onClick={() => setToggle(toggle => !toggle)}>
                 {displayName}
             </button>
             <div className="collapse" id="collapseTarget">

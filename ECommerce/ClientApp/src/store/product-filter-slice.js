@@ -13,12 +13,7 @@ const productFilterSlice = createSlice({
     initialState: initialValue,
     reducers: {
         updateBrands(state, action) {
-            if (state.brands.includes(action.payload)) {
-                state.brands = state.brands.filter(id => id !== action.payload)
-            }
-            else {
-                state.brands.push(action.payload)
-            }
+            state.brands = action.payload
         },
         removeBrand(state, action) {
             state.brands = action.payload

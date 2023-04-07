@@ -1,11 +1,9 @@
-﻿import { useState } from "react"
-import CollapseElement from "../shared/collapse"
-import BrandSelect from "../brands/brand-select"
+﻿import CollapseElement from "../shared/collapse"
 import ListSelect from "../shared/list-select"
 import { useDispatch, useSelector } from "react-redux"
-import { useEffect } from "react"
-import { getBrands } from "../store/brand-actions"
 import { productFilterActions } from "../store/product-filter-slice"
+import { getBrands } from "../store/brand-actions"
+import { useEffect } from "react"
 
 
 export default function ProductFilters(props) {
@@ -13,7 +11,12 @@ export default function ProductFilters(props) {
     const { brands } = useSelector(state => state.brand)
 
     const dispatch = useDispatch()
-    
+
+    useEffect(() => {
+        dispatch(getBrands())
+    }, [dispatch])
+
+
     const productCountChangeEvent = (event) => {
         dispatch(productFilterActions.updateProductCount(event.target.value))
     }
@@ -84,7 +87,7 @@ export default function ProductFilters(props) {
             <div className="dropdown-divider"></div>
 
             <div>
-                <CollapseElement displayName="Brands" component={<ListSelect items={brands} updateItems={brandsChangeEvent} />}></CollapseElement>
+                <CollapseElement classNames="btn-success" displayName="Brands" component={<ListSelect items={brands} updateItems={brandsChangeEvent} />}></CollapseElement>
             </div>
             
         </div>

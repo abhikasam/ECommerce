@@ -12,11 +12,7 @@ export default function Products() {
     const dispatch = useDispatch()
     const { products } = useSelector(state => state.product)
     const productFilters = useSelector(state => state.productFilter)
-
-    useEffect(() => {
-        dispatch(getBrands())
-    }, [dispatch])
-
+    
     useEffect(() => {
         dispatch(getProducts())
     }, [dispatch])
