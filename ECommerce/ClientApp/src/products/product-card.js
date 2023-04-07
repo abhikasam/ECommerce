@@ -2,7 +2,7 @@
 import classes from './product-card.module.css'
 
 
-export default function ProductCard({ product }: props) {
+export default function ProductCard({ product }) {
 
     function getDiscountColor() {
         if (product.discount >= 50)

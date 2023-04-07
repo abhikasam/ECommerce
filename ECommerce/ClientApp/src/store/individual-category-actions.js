@@ -23,3 +23,14 @@ export const getIndividualCategories = () => {
 }
 
 
+export const sortIndividualCategories = () => {
+    return async (dispatch, getState) => {
+        var store = getState()
+        var selectedIndividualCategories = store.product.filters.individualCategories.map(i => parseInt(i))
+        if (selectedIndividualCategories.length) {
+            dispatch(individualCategoryActions.sort(selectedIndividualCategories))
+        }
+    }
+}
+
+

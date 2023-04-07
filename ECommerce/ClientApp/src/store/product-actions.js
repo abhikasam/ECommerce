@@ -1,4 +1,8 @@
-﻿import { productActions } from "./product-slice";
+﻿import { sortBrands } from "./brand-actions";
+import { brandActions } from "./brand-slice";
+import { sortCategories } from "./category-actions";
+import { sortIndividualCategories } from "./individual-category-actions";
+import { productActions } from "./product-slice";
 
 
 
@@ -34,6 +38,9 @@ export const getProducts=()=>{
                 dispatch(productActions.update(response.data))
                 dispatch(productActions.updatePageNumber(response.data.pageNumber))
                 dispatch(productActions.updateTotalPages(response.data.totalPages))
+                dispatch(sortBrands())
+                dispatch(sortCategories())
+                dispatch(sortIndividualCategories())
             })
             .catch(error => {
                 dispatch(productActions.update([]))

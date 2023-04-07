@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialValue = {
     products: [],
-    pageNumber: '',
+    pageNumber: 1,
     totalPages: '',
     filters: {
         productCount: '',

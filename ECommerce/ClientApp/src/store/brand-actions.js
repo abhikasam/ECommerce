@@ -23,4 +23,15 @@ export const getBrands = () => {
     }
 }
 
+export const sortBrands = () => {
+    return async (dispatch, getState) => {
+        var store = getState()
+        var selectedBrands = store.product.filters.brands.map(i => parseInt(i))
+        if (selectedBrands.length) {
+            dispatch(brandActions.sort(selectedBrands))
+        }
+    }
+}
+
+
 

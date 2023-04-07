@@ -11,6 +11,11 @@ const individualCategorySlice = createSlice({
     reducers: {
         update(state, action) {
             state.individualCategories = action.payload
+        },
+        sort(state, action) {
+            state.individualCategories = state.individualCategories.sort(function (a, b) {
+                return action.payload.includes(a.key) > action.payload.includes(b.key) ? 1 : -1
+            }).reverse()
         }
     }
 })

@@ -77,7 +77,8 @@ namespace ECommerce.Controllers.Products
                 {
                     Result=productDtos.PaginateData(filters.PageNumber,filters.ProductCount),
                     TotalPages=totalPages,
-                    PageNumber=filters.PageNumber
+                    PageNumber=filters.PageNumber,
+                    Filters=filters
                 };
             }
             catch (Exception ex)
