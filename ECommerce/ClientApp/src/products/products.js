@@ -21,7 +21,7 @@ export default function Products() {
     }, [dispatch, pageNumber])
 
     function updatePageFilters() {
-        dispatch(getProducts(productFilters))
+        dispatch(getProducts())
     }
 
     function loadPage(page) {

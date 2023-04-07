@@ -27,6 +27,7 @@ const productFilterSlice = createSlice({
         },
         updateProductCount(state, action) {
             state.productCount = action.payload
+            state.pageNumber=1
         },
         updatePageNumber(state, action) {
             state.pageNumber = action.payload

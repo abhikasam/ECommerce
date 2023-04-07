@@ -1,7 +1,4 @@
-﻿import { useEffect, useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import { productFilterActions } from "../store/product-filter-slice"
-
+﻿
 
 export default function Pagination(props) {
 
