@@ -41,7 +41,14 @@ namespace ECommerce.Models.Ecommerce
             }
             #endregion
 
+            #region individual category filter
+            if (filters.IndividualCategoryIds.Count() > 0)
+            {
+                productDtos = productDtos.Where(i => filters.IndividualCategoryIds.Contains(i.IndividualCategoryId));
+            }
+            #endregion
 
+            #region sorting
             if (filters.SortOrder == "asc")
             {
                 switch (filters.SortBy)
@@ -78,6 +85,8 @@ namespace ECommerce.Models.Ecommerce
                         productDtos = productDtos.OrderByDescending(i => i.Description); break;
                 }
             }
+            #endregion
+
             return productDtos.Take(filters.ProductCount);
         }
     }

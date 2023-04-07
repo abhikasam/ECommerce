@@ -19,7 +19,8 @@ export const getProducts=(filters)=>{
                         queryString += '&brands=' + filters.brands.join(',')
                     if (filters.categories)
                         queryString += '&categories=' + filters.categories.join(',')
-                        
+                    if (filters.individualCategories)
+                        queryString += '&individualCategories=' + filters.individualCategories.join(',')
                     queryString = '?' + queryString.slice(1)
                 }
 

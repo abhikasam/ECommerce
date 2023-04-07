@@ -40,7 +40,8 @@ namespace ECommerce.Controllers.Products
             string sortBy,
             string sortOrder, 
             string brands=null,
-            string categories=null)
+            string categories=null,
+            string individualCategories=null)
         {
             var message = new ResponseMessage();
             try
@@ -55,7 +56,8 @@ namespace ECommerce.Controllers.Products
                     SortBy=sortBy,
                     SortOrder=sortOrder,
                     BrandIds= Utilities.GetArray(brands,","),
-                    CategoryIds=Utilities.GetArray(categories,",")
+                    CategoryIds=Utilities.GetArray(categories,","),
+                    IndividualCategoryIds=Utilities.GetArray(individualCategories,",")
                 };
 
                 var products = ecommerceContext.Products

@@ -5,6 +5,7 @@ import { productFilterActions } from "../store/product-filter-slice"
 import { getBrands } from "../store/brand-actions"
 import { useEffect } from "react"
 import { getCategories } from "../store/category-actions"
+import { getIndividualCategories } from "../store/individual-category-actions"
 
 
 export default function ProductFilters(props) {
@@ -14,11 +15,12 @@ export default function ProductFilters(props) {
 
     const { brands } = useSelector(state => state.brand)
     const { categories } = useSelector(state => state.category)
-
+    const { individualCategories } = useSelector(state => state.individualCategory)
 
     useEffect(() => {
         dispatch(getBrands())
         dispatch(getCategories())
+        dispatch(getIndividualCategories())
     }, [dispatch])
 
     const productCountChangeEvent = (event) => {
@@ -108,6 +110,18 @@ export default function ProductFilters(props) {
                         updateItems={(categories) => dispatch(productFilterActions.updateCategories(categories))}
                     />}></CollapseElement>
             </div>
+
+            <div>
+                <CollapseElement
+                    classNames="btn-success"
+                    displayName="Individual Categories"
+                    collapseId="collapseIndividualCategories"
+                    component={<ListSelect
+                        items={individualCategories}
+                        updateItems={(individualCategories) => dispatch(productFilterActions.updateIndividualCategories(individualCategories))}
+                    />}></CollapseElement>
+            </div>
+
         </div>
     )
 }
