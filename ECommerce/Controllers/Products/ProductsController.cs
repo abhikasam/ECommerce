@@ -35,8 +35,9 @@ namespace ECommerce.Controllers.Products
         }
 
         [HttpGet]
-        public IActionResult Get(
+        public JsonResult Get(
             int? productCount,
+            int? pageNumber,
             string sortBy,
             string sortOrder, 
             string brands=null,
@@ -47,12 +48,14 @@ namespace ECommerce.Controllers.Products
             try
             {
                 productCount = productCount ?? this.filters.Value.ProductCount;
+                pageNumber= pageNumber ?? this.filters.Value.PageNumber;
                 sortBy = sortBy ?? this.filters.Value.SortBy;
                 sortOrder = sortOrder ?? this.filters.Value.SortOrder;
                 
                 var filters = new ProductFilters()
                 {
                     ProductCount=productCount.Value,
+                    PageNumber=pageNumber.Value,
                     SortBy=sortBy,
                     SortOrder=sortOrder,
                     BrandIds= Utilities.GetArray(brands,","),
@@ -65,7 +68,17 @@ namespace ECommerce.Controllers.Products
                                 .Include(i => i.Category).DefaultIfEmpty()
                                 .Include(i => i.IndividualCategory).DefaultIfEmpty();
 
-                message.Data= products.GetProductDtos(filters);
+                var productDtos = products.GetProductDtos(filters);
+
+                var totalRecords=productDtos.Count();
+                var totalPages=(totalRecords+filters.ProductCount)/filters.ProductCount;
+
+                message.Data = new
+                {
+                    Result=productDtos.PaginateData(filters.PageNumber,filters.ProductCount),
+                    TotalPages=totalPages,
+                    PageNumber=filters.PageNumber
+                };
             }
             catch (Exception ex)
             {

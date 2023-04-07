@@ -2,7 +2,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialValue = {
-    products: []
+    products: [],
 }
 
 const productSlice = createSlice({
@@ -10,7 +10,10 @@ const productSlice = createSlice({
     initialState: initialValue,
     reducers: {
         update(state, action) {
-            state.products=action.payload
+            state.products = action.payload.result
+        },
+        updatePageNumber(state, action) {
+            state.pageNumber = action.payload
         }
     }
 })

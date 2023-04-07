@@ -1,5 +1,6 @@
 ﻿using ECommerce.Data.Products;
 using ECommerce.Models.EcommerceExtensions;
+using Microsoft.AspNetCore.Hosting;
 
 namespace ECommerce.Models.Ecommerce
 {
@@ -7,7 +8,7 @@ namespace ECommerce.Models.Ecommerce
 
     public static class ProductExt
     {
-        public static IEnumerable<ProductDto> GetProductDtos(this IQueryable<Product> products,ProductFilters filters)
+        public static IQueryable<ProductDto> GetProductDtos(this IQueryable<Product> products,ProductFilters filters)
         {
             var productDtos = products.Select(i => new ProductDto()
             {
@@ -87,7 +88,18 @@ namespace ECommerce.Models.Ecommerce
             }
             #endregion
 
-            return productDtos.Take(filters.ProductCount);
+            return productDtos;
         }
+
+        public static IQueryable<ProductDto> PaginateData(this IQueryable<ProductDto> products,int pageNumber,int pageSize)
+        {
+            var totalRecords =products.Count();
+
+            var skip = (pageNumber - 1) * pageSize;
+            var take = pageSize;
+
+            return products.Skip(skip).Take(take);
+        }
+
     }
 }

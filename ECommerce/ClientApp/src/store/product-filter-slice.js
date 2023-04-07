@@ -7,6 +7,8 @@ const initialValue = {
     sortOrder: null,
     brands: [],
     categories: [],
+    pageNumber: '',
+    totalPages:'',
     individualCategories:[]
 }
 
@@ -25,6 +27,12 @@ const productFilterSlice = createSlice({
         },
         updateProductCount(state, action) {
             state.productCount = action.payload
+        },
+        updatePageNumber(state, action) {
+            state.pageNumber = action.payload
+        },
+        updateTotalPages(state, action) {
+            state.totalPages = action.payload
         },
         updateSortBy(state, action) {
             state.sortBy = action.payload
