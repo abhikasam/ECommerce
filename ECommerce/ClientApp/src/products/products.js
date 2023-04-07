@@ -3,18 +3,15 @@ import { useDispatch, useSelector } from "react-redux"
 import { getProducts } from "../store/product-actions"
 import ProductCard from "./product-card"
 import classes from './products.module.css';
-import ProductFilters from "./product-filters";
 import Pagination from "../shared/pagination";
 import { productActions } from "../store/product-slice";
-import { productFilterActions } from "../store/product-filter-slice";
+import ProductFilters from "./product-filters";
 
 
 export default function Products() {
 
     const dispatch = useDispatch()
-    const { products } = useSelector(state => state.product)
-    const { totalPages, pageNumber } = useSelector(state => state.productFilter)
-    const productFilters = useSelector(state => state.productFilter)
+    const { products, totalPages, pageNumber } = useSelector(state => state.product)
     
     useEffect(() => {
         dispatch(getProducts())
@@ -25,7 +22,7 @@ export default function Products() {
     }
 
     function loadPage(page) {
-        dispatch(productFilterActions.updatePageNumber(page))
+        dispatch(productActions.updatePageNumber(page))
     }
 
     return (

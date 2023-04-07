@@ -1,15 +1,14 @@
 ﻿import CollapseElement from "../shared/collapse"
 import ListSelect from "../shared/list-select"
 import { useDispatch, useSelector } from "react-redux"
-import { productFilterActions } from "../store/product-filter-slice"
 import { getBrands } from "../store/brand-actions"
 import { useEffect } from "react"
 import { getCategories } from "../store/category-actions"
 import { getIndividualCategories } from "../store/individual-category-actions"
+import { productActions } from "../store/product-slice"
 
 
 export default function ProductFilters(props) {
-
     
     const dispatch = useDispatch()
 
@@ -23,19 +22,6 @@ export default function ProductFilters(props) {
         dispatch(getIndividualCategories())
     }, [dispatch])
 
-    const productCountChangeEvent = (event) => {
-        dispatch(productFilterActions.updateProductCount(event.target.value))
-    }
-
-    const sortByChangeEvent = (event) => {
-        dispatch(productFilterActions.updateSortBy(event.target.value))
-    }
-
-    const sortOrderChangeEvent = (event) => {
-        dispatch(productFilterActions.updateSortOrder(event.target.value))
-    }
-
-
     return (
         <div className="filters">
             <input type="button" className="btn btn-primary m-2" onClick={() => { props.onUpdate() }} value="Update" />
@@ -48,7 +34,7 @@ export default function ProductFilters(props) {
                     <label>Product Count :</label>
                 </div>
                 <div className="col-4">
-                    <select className="form-control" onChange={productCountChangeEvent}>
+                    <select className="form-control" onChange={(event) => dispatch(productActions.updateProductCount(event.target.value)) }>
                         <option value="50">50</option>
                         <option value="100">100</option>
                         <option value="200">200</option>
@@ -63,7 +49,7 @@ export default function ProductFilters(props) {
                     <label>Sort By :</label>
                 </div>
                 <div className="col-4">
-                    <select className="form-control" onChange={sortByChangeEvent}>
+                    <select className="form-control" onChange={(event) => dispatch(productActions.updateSortBy(event.target.value))}>
                         <option value="Description">Name</option>
                         <option value="Brand">Brand</option>
                         <option value="Category">Category</option>
@@ -80,7 +66,7 @@ export default function ProductFilters(props) {
                     <label>Sort Order :</label>
                 </div>
                 <div className="col-4">
-                    <select className="form-control" onChange={sortOrderChangeEvent}>
+                    <select className="form-control" onChange={(event) => dispatch(productActions.updateSortOrder(event.target.value))}>
                         <option value="asc">Asc</option>
                         <option value="desc">Desc</option>
                     </select>
@@ -96,7 +82,7 @@ export default function ProductFilters(props) {
                     collapseId="collapseBrands"
                     component={<ListSelect
                         items={brands}
-                        updateItems={(brands) => dispatch(productFilterActions.updateBrands(brands))}
+                        updateItems={(brands) => dispatch(productActions.updateBrands(brands))}
                     />}></CollapseElement>
             </div>
 
@@ -107,7 +93,7 @@ export default function ProductFilters(props) {
                     collapseId="collapseCategories"
                     component={<ListSelect
                         items={categories}
-                        updateItems={(categories) => dispatch(productFilterActions.updateCategories(categories))}
+                        updateItems={(categories) => dispatch(productActions.updateCategories(categories))}
                     />}></CollapseElement>
             </div>
 
@@ -118,7 +104,7 @@ export default function ProductFilters(props) {
                     collapseId="collapseIndividualCategories"
                     component={<ListSelect
                         items={individualCategories}
-                        updateItems={(individualCategories) => dispatch(productFilterActions.updateIndividualCategories(individualCategories))}
+                        updateItems={(individualCategories) => dispatch(productActions.updateIndividualCategories(individualCategories))}
                     />}></CollapseElement>
             </div>
 
