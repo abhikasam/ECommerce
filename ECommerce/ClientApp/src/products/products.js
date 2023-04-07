@@ -4,7 +4,6 @@ import { getProducts } from "../store/product-actions"
 import ProductCard from "./product-card"
 import classes from './products.module.css';
 import ProductFilters from "./product-filters";
-import { getBrands } from "../store/brand-actions";
 
 
 export default function Products() {
@@ -16,7 +15,6 @@ export default function Products() {
     useEffect(() => {
         dispatch(getProducts())
     }, [dispatch])
-
 
     function updatePageFilters() {
         dispatch(getProducts(productFilters))

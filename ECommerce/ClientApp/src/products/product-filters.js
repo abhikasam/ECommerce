@@ -9,16 +9,15 @@ import { getCategories } from "../store/category-actions"
 
 export default function ProductFilters(props) {
 
+    
+    const dispatch = useDispatch()
+
     const { brands } = useSelector(state => state.brand)
     const { categories } = useSelector(state => state.category)
 
-    const dispatch = useDispatch()
 
     useEffect(() => {
         dispatch(getBrands())
-    }, [dispatch])
-
-    useEffect(() => {
         dispatch(getCategories())
     }, [dispatch])
 
@@ -34,7 +33,6 @@ export default function ProductFilters(props) {
         dispatch(productFilterActions.updateSortOrder(event.target.value))
     }
 
-    console.log(brands, categories)
 
     return (
         <div className="filters">

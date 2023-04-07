@@ -5,14 +5,16 @@ import classes from './list-select.module.css';
 
 export default function ListSelect(props) {
 
-    const dispatch = useDispatch()
     const [filteredItems, setFilteredItems] = useState(props.items)
-
     const [selected, setSelected] = useState([])
 
     useEffect(() => {
         props.updateItems(selected)
     }, [selected])
+
+    useEffect(() => {
+        setFilteredItems(props.items)
+    }, [props.items])
 
     const selectedChangeEvent = (event) => {
         if (event.target.checked) {
