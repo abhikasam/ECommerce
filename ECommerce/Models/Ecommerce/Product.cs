@@ -11,7 +11,7 @@ namespace ECommerce.Models.Ecommerce
         public int CategoryId { get; set; }
         public int IndividualCategoryId { get; set; }
         public int OriginalPrice { get; set; }
-        public int? Discount { get; set; }
+        public int? FinalPrice { get; set; }
         public string SizeOptions { get; set; }
         public double Rating { get; set; }
         public int Reviews { get; set; }

@@ -1,4 +1,5 @@
 ﻿using ECommerce.Data.Products;
+using ECommerce.Models.EcommerceExtensions;
 
 namespace ECommerce.Models.Ecommerce
 {
@@ -6,9 +7,9 @@ namespace ECommerce.Models.Ecommerce
 
     public static class ProductExt
     {
-        public static IEnumerable<ProductDto> GetProductDtos(this List<Product> products)
+        public static IEnumerable<ProductDto> GetProductDtos(this IQueryable<Product> products,ProductFilters filters)
         {
-            return products.Select(i => new ProductDto()
+            var productDtos = products.Select(i => new ProductDto()
             {
                 ProductId = i.ProductId,
                 BrandId = i.BrandId,
@@ -16,7 +17,7 @@ namespace ECommerce.Models.Ecommerce
                 IndividualCategoryId = i.IndividualCategoryId,
                 Description = i.Description,
                 OriginalPrice = i.OriginalPrice,
-                Discount = i.Discount,
+                FinalPrice = i.FinalPrice,
                 Rating = i.Rating,
                 Reviews = i.Reviews,
                 SizeOptions = i.SizeOptions,
@@ -25,6 +26,51 @@ namespace ECommerce.Models.Ecommerce
                 CategoryName = i.Category.CategoryName,
                 IndividualCategoryName = i.IndividualCategory.IndividualCategoryName
             });
+
+            #region brand filter
+            if(filters.BrandIds.Count() > 0)
+            {
+                productDtos = productDtos.Where(i => filters.BrandIds.Contains(i.BrandId));
+            }
+            #endregion
+
+            if (filters.SortOrder == "asc")
+            {
+                switch (filters.SortBy)
+                {
+                    case "Description":
+                        productDtos = productDtos.OrderBy(i => i.Description).AsQueryable(); break;
+                    case "Price":
+                        productDtos = productDtos.OrderBy(i => i.FinalPrice).AsQueryable(); break;
+                    case "Brand":
+                        productDtos = productDtos.OrderBy(i => i.BrandName).AsQueryable(); break;
+                    case "Category":
+                        productDtos = productDtos.OrderBy(i => i.CategoryName).AsQueryable(); break;
+                    case "IndividualCategory":
+                        productDtos = productDtos.OrderBy(i => i.IndividualCategoryName).AsQueryable(); break;
+                    default:
+                        productDtos = productDtos.OrderBy(i => i.Description); break;
+                }
+            }
+            else
+            {
+                switch (filters.SortBy)
+                {
+                    case "Description":
+                        productDtos = productDtos.OrderByDescending(i => i.Description).AsQueryable(); break;
+                    case "Price":
+                        productDtos = productDtos.OrderByDescending(i => i.FinalPrice).AsQueryable(); break;
+                    case "Brand":
+                        productDtos = productDtos.OrderByDescending(i => i.BrandName).AsQueryable(); break;
+                    case "Category":
+                        productDtos = productDtos.OrderByDescending(i => i.CategoryName).AsQueryable(); break;
+                    case "IndividualCategory":
+                        productDtos = productDtos.OrderByDescending(i => i.IndividualCategoryName).AsQueryable(); break;
+                    default:
+                        productDtos = productDtos.OrderByDescending(i => i.Description); break;
+                }
+            }
+            return productDtos.Take(filters.ProductCount);
         }
     }
 }

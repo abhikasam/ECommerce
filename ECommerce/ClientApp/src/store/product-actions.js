@@ -2,11 +2,27 @@
 
 
 
-export const getProducts=()=>{
-    return async (dispatch)=> {
-
+export const getProducts=(filters)=>{
+    return async (dispatch) => {
         async function getData() {
-            await fetch('/products')
+
+            var queryString = ''
+
+                if (filters) {
+                    if (filters.productCount)
+                        queryString += '&productCount=' + filters.productCount
+                    if (filters.sortBy)
+                        queryString += '&sortBy=' + filters.sortBy
+                    if (filters.sortOrder)
+                        queryString += '&sortOrder=' + filters.sortOrder
+                    if (filters.brands)
+                        queryString += '&brands='+filters.brands.join(',')
+
+                    queryString = '?' + queryString.slice(1)
+                    console.log(queryString)
+                }
+
+                await fetch('/products' + queryString)
                 .then(result => {
                     if (!result.ok) throw result;
                     return result.json();

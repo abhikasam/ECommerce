@@ -1,25 +1,49 @@
 ﻿import { useEffect } from "react"
-import { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { getProducts } from "../store/product-actions"
+import ProductCard from "./product-card"
+import classes from './products.module.css';
+import ProductFilters from "./product-filters";
+import { getBrands } from "../store/brand-actions";
+
 
 export default function Products() {
 
     const dispatch = useDispatch()
     const { products } = useSelector(state => state.product)
+    const productFilters = useSelector(state => state.productFilter)
+
+    useEffect(() => {
+        dispatch(getBrands())
+    }, [dispatch])
 
     useEffect(() => {
         dispatch(getProducts())
     }, [dispatch])
 
+
+    function updatePageFilters() {
+        console.log(productFilters)
+        dispatch(getProducts(productFilters))
+    }
+    
     return (
-        <>
-            {
-                products.map(product =>
-                    <div key={product.productId}>{product.productId} {product.brandName}</div>
-                )
-            }
-        </>
+        <div className="row">
+            <div className="col-2">
+                <ProductFilters
+                    onUpdate={updatePageFilters}
+                ></ProductFilters>
+            </div>
+            <div className="col-10">
+                <div className="row">
+                    {
+                        products.map(product =>
+                            <ProductCard key={product.productId} product={product}></ProductCard>
+                        )
+                    }
+                </div>
+            </div>
+        </div>
     )
 }
 

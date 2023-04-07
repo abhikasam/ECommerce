@@ -4,7 +4,7 @@ import { statusActions } from "./status-slice"
 export const fetchUser = () => {
     return async (dispatch) => {
 
-        const userData = async () => {
+        const getData = async () => {
 
             await fetch('/login')
             .then(result => {
@@ -21,14 +21,14 @@ export const fetchUser = () => {
             })
         }
 
-        userData();
+        getData();
     }
 }
 
 export const setUser = (data) => {
     return async (dispatch) => {
 
-        async function userData() {
+        async function loginUser() {
             dispatch(authActions.login(data))
 
             setTimeout(function () {
@@ -36,7 +36,7 @@ export const setUser = (data) => {
             }, data.expiresIn * 1000);
         }
 
-        userData();
+        loginUser();
     }
 }
 

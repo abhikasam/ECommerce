@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ECommerce;
 using ECommerce.Models.Ecommerce;
+using ECommerce.Models.EcommerceExtensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,6 +48,8 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.HttpOnly = true;
     options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
 });
+
+builder.Services.Configure<ProductFilters>(builder.Configuration.GetSection("ProductFilters"));
 
 var app = builder.Build();
 

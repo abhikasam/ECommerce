@@ -1,0 +1,16 @@
+﻿
+.ul {
+    overflow-y: auto;
+    max-height: 20em;
+}
+
+
+.li {
+}
+
+.label {
+}
+
+.search {
+    margin: 0.5em 0;
+}

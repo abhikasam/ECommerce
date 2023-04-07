@@ -9,7 +9,7 @@ export default function Layout(props){
     const status = useSelector(state=>state.status)
 
     return (
-        <div>
+        <div className={classes.layout}>
             <NavMenu />
             {status.hasStatus &&
                 <div className={"row rowpad5px align-items-center " + classes.alertbar}>
@@ -20,9 +20,9 @@ export default function Layout(props){
                     </div>
                 </div>
             }
-            <Container>
+            <div className={classes.container}>
                 {props.children}
-            </Container>
+            </div>
         </div>
     );
 }

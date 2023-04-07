@@ -146,7 +146,9 @@ export default function Register() {
 
     return (
         <>
-            <h4>Register Here</h4>
+            <h4 style={{ paddingLeft: '6em' }}>
+                Register Here
+            </h4>
             <form onSubmit={onFormSubmit}>
                 <div className="container">
                     <div className="row rowpad5px align-items-center m-2">

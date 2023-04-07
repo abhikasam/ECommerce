@@ -1,0 +1,80 @@
+﻿body {
+}
+
+.card {
+    height: auto;
+    width: 15em;
+    border-style: groove;
+    margin: 0.5em;
+}
+
+.photo {
+    height: 15em;
+    display: grid;
+    align-items: center;
+    justify-content: space-around;
+    margin-top: 0.5em;
+}
+
+.alphabet{
+    font-size:8em;
+    color:white;
+}
+
+.description {
+    text-align: center;
+    font-style: italic;
+    font-weight: 500;
+}
+
+.quantity{
+
+}
+
+.brand {
+    font-size: small;
+    color: gray;
+    margin-top: 0.5em;
+    text-align-last: center;
+}
+
+.categories{
+
+}
+
+.category {
+    font-size: small;
+    color: darkgray;
+    text-align-last: center;
+}
+
+.individualCategory {
+    font-size: small;
+    color: darkgray;
+    text-align-last: center;
+}
+
+.price {
+    margin-top: 0.3em;
+    margin-bottom: 0.3em;
+}
+
+.originalPrice {
+    font-weight: bold;
+}
+
+.discount{
+    font-style:italic;
+}
+
+.finalPrice {
+    font-weight: 900;
+    text-align-last: end;
+    font-size: medium;
+    margin-right: 1em;
+}
+
+.details{
+    height:15em;
+}
+
