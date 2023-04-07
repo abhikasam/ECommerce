@@ -7,7 +7,7 @@
         public int[] BrandIds { get; set; }
         public int[] CategoryIds { get; set; }
         public int[] IndividualCategoryIds { get; set; }
-        public KeyValuePair<int,int>[] PriceRange { get; set; }
+        public string[] PriceRange { get; set; }
         public string[] SizeOptions { get; set; }
         public int[] Discounts { get; set; }
         public int[] Rating { get; set; }

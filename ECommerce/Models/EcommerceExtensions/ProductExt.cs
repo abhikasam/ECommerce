@@ -10,7 +10,7 @@ namespace ECommerce.Models.Ecommerce
     {
         public static IQueryable<ProductDto> GetProductDtos(this IQueryable<Product> products,ProductFilters filters)
         {
-            var productDtos = products.Select(i => new ProductDto()
+            var productDtoList = products.Select(i => new ProductDto()
             {
                 ProductId = i.ProductId,
                 BrandId = i.BrandId,
@@ -28,8 +28,47 @@ namespace ECommerce.Models.Ecommerce
                 IndividualCategoryName = i.IndividualCategory.IndividualCategoryName
             });
 
+
+            var productDtos= productDtoList.Where(i=>false);
+            if (filters.PriceRange.Count() > 0)
+            {
+                if (filters.PriceRange.Contains("0-500"))
+                {
+                    productDtos = productDtos.Union(productDtoList.Where(i => i.FinalPrice >= 0 && i.FinalPrice < 500));
+                }
+
+                if (filters.PriceRange.Contains("500-1000"))
+                {
+                    productDtos = productDtos.Union(productDtoList.Where(i => i.FinalPrice >= 500 && i.FinalPrice < 1000));
+                }
+
+                if (filters.PriceRange.Contains("1000-5000"))
+                {
+                    productDtos = productDtos.Union(productDtoList.Where(i => i.FinalPrice >= 1000 && i.FinalPrice < 5000));
+                }
+
+                if (filters.PriceRange.Contains("5000-10000"))
+                {
+                    productDtos = productDtos.Union(productDtoList.Where(i => i.FinalPrice >= 5000 && i.FinalPrice < 10000));
+                }
+
+                if (filters.PriceRange.Contains("10000-15000"))
+                {
+                    productDtos = productDtos.Union(productDtoList.Where(i => i.FinalPrice >= 10000 && i.FinalPrice < 15000));
+                }
+
+                if (filters.PriceRange.Contains("15000-50000"))
+                {
+                    productDtos = productDtos.Union(productDtoList.Where(i => i.FinalPrice >= 15000 && i.FinalPrice < 50000));
+                }
+            }
+            else
+            {
+                productDtos= productDtoList;
+            }
+
             #region brand filter
-            if(filters.BrandIds.Count() > 0)
+            if (filters.BrandIds.Count() > 0)
             {
                 productDtos = productDtos.Where(i => filters.BrandIds.Contains(i.BrandId));
             }

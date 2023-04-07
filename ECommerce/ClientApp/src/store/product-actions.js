@@ -26,7 +26,8 @@ export const getProducts=()=>{
                 queryString += '&categories=' + product.filters.categories.join(',')
             if (product.filters.individualCategories)
                 queryString += '&individualCategories=' + product.filters.individualCategories.join(',')
-
+            if (product.filters.priceRanges)
+                queryString += '&priceRanges=' + product.filters.priceRanges.join(',')
             queryString = '?' + queryString.slice(1)
 
             await fetch('/products' + queryString)

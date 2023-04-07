@@ -11,6 +11,7 @@ const initialValue = {
         sortOrder: null,
         brands: [],
         categories: [],
+        priceRanges:[],
         individualCategories: []
     }
 }
@@ -36,6 +37,9 @@ const productSlice = createSlice({
         },
         updateIndividualCategories(state, action) {
             state.filters.individualCategories = action.payload
+        },
+        updatePriceRanges(state, action) {
+            state.filters.priceRanges = action.payload
         },
         updateProductCount(state, action) {
             state.filters.productCount = action.payload

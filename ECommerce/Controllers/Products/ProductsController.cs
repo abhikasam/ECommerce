@@ -42,6 +42,7 @@ namespace ECommerce.Controllers.Products
             string sortOrder, 
             string brands=null,
             string categories=null,
+            string priceRanges=null,
             string individualCategories=null)
         {
             var message = new ResponseMessage();
@@ -51,7 +52,12 @@ namespace ECommerce.Controllers.Products
                 pageNumber= pageNumber ?? this.filters.Value.PageNumber;
                 sortBy = sortBy ?? this.filters.Value.SortBy;
                 sortOrder = sortOrder ?? this.filters.Value.SortOrder;
-                
+                var priceRangeFilters = new string[] { };
+                if(!string.IsNullOrWhiteSpace(priceRanges))
+                {
+                    priceRangeFilters=priceRanges.Split(',');
+                }
+
                 var filters = new ProductFilters()
                 {
                     ProductCount=productCount.Value,
@@ -60,7 +66,8 @@ namespace ECommerce.Controllers.Products
                     SortOrder=sortOrder,
                     BrandIds= Utilities.GetArray(brands,","),
                     CategoryIds=Utilities.GetArray(categories,","),
-                    IndividualCategoryIds=Utilities.GetArray(individualCategories,",")
+                    IndividualCategoryIds=Utilities.GetArray(individualCategories,","),
+                    PriceRange=priceRangeFilters
                 };
 
                 var products = ecommerceContext.Products

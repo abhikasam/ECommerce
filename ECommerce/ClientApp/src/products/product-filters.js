@@ -108,6 +108,25 @@ export default function ProductFilters(props) {
                     />}></CollapseElement>
             </div>
 
+            <div>
+                <CollapseElement
+                    classNames="btn-success"
+                    displayName="Price Ranges"
+                    collapseId="collapsePriceRanges"
+                    component={<ListSelect
+                        items={[
+                            { key: '0-500', value: 'below 500' },
+                            { key: '500-1000', value: '500-1000' },
+                            { key: '1000-5000', value: '1000-5000' },
+                            { key: '5000-10000', value: '5000-10000' },
+                            { key: '10000-15000', value: '10000-15000' },
+                            { key: '15000-50000', value: 'above 15000' }
+                        ]}
+                        updateItems={(priceRanges) => dispatch(productActions.updatePriceRanges(priceRanges))}
+                    />}></CollapseElement>
+            </div>
+
+
         </div>
     )
 }
