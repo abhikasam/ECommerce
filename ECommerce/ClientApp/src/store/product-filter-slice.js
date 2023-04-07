@@ -5,7 +5,8 @@ const initialValue = {
     productCount: '',
     sortBy: null,
     sortOrder: null,
-    brands: []
+    brands: [],
+    categories:[]
 }
 
 const productFilterSlice = createSlice({
@@ -15,8 +16,8 @@ const productFilterSlice = createSlice({
         updateBrands(state, action) {
             state.brands = action.payload
         },
-        removeBrand(state, action) {
-            state.brands = action.payload
+        updateCategories(state, action) {
+            state.categories = action.payload
         },
         updateProductCount(state, action) {
             state.productCount = action.payload

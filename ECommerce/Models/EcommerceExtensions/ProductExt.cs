@@ -34,6 +34,14 @@ namespace ECommerce.Models.Ecommerce
             }
             #endregion
 
+            #region category filter
+            if (filters.CategoryIds.Count() > 0)
+            {
+                productDtos = productDtos.Where(i => filters.CategoryIds.Contains(i.CategoryId));
+            }
+            #endregion
+
+
             if (filters.SortOrder == "asc")
             {
                 switch (filters.SortBy)

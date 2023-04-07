@@ -1,4 +1,5 @@
-﻿using DealManager.Models;
+﻿using ECommerce.Models;
+using ECommerce.Data;
 using ECommerce.Data.Authentication;
 using ECommerce.Data.Products;
 using ECommerce.Models.Ecommerce;
@@ -34,7 +35,12 @@ namespace ECommerce.Controllers.Products
         }
 
         [HttpGet]
-        public IActionResult Get(int? productCount,string sortBy,string sortOrder, string brands=null)
+        public IActionResult Get(
+            int? productCount,
+            string sortBy,
+            string sortOrder, 
+            string brands=null,
+            string categories=null)
         {
             var message = new ResponseMessage();
             try
@@ -42,18 +48,14 @@ namespace ECommerce.Controllers.Products
                 productCount = productCount ?? this.filters.Value.ProductCount;
                 sortBy = sortBy ?? this.filters.Value.SortBy;
                 sortOrder = sortOrder ?? this.filters.Value.SortOrder;
-                var brandIds = new int[] { };
-                if (brands != null)
-                {
-                    brandIds = brands.Split(",").Select(i => Convert.ToInt32(i)).ToArray();
-                }
-
+                
                 var filters = new ProductFilters()
                 {
                     ProductCount=productCount.Value,
                     SortBy=sortBy,
                     SortOrder=sortOrder,
-                    BrandIds=brandIds
+                    BrandIds= Utilities.GetArray(brands,","),
+                    CategoryIds=Utilities.GetArray(categories,",")
                 };
 
                 var products = ecommerceContext.Products

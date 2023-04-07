@@ -19,7 +19,6 @@ export default function Products() {
 
 
     function updatePageFilters() {
-        console.log(productFilters)
         dispatch(getProducts(productFilters))
     }
     

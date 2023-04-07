@@ -1,11 +1,11 @@
 ﻿import { useEffect, useState } from "react";
 import { Collapse } from "bootstrap"
 
-export default function CollapseElement({ classNames, displayName, component }: props) {
+export default function CollapseElement({ classNames, collapseId, displayName, component }: props) {
     var [toggle, setToggle] = useState(false);
 
     useEffect(() => {
-        var myCollapse = document.getElementById('collapseTarget')
+        var myCollapse = document.getElementById(collapseId)
         var bsCollapse = new Collapse(myCollapse, { toggle: false })
         toggle ? bsCollapse.show() : bsCollapse.hide()
     })
@@ -15,7 +15,7 @@ export default function CollapseElement({ classNames, displayName, component }: 
             <button className={"btn " + classNames} onClick={() => setToggle(toggle => !toggle)}>
                 {displayName}
             </button>
-            <div className="collapse" id="collapseTarget">
+            <div className="collapse" id={collapseId}>
                 {component}
             </div>
         </div>

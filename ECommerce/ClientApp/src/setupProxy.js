@@ -11,6 +11,7 @@ const context =  [
     "/logout",
     "/products",
     "/brands",
+    "/categories"
 ];
 
 module.exports = function(app) {

@@ -4,18 +4,19 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
+
 namespace ECommerce.Controllers.Products
 {
     [Route("[controller]")]
     [ApiController]
-    public class BrandsController : ControllerBase
+    public class CategoriesController : ControllerBase
     {
         private readonly EcommerceContext ecommerceContext;
 
-        private readonly ILogger<BrandsController> _logger;
+        private readonly ILogger<CategoriesController> _logger;
         private readonly IConfiguration configuration;
 
-        public BrandsController(EcommerceContext ecommerceContext, ILogger<BrandsController> logger, IConfiguration configuration)
+        public CategoriesController(EcommerceContext ecommerceContext, ILogger<CategoriesController> logger, IConfiguration configuration)
         {
             this.ecommerceContext = ecommerceContext;
             _logger = logger;
@@ -29,10 +30,10 @@ namespace ECommerce.Controllers.Products
 
             try
             {
-                var brands=await ecommerceContext.Brands
-                                    .Select(i=> new KeyValuePair<int,string>(i.BrandId,i.BrandName))
+                var categories = await ecommerceContext.Categories
+                                    .Select(i => new KeyValuePair<int, string>(i.CategoryId, i.CategoryName))
                                     .ToListAsync();
-                message.Data = brands;
+                message.Data = categories;
             }
             catch (Exception ex)
             {

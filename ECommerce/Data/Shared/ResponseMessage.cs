@@ -1,4 +1,4 @@
-namespace DealManager.Models
+namespace ECommerce.Models
 {
     public class ResponseMessage
     {

@@ -1,4 +1,4 @@
-﻿using DealManager.Models;
+﻿using ECommerce.Models;
 using ECommerce.Data.Account;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Http;

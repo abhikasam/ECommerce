@@ -16,10 +16,11 @@ export const getProducts=(filters)=>{
                     if (filters.sortOrder)
                         queryString += '&sortOrder=' + filters.sortOrder
                     if (filters.brands)
-                        queryString += '&brands='+filters.brands.join(',')
-
+                        queryString += '&brands=' + filters.brands.join(',')
+                    if (filters.categories)
+                        queryString += '&categories=' + filters.categories.join(',')
+                        
                     queryString = '?' + queryString.slice(1)
-                    console.log(queryString)
                 }
 
                 await fetch('/products' + queryString)

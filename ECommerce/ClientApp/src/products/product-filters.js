@@ -4,11 +4,13 @@ import { useDispatch, useSelector } from "react-redux"
 import { productFilterActions } from "../store/product-filter-slice"
 import { getBrands } from "../store/brand-actions"
 import { useEffect } from "react"
+import { getCategories } from "../store/category-actions"
 
 
 export default function ProductFilters(props) {
 
     const { brands } = useSelector(state => state.brand)
+    const { categories } = useSelector(state => state.category)
 
     const dispatch = useDispatch()
 
@@ -16,6 +18,9 @@ export default function ProductFilters(props) {
         dispatch(getBrands())
     }, [dispatch])
 
+    useEffect(() => {
+        dispatch(getCategories())
+    }, [dispatch])
 
     const productCountChangeEvent = (event) => {
         dispatch(productFilterActions.updateProductCount(event.target.value))
@@ -29,9 +34,7 @@ export default function ProductFilters(props) {
         dispatch(productFilterActions.updateSortOrder(event.target.value))
     }
 
-    const brandsChangeEvent = (brandId) => {
-        dispatch(productFilterActions.updateBrands(brandId))
-    }
+    console.log(brands, categories)
 
     return (
         <div className="filters">
@@ -87,9 +90,26 @@ export default function ProductFilters(props) {
             <div className="dropdown-divider"></div>
 
             <div>
-                <CollapseElement classNames="btn-success" displayName="Brands" component={<ListSelect items={brands} updateItems={brandsChangeEvent} />}></CollapseElement>
+                <CollapseElement
+                    classNames="btn-success"
+                    displayName="Brands"
+                    collapseId="collapseBrands"
+                    component={<ListSelect
+                        items={brands}
+                        updateItems={(brands) => dispatch(productFilterActions.updateBrands(brands))}
+                    />}></CollapseElement>
             </div>
-            
+
+            <div>
+                <CollapseElement
+                    classNames="btn-success"
+                    displayName="Categories"
+                    collapseId="collapseCategories"
+                    component={<ListSelect
+                        items={categories}
+                        updateItems={(categories) => dispatch(productFilterActions.updateCategories(categories))}
+                    />}></CollapseElement>
+            </div>
         </div>
     )
 }

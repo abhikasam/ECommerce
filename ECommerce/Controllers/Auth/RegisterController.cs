@@ -1,4 +1,4 @@
-﻿using DealManager.Models;
+﻿using ECommerce.Models;
 using ECommerce.Data;
 using ECommerce.Data.Account;
 using ECommerce.Data.Authentication;
