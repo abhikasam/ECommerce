@@ -7,7 +7,8 @@ import { addFavourite, removeFavourite, updateFourites } from '../store/favourit
 
 export default function ProductCard({ product }) {
 
-    const dispatch=useDispatch()
+    const dispatch = useDispatch()
+    const { user }=useSelector(state=>state.auth)
     const { products:favourites } = useSelector(state => state.favourite)
 
     function getDiscountColor() {
@@ -66,16 +67,27 @@ export default function ProductCard({ product }) {
                             onClick={openProductDetails} aria-hidden="true"></i>
                     </div>
                     <div className="col-4 text-center">
-                        {!favourites.map(i=>i.productId).includes(product.productId) &&
-                            <i className={"fa fa-heart-o " + classes.icon}
-                                onClick={(event) => dispatch(addFavourite(product.productId))}
-                                aria-hidden="true"></i>
+                        {
+                            user.isAdmin &&
+                            <>
+                                <i className={"fa fa-bar-chart " + classes.icon} aria-hidden="true"></i>
+                            </>
                         }
-                        {favourites.map(i => i.productId).includes(product.productId) &&
-                            <i className={"fa fa-heart " + classes.icon}
-                                style={{ color: 'red' }}
-                                onClick={(event) => dispatch(removeFavourite(product.productId))}
-                                aria-hidden="true"></i>
+                        {
+                            !user.isAdmin &&
+                            <>
+                                {!favourites.map(i => i.productId).includes(product.productId) &&
+                                    <i className={"fa fa-heart-o " + classes.icon}
+                                        onClick={(event) => dispatch(addFavourite(product.productId))}
+                                        aria-hidden="true"></i>
+                                }
+                                {favourites.map(i => i.productId).includes(product.productId) &&
+                                    <i className={"fa fa-heart " + classes.icon}
+                                        style={{ color: 'red' }}
+                                        onClick={(event) => dispatch(removeFavourite(product.productId))}
+                                        aria-hidden="true"></i>
+                                }
+                            </>
                         }
 
                     </div>
