@@ -6,12 +6,15 @@ import { useEffect } from "react"
 import { getCategories } from "../store/category-actions"
 import { getIndividualCategories } from "../store/individual-category-actions"
 import { productActions } from "../store/product-slice"
+import { useHistory } from "react-router-dom"
 
 
 export default function ProductFilters(props) {
     
     const dispatch = useDispatch()
+    const history = useHistory()
 
+    const { isAuthenticated,user } = useSelector(state => state.auth)
     const { brands } = useSelector(state => state.brand)
     const { categories } = useSelector(state => state.category)
     const { individualCategories } = useSelector(state => state.individualCategory)
@@ -25,8 +28,12 @@ export default function ProductFilters(props) {
     return (
         <div className="filters">
             <input type="button" className="btn btn-primary m-2" onClick={() => { props.onUpdate() }} value="Update" />
-            <input type="reset" className="btn btn-secondary m-2" value="Clear" />
-
+            {isAuthenticated && user.isAdmin && 
+                <input type="button"
+                    onClick={() => history.push('/product-edit')}
+                className="btn btn-danger m-2"
+                value="Add Product" />
+            }
             <div className="dropdown-divider"></div>
 
             <div className="row align-items-center">

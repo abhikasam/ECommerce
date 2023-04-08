@@ -18,9 +18,12 @@ namespace ECommerce.Models.Ecommerce
 
         public virtual DbSet<Brand> Brands { get; set; }
         public virtual DbSet<Category> Categories { get; set; }
+        public virtual DbSet<CategoryMapping> CategoryMappings { get; set; }
         public virtual DbSet<Favourite> Favourites { get; set; }
         public virtual DbSet<IndividualCategory> IndividualCategories { get; set; }
         public virtual DbSet<Product> Products { get; set; }
+        public virtual DbSet<Size> Sizes { get; set; }
+        public virtual DbSet<SizeMapping> SizeMappings { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -51,6 +54,23 @@ namespace ECommerce.Models.Ecommerce
                     .HasMaxLength(100);
             });
 
+            modelBuilder.Entity<CategoryMapping>(entity =>
+            {
+                entity.ToTable("CategoryMapping");
+
+                entity.HasOne(d => d.Category)
+                    .WithMany(p => p.CategoryMappings)
+                    .HasForeignKey(d => d.CategoryId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CategoryMapping_Category");
+
+                entity.HasOne(d => d.IndividualCategory)
+                    .WithMany(p => p.CategoryMappings)
+                    .HasForeignKey(d => d.IndividualCategoryId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CategoryMapping_IndividualCategory");
+            });
+
             modelBuilder.Entity<Favourite>(entity =>
             {
                 entity.ToTable("Favourite");
@@ -78,15 +98,9 @@ namespace ECommerce.Models.Ecommerce
             {
                 entity.ToTable("Product");
 
-                entity.Property(e => e.ProductId).ValueGeneratedNever();
-
                 entity.Property(e => e.Description)
                     .IsRequired()
                     .HasMaxLength(1000);
-
-                entity.Property(e => e.SizeOptions)
-                    .IsRequired()
-                    .HasMaxLength(200);
 
                 entity.Property(e => e.Url).HasMaxLength(1000);
 
@@ -107,6 +121,33 @@ namespace ECommerce.Models.Ecommerce
                     .HasForeignKey(d => d.IndividualCategoryId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Product_IndividualCategory");
+            });
+
+            modelBuilder.Entity<Size>(entity =>
+            {
+                entity.ToTable("Size");
+
+                entity.Property(e => e.SizeName)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<SizeMapping>(entity =>
+            {
+                entity.ToTable("SizeMapping");
+
+                entity.HasOne(d => d.Product)
+                    .WithMany(p => p.SizeMappings)
+                    .HasForeignKey(d => d.ProductId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_SizeMapping_Product");
+
+                entity.HasOne(d => d.Size)
+                    .WithMany(p => p.SizeMappings)
+                    .HasForeignKey(d => d.SizeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_SizeMapping_Size");
             });
 
             OnModelCreatingPartial(modelBuilder);

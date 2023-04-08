@@ -1,15 +1,14 @@
 ﻿.photo {
-    height: 25em;
-    width: 30em;
-    display: grid;
-    align-items: center;
-    justify-content: space-around;
-    margin-top: 0.5em;
+    height: 30em;
+    width: 35em;
 }
 
+.listGroupItem{
+    border:0px;
+}
 
-.label{
-    font-weight:600;
+.label {
+    font-weight: 600;
 }
 
 .detail {

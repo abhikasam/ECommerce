@@ -1,4 +1,5 @@
 ﻿using ECommerce.Models.Ecommerce;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 
 namespace ECommerce.Data.Products
@@ -12,14 +13,12 @@ namespace ECommerce.Data.Products
         public int IndividualCategoryId { get; set; }
         public int OriginalPrice { get; set; }
         public int? FinalPrice { get; set; }
-        public string SizeOptions { get; set; }
         public double Rating { get; set; }
         public int Reviews { get; set; }
         public string Url { get; set; }
         public string BrandName { get; set; }
         public string CategoryName { get; set; }
         public string IndividualCategoryName { get; set; }
-        public int Quantity { get; set; }
         public ICollection<Favourite> Favourites { get; set; }
         public byte[] Photo { get; set; }
         public int Discount
@@ -30,5 +29,6 @@ namespace ECommerce.Data.Products
             }
         }
         public bool IsFavourite { get; set; }
+        public IEnumerable<SizeMappingDto> SizeMappings { get; set; }
     }
 }

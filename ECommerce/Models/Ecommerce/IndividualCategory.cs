@@ -7,12 +7,14 @@ namespace ECommerce.Models.Ecommerce
     {
         public IndividualCategory()
         {
+            CategoryMappings = new HashSet<CategoryMapping>();
             Products = new HashSet<Product>();
         }
 
         public int IndividualCategoryId { get; set; }
         public string IndividualCategoryName { get; set; }
 
+        public virtual ICollection<CategoryMapping> CategoryMappings { get; set; }
         public virtual ICollection<Product> Products { get; set; }
     }
 }

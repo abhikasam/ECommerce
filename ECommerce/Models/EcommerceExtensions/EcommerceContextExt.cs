@@ -8,6 +8,8 @@ namespace ECommerce.Models.Ecommerce
         {
             modelBuilder.Entity<Product>(entity =>
             {
+                entity.Property(i => i.ProductId).ValueGeneratedOnAdd();
+
                 entity.HasMany(i => i.Favorites)
                     .WithOne(i => i.Product)
                     .HasForeignKey(i => i.ProductId);

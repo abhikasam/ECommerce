@@ -9,6 +9,7 @@ import NotFound from "./components/NotFound";
 import Products from "./products/products";
 import Favourites from "./products/favourites";
 import ProductDetails from "./products/product-details";
+import EditProduct from "./products/product-edit";
 
 function AppRoutes() {
 
@@ -26,6 +27,7 @@ function AppRoutes() {
                     {isAuthenticated && <Route path='/products' component={Products} />}
                     {isAuthenticated && <Route path='/product-details' component={ProductDetails} />}
                     {isAuthenticated && !user.isAdmin && <Route path='/favourites' component={Favourites} />}
+                    {isAuthenticated && user.isAdmin && <Route path='/product-edit' component={EditProduct} />}
                     <Route component={NotFound} />
                 </Switch>
             )} />

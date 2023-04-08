@@ -41,14 +41,13 @@ namespace ECommerce.Models.Ecommerce
                 FinalPrice = i.FinalPrice,
                 Rating = i.Rating,
                 Reviews = i.Reviews,
-                SizeOptions = i.SizeOptions,
                 Url = i.Url,
                 BrandName = i.Brand.BrandName,
                 CategoryName = i.Category.CategoryName,
                 IndividualCategoryName = i.IndividualCategory.IndividualCategoryName,
-                Quantity = i.Quantity,
                 IsFavourite= i.Favorites.IsFavorite(claimsPrincipal),
-                Photo= bytes
+                Photo= bytes,
+                SizeMappings=i.SizeMappings.GetSizeMappingDtos()
             });
 
             if(filters != null)
@@ -170,12 +169,10 @@ namespace ECommerce.Models.Ecommerce
                 FinalPrice = product.FinalPrice,
                 Rating = product.Rating,
                 Reviews = product.Reviews,
-                SizeOptions = product.SizeOptions,
                 Url = product.Url,
                 BrandName = product.Brand.BrandName,
                 CategoryName = product.Category.CategoryName,
                 IndividualCategoryName = product.IndividualCategory.IndividualCategoryName,
-                Quantity = product.Quantity,
                 IsFavourite = product.Favorites.IsFavorite(claimsPrincipal)
             };
 

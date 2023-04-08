@@ -13,6 +13,8 @@ export default function ProductDetails(props) {
         history.push('/notfound')
     }
 
+    console.log(product)
+
     function getDiscountColor() {
         if (product.discount >= 50)
             return 'green';
@@ -78,7 +80,20 @@ export default function ProductDetails(props) {
                             <label className={classes.label}>Size Options</label>
                         </div>
                         <div className="col-4">
-                            {product.sizeOptions}
+                            <ul className="list-group">
+                                {product.sizeMappings.map(mapping =>
+                                    <li className={"list-group-item "+classes.listGroupItem } key={mapping.sizeId}>
+                                        <div className="row">
+                                            <div className="col-1 text-end">
+                                                {mapping.sizeName}
+                                            </div>
+                                            <div className="col-2 text-center">
+                                                {mapping.quantity}
+                                            </div>
+                                        </div>
+                                    </li>
+                                )}
+                            </ul>
                         </div>
                     </div>
                     <div className={"row "+classes.row}>
