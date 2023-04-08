@@ -2,13 +2,15 @@
 import classes from './product-card.module.css'
 import { useState } from 'react';
 import { useEffect } from 'react';
+import { useHistory } from "react-router-dom"
 import { addFavourite, removeFavourite, updateFourites } from '../store/favourite-actions';
 
 
 export default function ProductCard({ product }) {
 
     const dispatch = useDispatch()
-    const { user }=useSelector(state=>state.auth)
+    const history=useHistory()
+    const { user } = useSelector(state => state.auth)
     const { products:favourites } = useSelector(state => state.favourite)
 
     function getDiscountColor() {
@@ -19,8 +21,10 @@ export default function ProductCard({ product }) {
          else return 'red';
     }
 
-    function openProductDetails() {
-        console.log('product details page')
+    const openProductDetails = () => {
+        history.push('/product-details', {
+            product: product       
+        })
     }
 
     return (

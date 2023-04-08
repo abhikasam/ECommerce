@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import NotFound from "./components/NotFound";
 import Products from "./products/products";
 import Favourites from "./products/favourites";
+import ProductDetails from "./products/product-details";
 
 function AppRoutes() {
 
@@ -23,6 +24,7 @@ function AppRoutes() {
                     <Route path='/counter' component={Counter} />
                     <Route path='/register' component={Register} />
                     {isAuthenticated && <Route path='/products' component={Products} />}
+                    {isAuthenticated && <Route path='/product-details' component={ProductDetails} />}
                     {isAuthenticated && !user.isAdmin && <Route path='/favourites' component={Favourites} />}
                     <Route component={NotFound} />
                 </Switch>

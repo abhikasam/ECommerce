@@ -1,0 +1,48 @@
+﻿.photo {
+    height: 25em;
+    width:25em;
+    display: grid;
+    align-items: center;
+    justify-content: space-around;
+    margin-top: 0.5em;
+}
+
+.alphabet {
+    font-size: 12em;
+    color: white;
+}
+
+
+.label{
+    font-weight:600;
+}
+
+.detail {
+    font-style: italic;
+    color: gray;
+    font-weight: 500;
+}
+
+.description {
+    font-weight: 500;
+    color: green;
+    font-size:2em;
+}
+
+.row {
+    margin-left: 1em;
+    margin-top: 2em;
+}
+
+.originalPrice {
+    font-weight: bold;
+}
+
+.discount {
+    font-style: italic;
+}
+
+.finalPrice {
+    font-weight: 700;
+    font-size: medium;
+}
