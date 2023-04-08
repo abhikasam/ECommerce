@@ -1,15 +1,24 @@
 ﻿import { useContext, useState } from "react"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { useHistory } from "react-router-dom"
 import { authActions } from "../../store/auth-slice";
 import { loginUser, setUser } from "../../store/auth-actions";
 import { statusActions } from "../../store/status-slice";
+import { useEffect } from "react";
 
 
 export default function Login() {
 
     const dispatch = useDispatch();
     const history = useHistory()
+
+    const { isAuthenticated } = useSelector(state => state.auth)
+
+    useEffect(() => {
+        if (isAuthenticated) {
+             history.push('/')
+        }
+    }, [history, isAuthenticated])
 
     const validationMessages = {
         InvalidEmailAddress: 'Invalid Email Address',
@@ -79,32 +88,7 @@ export default function Login() {
 
     async function onFormSubmit(event) {
         event.preventDefault()
-        await fetch('login'
-            , {
-                method: 'POST',
-                body: JSON.stringify(formData),
-                headers: {
-                    'Content-Type': 'application/json;'
-                }
-            }
-        )
-        .then(result => {
-            if (!result.ok) throw result;
-            return result.json();
-        })
-        .then(response => {
-            dispatch(statusActions.add(response))
-
-            if (response.statusCode === 1) {
-                dispatch(setUser(response.data));
-                setTimeout(() => {
-                    history.push('/')
-                }, 1000)
-            }
-        })
-        .catch(error =>
-            dispatch(statusActions.add(error))
-        )
+        dispatch(loginUser(formData))
     }
 
 

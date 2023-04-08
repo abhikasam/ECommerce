@@ -1,5 +1,5 @@
-﻿import { useState } from "react";
-import { useDispatch } from "react-redux";
+﻿import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from 'react-router-dom';
 import { statusActions } from "../../store/status-slice";
 
@@ -7,6 +7,15 @@ export default function Register() {
 
     const dispatch = useDispatch()
     const history = useHistory()
+
+    const { isAuthenticated } = useSelector(state => state.auth)
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            history.push('/')
+        }
+    }, [history, isAuthenticated])
+
 
     const validationMessages = {
         PasswordMismatch: "Passwords didn't match.",

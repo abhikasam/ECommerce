@@ -40,5 +40,36 @@ export const setUser = (data) => {
     }
 }
 
+export const loginUser = (formData) => {
+    return async (dispatch) => {
+        async function login() {
+            await fetch('login'
+                , {
+                    method: 'POST',
+                    body: JSON.stringify(formData),
+                    headers: {
+                        'Content-Type': 'application/json;'
+                    }
+                }
+            )
+            .then(result => {
+                if (!result.ok) throw result;
+                return result.json();
+            })
+            .then(response => {
+                dispatch(statusActions.add(response))
+
+                if (response.statusCode === 1) {
+                    dispatch(setUser(response.data));
+                }
+            })
+            .catch(error =>
+                dispatch(statusActions.add(error))
+            )
+        }
+        login();
+    }
+}
+
 
 

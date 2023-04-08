@@ -27,6 +27,9 @@ namespace ECommerce.Models.Ecommerce
         public static IQueryable<ProductDto> GetProductDtos(this IQueryable<Product> products, 
             ClaimsPrincipal claimsPrincipal, ProductFilters filters=null)
         {
+            var noImage = @"D:\project\ECommerce\ECommerce\ClientApp\src\images\no-image.png";
+            byte[] bytes = System.IO.File.ReadAllBytes(noImage);
+
             var productDtoList = products.Select(i => new ProductDto()
             {
                 ProductId = i.ProductId,
@@ -44,7 +47,8 @@ namespace ECommerce.Models.Ecommerce
                 CategoryName = i.Category.CategoryName,
                 IndividualCategoryName = i.IndividualCategory.IndividualCategoryName,
                 Quantity = i.Quantity,
-                IsFavourite= i.Favorites.IsFavorite(claimsPrincipal)
+                IsFavourite= i.Favorites.IsFavorite(claimsPrincipal),
+                Photo= bytes
             });
 
             if(filters != null)

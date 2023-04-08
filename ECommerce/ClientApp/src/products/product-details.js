@@ -1,6 +1,7 @@
 ﻿import { useState } from "react"
 import { useHistory } from "react-router-dom"
 import classes from './product-details.module.css'
+import NoPhoto from '../images/no-image.png';
 
 
 export default function ProductDetails(props) {
@@ -25,11 +26,7 @@ export default function ProductDetails(props) {
         <>
             <div className="row">
                 <div className="col-3">
-                    <div className={classes.photo} style={{ background: product.background }}>
-                        <div className={classes.alphabet}>
-                            {product.alphabet}
-                        </div>
-                    </div>
+                    <img src={"data:image/png;base64," + product.photo} className={classes.photo}></img>
                 </div>
                 <div className="col-9">
                     <div className={"row " + classes.row}>

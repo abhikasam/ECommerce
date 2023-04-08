@@ -29,11 +29,9 @@ export default function ProductCard({ product }) {
 
     return (
         <div className={classes.card}>
-            <div className={classes.photo} style={{ background: product.background }}>
-                <div className={classes.alphabet}>
-                    {product.alphabet}
-                </div>
-            </div>
+            {product.photo &&
+                <img src={"data:image/png;base64," + product.photo} className={classes.photo}>
+                </img>}
             <div className={classes.details}>
                 <div className={"row " + classes.price} >
                     <div className={"col-4 " + classes.originalPrice}>

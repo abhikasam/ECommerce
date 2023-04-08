@@ -16,11 +16,6 @@
     margin-top: 0.5em;
 }
 
-.alphabet{
-    font-size:8em;
-    color:white;
-}
-
 .description {
     text-align: center;
     font-style: italic;
@@ -92,4 +87,7 @@
 }
 
 
-
+.photo {
+    height: 13em;
+    width: 13em;
+}

@@ -21,6 +21,7 @@ namespace ECommerce.Data.Products
         public string IndividualCategoryName { get; set; }
         public int Quantity { get; set; }
         public ICollection<Favourite> Favourites { get; set; }
+        public byte[] Photo { get; set; }
         public int Discount
         {
             get
@@ -28,28 +29,6 @@ namespace ECommerce.Data.Products
                 return (int)((((OriginalPrice - FinalPrice)*100) / OriginalPrice));
             }
         }
-
-        private static Random random = new Random();
-        public string Background
-        {
-            get
-            {
-                var colors = new string[] { "#c2185b", "#33691e", "#01579b", "#fe6700", "#d01c1f", "#d73c26", "#65318e", "#eb5406" };
-                var number=random.Next(0, colors.Length);
-                return colors[number];
-            }
-        }
-
-        public string Alphabet
-        {
-            get
-            {
-                int num = random.Next(0, 26); 
-                char let = (char)('A' + num);
-                return ""+let;
-            }
-        }
-
         public bool IsFavourite { get; set; }
     }
 }

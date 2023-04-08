@@ -17,6 +17,7 @@ namespace ECommerce.Models.Ecommerce
         public int Reviews { get; set; }
         public string Url { get; set; }
         public int Quantity { get; set; }
+        public byte[] Photo { get; set; }
 
         public virtual Brand Brand { get; set; }
         public virtual Category Category { get; set; }
