@@ -78,7 +78,7 @@ namespace ECommerce.Controllers.Products
                                 .Include(i=>i.Favorites).DefaultIfEmpty();
 
 
-                var productDtos = products.GetProductDtos(filters,this.User);
+                var productDtos = products.GetProductDtos(this.User, filters);
 
                 var totalRecords=productDtos.Count();
                 var totalPages=(totalRecords+filters.ProductCount)/filters.ProductCount;

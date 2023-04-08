@@ -8,7 +8,7 @@ import { addFavourite, removeFavourite, updateFourites } from '../store/favourit
 export default function ProductCard({ product }) {
 
     const dispatch=useDispatch()
-    const { favourites } = useSelector(state => state.favourite)
+    const { products:favourites } = useSelector(state => state.favourite)
 
     function getDiscountColor() {
         if (product.discount >= 50)

@@ -20,7 +20,7 @@ namespace ECommerce.Models.Ecommerce
 
                 entity.HasOne(i => i.Product)
                     .WithMany(i => i.Favorites)
-                    .HasForeignKey(i => i.FavouriteId);
+                    .HasForeignKey(i => i.ProductId);
 
             });
 

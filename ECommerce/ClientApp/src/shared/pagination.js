@@ -60,7 +60,7 @@ export default function Pagination(props) {
                             </>
                         }
 
-                        <li className={"page-item " + (props.pageNumber === 1 ? "disabled" : "")}>
+                        <li className={"page-item " + (props.pageNumber === props.totalPages ? "disabled" : "")}>
                             <a className='page-link' onClick={event => epd(event)} href='#' tabIndex='-1' page={props.pageNumber + 1}>Next</a>
                         </li>
                     </ul>

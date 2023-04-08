@@ -2,7 +2,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialValue = {
-    favourites:[]
+    products: [],
+    pageNumber: 1,
+    totalPages:''
 }
 
 
@@ -10,14 +12,19 @@ const favouriteSlice = createSlice({
     name: 'favourite',
     initialState: initialValue,
     reducers: {
-        update(state, action) {
-            state.favourites=action.payload
+        updateProducts(state, action) {
+            state.products = action.payload.result
+            state.pageNumber = action.payload.pageNumber
+            state.totalPages = action.payload.totalPages
         },
-        add(state, action) {
-            state.favourites = [...state.favourites, action.payload]
+        updatePageNumber(state, action) {
+            state.pageNumber = action.payload
         },
-        remove(state, action) {
-            state.favourites = state.favourites.filter(i => i.productId != action.payload)
+        addProduct(state, action) {
+            state.products = [...state.products, action.payload]
+        },
+        removeProduct(state, action) {
+            state.products = state.products.filter(i => i.productId != action.payload)
         }
     }
 })

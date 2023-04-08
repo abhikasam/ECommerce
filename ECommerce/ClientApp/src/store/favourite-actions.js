@@ -2,20 +2,25 @@
 
 
 
-export const updateFourites=()=>{
-    return async (dispatch,getState) => {
+export const updateFavourites=()=>{
+    return async (dispatch, getState) => {
+
+        var pageNumber = getState().favourite.pageNumber;
+        var queryString = ''
+        queryString += '&pageNumber=' + pageNumber
+        queryString = '?' + queryString.slice(1)
 
         async function getData() {
-            await fetch('/favourites')
+            await fetch('/favourites' + queryString)
                 .then(result => {
                     if (!result.ok) throw result;
                     return result.json();
                 })
                 .then(response => {
-                    dispatch(favouriteActions.update(response.data))
+                    dispatch(favouriteActions.updateProducts(response.data))
                 })
                 .catch(error => {
-                    dispatch(favouriteActions.update([]))
+                    dispatch(favouriteActions.updateProducts([{ result: [], pageNumber:1,totalPages:1 }]))
                     console.log(error)
                 })
         }
@@ -39,7 +44,7 @@ export const addFavourite = (productId) => {
                 return result.json();
             })
             .then(response => {
-                dispatch(favouriteActions.add(response.data))
+                dispatch(favouriteActions.addProduct(response.data))
                 console.log(response)
             })
             .catch(error => {
@@ -66,7 +71,7 @@ export const removeFavourite = (productId) => {
                 return result.json();
             })
             .then(response => {
-                dispatch(favouriteActions.remove(productId))
+                dispatch(favouriteActions.removeProduct(productId))
                 console.log(response)
             })
             .catch(error => {

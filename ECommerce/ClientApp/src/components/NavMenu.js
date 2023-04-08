@@ -72,6 +72,11 @@ export default function NavMenu() {
                             <NavLink tag={Link} className="text-dark" to="/products">Products</NavLink>
                         }
 
+                        {
+                            isAuthenticated && !user.isAdmin &&
+                            <NavLink tag={Link} className="text-dark" to="/favourites">Favourites</NavLink>
+                        }
+
                         {isAuthenticated &&
                             <NavItem>
                                 <NavLink tag={Link} className="text-dark" to="/login" onClick={logoutHandler}>Logout</NavLink>

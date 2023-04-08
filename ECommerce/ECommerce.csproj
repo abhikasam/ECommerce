@@ -78,7 +78,6 @@
 
   <ItemGroup>
     <Folder Include="ClientApp\public\assets\" />
-    <Folder Include="ClientApp\src\context\" />
     <Folder Include="Models\AppUser\" />
   </ItemGroup>
 

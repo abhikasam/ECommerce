@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using ECommerce.Data.Products;
+using System.Security.Claims;
 
 namespace ECommerce.Data
 {
@@ -18,6 +19,17 @@ namespace ECommerce.Data
             }
             return values;
         }
+    }
 
+    public static class CommonUtilites
+    {
+        public static IQueryable<T> PaginateData<T>(this IQueryable<T> records, int pageNumber, int pageSize)
+        {
+
+            var skip = (pageNumber - 1) * pageSize;
+            var take = pageSize;
+
+            return records.Skip(skip).Take(take);
+        }
     }
 }

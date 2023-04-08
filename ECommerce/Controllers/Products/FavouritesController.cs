@@ -6,6 +6,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNet.Identity;
 using ECommerce.Data.Authentication;
 using Newtonsoft.Json;
+using ECommerce.Models.EcommerceExtensions;
+using Microsoft.Extensions.Options;
+using ECommerce.Data.Products;
+using ECommerce.Data;
 
 namespace ECommerce.Controllers.Products
 {
@@ -17,26 +21,45 @@ namespace ECommerce.Controllers.Products
 
         private readonly ILogger<FavouritesController> _logger;
         private readonly IConfiguration configuration;
+        private readonly IOptions<ProductFilters> filters;
 
-        public FavouritesController(EcommerceContext ecommerceContext, ILogger<FavouritesController> logger, IConfiguration configuration)
+        public FavouritesController(EcommerceContext ecommerceContext, ILogger<FavouritesController> logger, IConfiguration configuration, IOptions<ProductFilters> filters)
         {
             this.ecommerceContext = ecommerceContext;
             _logger = logger;
             this.configuration = configuration;
+            this.filters = filters;
         }
 
         [HttpGet]
-        public async Task<JsonResult> Get()
+        public JsonResult Get(int? pageNumber = null)
         {
+            pageNumber = pageNumber ?? this.filters.Value.PageNumber;
             var message = new ResponseMessage();
 
             try
             {
                 var userId = this.User.Identity.GetUserId();
-                var favourites = await ecommerceContext.Favourites
-                                    .Where(i=>i.UserId==userId)
-                                    .ToListAsync();
-                message.Data = favourites;
+                var products = ecommerceContext.Favourites
+                                    .Include(i=>i.Product).DefaultIfEmpty()
+                                    .Include(i => i.Product).ThenInclude(i => i.Brand).DefaultIfEmpty()
+                                    .Include(i => i.Product).ThenInclude(i => i.Category).DefaultIfEmpty()
+                                    .Include(i => i.Product).ThenInclude(i => i.IndividualCategory).DefaultIfEmpty()
+                                    .Where(i => i.UserId == userId)
+                                    .OrderByDescending(i => i.AddedOn)
+                                    .Select(i => i.Product).GetProductDtos(this.User);
+
+                
+                var productCount = this.filters.Value.ProductCount;
+                var totalRecords = products.Count();
+                var totalPages = (totalRecords + productCount) / productCount;
+
+                message.Data = new
+                {
+                    Result= products.PaginateData(pageNumber.Value,productCount),
+                    TotalPages = totalPages,
+                    PageNumber = pageNumber.Value
+                };
             }
             catch (Exception ex)
             {
@@ -49,20 +72,26 @@ namespace ECommerce.Controllers.Products
         [HttpPost]
         [Route("[action]")]
         [ActionName("Add")]
-        public async Task<JsonResult> AddFavourite([FromBody]object obj)
+        public async Task<JsonResult> AddFavourite([FromBody] object obj)
         {
             var message = new ResponseMessage();
             try
             {
                 var productId = JsonConvert.DeserializeObject<int>(obj.ToString());
                 var userId = this.User.Identity.GetUserId();
-                if (!ecommerceContext.Products.Any(i=>i.ProductId==productId))
+                var product = ecommerceContext.Products
+                                    .Include(i => i.Brand)
+                                    .Include(i => i.Category)
+                                    .Include(i => i.IndividualCategory)
+                                    .Include(i => i.Favorites)
+                                    .Where(i => i.ProductId == productId);
+                if (!product.Any())
                 {
                     message.Message = "Product not found to add to favourites.";
                     message.StatusCode = ResponseStatus.ERROR;
                     return new JsonResult(message);
                 }
-                else  if(ecommerceContext.Favourites.Any(i=>i.ProductId==productId && i.UserId == userId))
+                else if (ecommerceContext.Favourites.Any(i => i.ProductId == productId && i.UserId == userId))
                 {
                     message.Message = "Product already added to favourites.";
                     message.StatusCode = ResponseStatus.ERROR;
@@ -79,13 +108,14 @@ namespace ECommerce.Controllers.Products
                     await ecommerceContext.Favourites.AddAsync(favourite);
                     await ecommerceContext.SaveChangesAsync();
                     message.Message = "Added to favourites.";
-                    message.Data=favourite;
+
+                    message.Data = product.First().GetProductDto(this.User);
                     message.StatusCode = ResponseStatus.SUCCESS;
                     return new JsonResult(message);
 
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 message.Message = ex.Message;
                 message.StatusCode = ResponseStatus.EXCEPTION;
@@ -103,8 +133,8 @@ namespace ECommerce.Controllers.Products
             {
                 var productId = JsonConvert.DeserializeObject<int>(obj.ToString());
 
-                var userId=this.User.Identity.GetUserId();
-                var favourite = ecommerceContext.Favourites.Where(i => i.ProductId == productId && i.UserId==userId);
+                var userId = this.User.Identity.GetUserId();
+                var favourite = ecommerceContext.Favourites.Where(i => i.ProductId == productId && i.UserId == userId);
                 if (!favourite.Any())
                 {
                     message.Message = "Product not found to remove from favourites.";
@@ -112,7 +142,8 @@ namespace ECommerce.Controllers.Products
                     return new JsonResult(message);
                 }
                 else
-                {   ecommerceContext.Favourites.Remove(favourite.First());
+                {
+                    ecommerceContext.Favourites.Remove(favourite.First());
                     await ecommerceContext.SaveChangesAsync();
                     message.Message = "Removed from favourites.";
                     message.StatusCode = ResponseStatus.SUCCESS;
