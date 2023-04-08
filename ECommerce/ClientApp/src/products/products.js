@@ -6,13 +6,19 @@ import classes from './products.module.css';
 import Pagination from "../shared/pagination";
 import { productActions } from "../store/product-slice";
 import ProductFilters from "./product-filters";
+import { updateFourites } from "../store/favourite-actions";
 
 
 export default function Products() {
 
     const dispatch = useDispatch()
     const { products, totalPages, pageNumber } = useSelector(state => state.product)
-    
+
+
+    useEffect(() => {
+        dispatch(updateFourites())
+    }, [dispatch])
+
     useEffect(() => {
         dispatch(getProducts())
     }, [dispatch, pageNumber])

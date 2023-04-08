@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Microsoft.AspNet.Identity;
 
 namespace ECommerce.Controllers.Products
 {
@@ -73,9 +74,11 @@ namespace ECommerce.Controllers.Products
                 var products = ecommerceContext.Products
                                 .Include(i => i.Brand).DefaultIfEmpty()
                                 .Include(i => i.Category).DefaultIfEmpty()
-                                .Include(i => i.IndividualCategory).DefaultIfEmpty();
+                                .Include(i => i.IndividualCategory).DefaultIfEmpty()
+                                .Include(i=>i.Favorites).DefaultIfEmpty();
 
-                var productDtos = products.GetProductDtos(filters);
+
+                var productDtos = products.GetProductDtos(filters,this.User);
 
                 var totalRecords=productDtos.Count();
                 var totalPages=(totalRecords+filters.ProductCount)/filters.ProductCount;

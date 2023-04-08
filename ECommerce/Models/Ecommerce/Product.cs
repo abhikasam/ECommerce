@@ -16,6 +16,7 @@ namespace ECommerce.Models.Ecommerce
         public double Rating { get; set; }
         public int Reviews { get; set; }
         public string Url { get; set; }
+        public int Quantity { get; set; }
 
         public virtual Brand Brand { get; set; }
         public virtual Category Category { get; set; }

@@ -43,8 +43,8 @@ export const getProducts=()=>{
                 dispatch(sortCategories())
                 dispatch(sortIndividualCategories())
             })
-            .catch(error => {
-                dispatch(productActions.update([]))
+                .catch(error => {
+                    dispatch(productActions.update([{ result: {}, pageNumber: 1, totalPages: 1, filters: {} }]))
                 console.log(error)
             })
         }

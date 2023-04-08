@@ -5,7 +5,7 @@ import productReducer from './product-slice';
 import brandReducer from './brand-slice';
 import categoryReducer from './category-slice';
 import individualCategoryReducer from './individual-category-slice';
-
+import favouriteReducer from './favourite-slice';
 
 const store = configureStore({
     reducer: {
@@ -14,7 +14,8 @@ const store = configureStore({
         product: productReducer,
         brand: brandReducer,
         category: categoryReducer,
-        individualCategory: individualCategoryReducer
+        individualCategory: individualCategoryReducer,
+        favourite: favouriteReducer
     }
 })
 

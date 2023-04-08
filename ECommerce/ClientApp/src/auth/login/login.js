@@ -2,7 +2,7 @@
 import { useDispatch } from "react-redux"
 import { useHistory } from "react-router-dom"
 import { authActions } from "../../store/auth-slice";
-import { setUser } from "../../store/auth-actions";
+import { loginUser, setUser } from "../../store/auth-actions";
 import { statusActions } from "../../store/status-slice";
 
 
@@ -88,23 +88,23 @@ export default function Login() {
                 }
             }
         )
-            .then(result => {
-                if (!result.ok) throw result;
-                return result.json();
-            })
-            .then(response => {
-                dispatch(statusActions.add(response))
+        .then(result => {
+            if (!result.ok) throw result;
+            return result.json();
+        })
+        .then(response => {
+            dispatch(statusActions.add(response))
 
-                if (response.statusCode === 1) {
-                    dispatch(setUser(response.data));
-                    setTimeout(() => {
-                        history.push('/')
-                    }, 1000)
-                }
-            })
-            .catch(error =>
-                dispatch(statusActions.add(error))
-            )
+            if (response.statusCode === 1) {
+                dispatch(setUser(response.data));
+                setTimeout(() => {
+                    history.push('/')
+                }, 1000)
+            }
+        })
+        .catch(error =>
+            dispatch(statusActions.add(error))
+        )
     }
 
 

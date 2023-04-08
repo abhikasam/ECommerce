@@ -18,6 +18,7 @@ namespace ECommerce.Models.Ecommerce
 
         public virtual DbSet<Brand> Brands { get; set; }
         public virtual DbSet<Category> Categories { get; set; }
+        public virtual DbSet<Favourite> Favourites { get; set; }
         public virtual DbSet<IndividualCategory> IndividualCategories { get; set; }
         public virtual DbSet<Product> Products { get; set; }
 
@@ -25,7 +26,7 @@ namespace ECommerce.Models.Ecommerce
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Data Source=hydws102855;Initial Catalog=Ecommerce;Integrated Security=True;TrustServerCertificate=True");
+            optionsBuilder.UseSqlServer("Data Source=hydws102855;Initial Catalog=Ecommerce;Integrated Security=True;TrustServerCertificate=True");
             }
         }
 
@@ -47,6 +48,20 @@ namespace ECommerce.Models.Ecommerce
                 entity.Property(e => e.CategoryName)
                     .IsRequired()
                     .HasMaxLength(100);
+            });
+
+            modelBuilder.Entity<Favourite>(entity =>
+            {
+                entity.ToTable("Favourite");
+
+                entity.Property(e => e.AddedOn)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.UserId)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasDefaultValueSql("(newid())");
             });
 
             modelBuilder.Entity<IndividualCategory>(entity =>

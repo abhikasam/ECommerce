@@ -12,7 +12,8 @@ const context =  [
     "/products",
     "/brands",
     "/categories",
-    "/individualCategories"
+    "/individualCategories",
+    "/favourites",
 ];
 
 module.exports = function(app) {

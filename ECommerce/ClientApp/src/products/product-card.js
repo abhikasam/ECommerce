@@ -1,8 +1,14 @@
-﻿
+﻿import { useDispatch, useSelector } from 'react-redux';
 import classes from './product-card.module.css'
+import { useState } from 'react';
+import { useEffect } from 'react';
+import { addFavourite, removeFavourite, updateFourites } from '../store/favourite-actions';
 
 
 export default function ProductCard({ product }) {
+
+    const dispatch=useDispatch()
+    const { favourites } = useSelector(state => state.favourite)
 
     function getDiscountColor() {
         if (product.discount >= 50)
@@ -11,7 +17,11 @@ export default function ProductCard({ product }) {
                 return 'blue';
          else return 'red';
     }
-    
+
+    function openProductDetails() {
+        console.log('product details page')
+    }
+
     return (
         <div className={classes.card}>
             <div className={classes.photo} style={{ background: product.background }}>
@@ -43,6 +53,31 @@ export default function ProductCard({ product }) {
                     </div>
                     <div className={"col-6 " + classes.individualCategory}>
                         {product.individualCategoryName}
+                    </div>
+                </div>
+            </div>
+            <div className={classes.actions}>
+                <div className={"row "+classes.icons }>
+                    <div className="col-4 text-center">
+                        <i className={"fa fa-shopping-cart "+classes.icon} aria-hidden="true"></i>
+                    </div>
+                    <div className="col-4 text-center">
+                        <i className={"fa fa-external-link " + classes.icon}
+                            onClick={openProductDetails} aria-hidden="true"></i>
+                    </div>
+                    <div className="col-4 text-center">
+                        {!favourites.map(i=>i.productId).includes(product.productId) &&
+                            <i className={"fa fa-heart-o " + classes.icon}
+                                onClick={(event) => dispatch(addFavourite(product.productId))}
+                                aria-hidden="true"></i>
+                        }
+                        {favourites.map(i => i.productId).includes(product.productId) &&
+                            <i className={"fa fa-heart " + classes.icon}
+                                style={{ color: 'red' }}
+                                onClick={(event) => dispatch(removeFavourite(product.productId))}
+                                aria-hidden="true"></i>
+                        }
+
                     </div>
                 </div>
             </div>

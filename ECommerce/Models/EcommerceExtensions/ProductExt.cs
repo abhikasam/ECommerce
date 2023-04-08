@@ -1,14 +1,31 @@
 ﻿using ECommerce.Data.Products;
 using ECommerce.Models.EcommerceExtensions;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Hosting;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Security.Claims;
+using System.Web;
 
 namespace ECommerce.Models.Ecommerce
 {
-    public partial class Product { }
+    public partial class Product
+    {
+        [NotMapped]
+        public virtual ICollection<Favourite> Favorites { get; set; }
+
+        [NotMapped]
+        public bool IsFavourite { get; set; }
+    }
 
     public static class ProductExt
     {
-        public static IQueryable<ProductDto> GetProductDtos(this IQueryable<Product> products,ProductFilters filters)
+        public static bool IsFavorite(this ICollection<Favourite> favourites,ClaimsPrincipal claimsPrincipal)
+        {
+            return favourites != null && favourites.Any(i => i.UserId == claimsPrincipal.Identity.GetUserId());
+        }
+
+        public static IQueryable<ProductDto> GetProductDtos(this IQueryable<Product> products, 
+            ProductFilters filters,ClaimsPrincipal claimsPrincipal)
         {
             var productDtoList = products.Select(i => new ProductDto()
             {
@@ -25,11 +42,13 @@ namespace ECommerce.Models.Ecommerce
                 Url = i.Url,
                 BrandName = i.Brand.BrandName,
                 CategoryName = i.Category.CategoryName,
-                IndividualCategoryName = i.IndividualCategory.IndividualCategoryName
+                IndividualCategoryName = i.IndividualCategory.IndividualCategoryName,
+                Quantity = i.Quantity,
+                IsFavourite= i.Favorites.IsFavorite(claimsPrincipal)
             });
 
 
-            var productDtos= productDtoList.Where(i=>false);
+            var productDtos = productDtoList.Where(i => false);
             if (filters.PriceRange.Count() > 0)
             {
                 if (filters.PriceRange.Contains("0-500"))
@@ -64,7 +83,7 @@ namespace ECommerce.Models.Ecommerce
             }
             else
             {
-                productDtos= productDtoList;
+                productDtos = productDtoList;
             }
 
             #region brand filter
@@ -130,9 +149,9 @@ namespace ECommerce.Models.Ecommerce
             return productDtos;
         }
 
-        public static IQueryable<ProductDto> PaginateData(this IQueryable<ProductDto> products,int pageNumber,int pageSize)
+        public static IQueryable<ProductDto> PaginateData(this IQueryable<ProductDto> products, int pageNumber, int pageSize)
         {
-            var totalRecords =products.Count();
+            var totalRecords = products.Count();
 
             var skip = (pageNumber - 1) * pageSize;
             var take = pageSize;

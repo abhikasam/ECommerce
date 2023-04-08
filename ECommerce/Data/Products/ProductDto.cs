@@ -19,6 +19,8 @@ namespace ECommerce.Data.Products
         public string BrandName { get; set; }
         public string CategoryName { get; set; }
         public string IndividualCategoryName { get; set; }
+        public int Quantity { get; set; }
+        public ICollection<Favourite> Favourites { get; set; }
         public int Discount
         {
             get
@@ -48,5 +50,6 @@ namespace ECommerce.Data.Products
             }
         }
 
+        public bool IsFavourite { get; set; }
     }
 }
