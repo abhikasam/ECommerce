@@ -6,6 +6,9 @@ import brandReducer from './brand-slice';
 import categoryReducer from './category-slice';
 import individualCategoryReducer from './individual-category-slice';
 import favouriteReducer from './favourite-slice';
+import categoryMappingReducer from './category-mapping-slice'
+import sizeMappingReducer from './size-mapping-slice'
+
 
 const store = configureStore({
     reducer: {
@@ -15,7 +18,9 @@ const store = configureStore({
         brand: brandReducer,
         category: categoryReducer,
         individualCategory: individualCategoryReducer,
-        favourite: favouriteReducer
+        favourite: favouriteReducer,
+        categoryMapping: categoryMappingReducer,
+        sizeMapping: sizeMappingReducer
     }
 })
 

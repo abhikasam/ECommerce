@@ -8,6 +8,7 @@ namespace ECommerce.Models.Ecommerce
         public IndividualCategory()
         {
             CategoryMappings = new HashSet<CategoryMapping>();
+            IndividualCategorySizeMappings = new HashSet<IndividualCategorySizeMapping>();
             Products = new HashSet<Product>();
         }
 
@@ -15,6 +16,7 @@ namespace ECommerce.Models.Ecommerce
         public string IndividualCategoryName { get; set; }
 
         public virtual ICollection<CategoryMapping> CategoryMappings { get; set; }
+        public virtual ICollection<IndividualCategorySizeMapping> IndividualCategorySizeMappings { get; set; }
         public virtual ICollection<Product> Products { get; set; }
     }
 }

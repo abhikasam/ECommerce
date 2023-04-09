@@ -3,16 +3,16 @@ using ECommerce.Models.Ecommerce;
 
 namespace ECommerce.Models.EcommerceExtensions
 {
-    public static class SizeMappingExt
+    public static class ProductQuantityExt
     {
-        public static IEnumerable<SizeMappingDto> GetSizeMappingDtos(this ICollection<SizeMapping> sizeMappings)
+        public static IEnumerable<ProductQuantityDto> GetSizeMappingDtos(this ICollection<ProductQuantity> productQuantities)
         {
-            return sizeMappings.Select(i => new SizeMappingDto()
+            return productQuantities.Select(i => new ProductQuantityDto()
             {
                 ProductId = i.ProductId,
                 Quantity = i.Quantity,
                 SizeId = i.SizeId,
-                SizeMappingId = i.SizeMappingId,
+                ProductQuantityId = i.ProductQuantityId,
                 SizeName = i.Size.SizeName
             });
         }

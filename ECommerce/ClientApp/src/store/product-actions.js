@@ -3,6 +3,7 @@ import { brandActions } from "./brand-slice";
 import { sortCategories } from "./category-actions";
 import { sortIndividualCategories } from "./individual-category-actions";
 import { productActions } from "./product-slice";
+import { statusActions } from "./status-slice";
 
 
 
@@ -52,6 +53,7 @@ export const getProducts=()=>{
         getData();
     }
 }
+
 
 
 

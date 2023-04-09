@@ -30,7 +30,7 @@ export default function ProductCard({ product }) {
     return (
         <div className={classes.card}>
             {product.photo &&
-                <img src={"data:image/png;base64," + product.photo} className={classes.photo}>
+                <img src={"data:image/*;base64," + product.photo} alt={product.description} className={classes.photo}>
                 </img>}
             <div className={classes.details}>
                 <div className={"row " + classes.price} >

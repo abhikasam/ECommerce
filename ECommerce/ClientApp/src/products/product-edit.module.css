@@ -1,9 +1,10 @@
 ﻿body {
 }
 
-.photo{
-    height:25em;
-    width:25em;
+.photo {
+    height: 25em;
+    width: 25em;
+    margin-top: 1em;
 }
 
 .label{

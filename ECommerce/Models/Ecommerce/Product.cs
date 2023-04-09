@@ -7,7 +7,7 @@ namespace ECommerce.Models.Ecommerce
     {
         public Product()
         {
-            SizeMappings = new HashSet<SizeMapping>();
+            ProductQuantities = new HashSet<ProductQuantity>();
         }
 
         public int ProductId { get; set; }
@@ -21,10 +21,12 @@ namespace ECommerce.Models.Ecommerce
         public int Reviews { get; set; }
         public string Url { get; set; }
         public byte[] Photo { get; set; }
+        public int Quantity { get; set; }
+        public int Available { get; set; }
 
         public virtual Brand Brand { get; set; }
         public virtual Category Category { get; set; }
         public virtual IndividualCategory IndividualCategory { get; set; }
-        public virtual ICollection<SizeMapping> SizeMappings { get; set; }
+        public virtual ICollection<ProductQuantity> ProductQuantities { get; set; }
     }
 }

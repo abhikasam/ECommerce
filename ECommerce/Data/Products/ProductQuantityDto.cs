@@ -2,9 +2,9 @@
 
 namespace ECommerce.Data.Products
 {
-    public class SizeMappingDto
+    public class ProductQuantityDto
     {
-        public int SizeMappingId { get; set; }
+        public int ProductQuantityId { get; set; }
         public int ProductId { get; set; }
         public int SizeId { get; set; }
         public int Quantity { get; set; }

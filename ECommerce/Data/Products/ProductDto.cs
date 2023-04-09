@@ -29,6 +29,6 @@ namespace ECommerce.Data.Products
             }
         }
         public bool IsFavourite { get; set; }
-        public IEnumerable<SizeMappingDto> SizeMappings { get; set; }
+        public IEnumerable<ProductQuantityDto> ProductQuantities { get; set; }
     }
 }

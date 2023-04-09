@@ -76,7 +76,7 @@ namespace ECommerce.Controllers.Products
                                 .Include(i => i.Category).DefaultIfEmpty()
                                 .Include(i => i.IndividualCategory).DefaultIfEmpty()
                                 .Include(i=>i.Favorites).DefaultIfEmpty()
-                                .Include(i=>i.SizeMappings).ThenInclude(i=>i.Size).DefaultIfEmpty();
+                                .Include(i=>i.ProductQuantities).ThenInclude(i=>i.Size).DefaultIfEmpty();
 
 
                 var productDtos = products.GetProductDtos(this.User, filters);
@@ -98,7 +98,48 @@ namespace ECommerce.Controllers.Products
                 message.StatusCode = ResponseStatus.EXCEPTION;
             }
             return new JsonResult(message);
-        } 
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> Post([FromBody]object obj)
+        {
+            var message = new ResponseMessage();
+            try
+            {
+                var product = JsonConvert.DeserializeObject<Product>(obj.ToString());
+
+                if(!ModelState.IsValid)
+                {
+                    message.Message = string.Join("; ", ModelState.Values
+                                            .SelectMany(x => x.Errors)
+                                            .Select(x => x.ErrorMessage));
+                    message.StatusCode = ResponseStatus.ERROR;
+                    return new JsonResult(message);
+                }
+                else
+                {
+                    product.Quantity=product.ProductQuantities.Sum(x => x.Quantity);
+                    product.Available = product.Quantity;
+
+                    product.FinalPrice = product.FinalPrice ?? product.OriginalPrice;
+
+                    await ecommerceContext.Products.AddAsync(product);
+                    await ecommerceContext.SaveChangesAsync();
+
+                    message.Message = "Product added successfully." + Environment.NewLine + "You will be redirected to Products Page.";
+                    message.StatusCode = ResponseStatus.SUCCESS;
+                }
+            }
+            catch(Exception ex)
+            {
+                message.Message = ex.Message;
+                message.StatusCode = ResponseStatus.EXCEPTION;
+            }
+            return new JsonResult(message);
+        }
+
+
+
 
     }
 }

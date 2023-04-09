@@ -2,12 +2,16 @@
 import { useHistory } from "react-router-dom"
 import classes from './product-details.module.css'
 import NoPhoto from '../images/no-image.png';
+import { useEffect } from "react";
 
 
 export default function ProductDetails(props) {
 
-    const history=useHistory()
-    const [product] = useState(props.location.state?.product)
+    const history = useHistory()
+    const state = props.location.state
+    const [product] = useState(state?.product)
+
+    console.log(product)
 
     if (!product) {
         history.push('/notfound')
@@ -28,7 +32,7 @@ export default function ProductDetails(props) {
         <>
             <div className="row">
                 <div className="col-3">
-                    <img src={"data:image/png;base64," + product.photo} className={classes.photo}></img>
+                    <img src={"data:image/png;base64," + product.photo} alt={product.description} className={classes.photo}></img>
                 </div>
                 <div className="col-9">
                     <div className={"row " + classes.row}>
@@ -81,7 +85,7 @@ export default function ProductDetails(props) {
                         </div>
                         <div className="col-4">
                             <ul className="list-group">
-                                {product.sizeMappings.map(mapping =>
+                                {product.productQuantities.map(mapping =>
                                     <li className={"list-group-item "+classes.listGroupItem } key={mapping.sizeId}>
                                         <div className="row">
                                             <div className="col-1 text-end">

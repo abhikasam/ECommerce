@@ -31,15 +31,19 @@ const productSlice = createSlice({
         },
         updateBrands(state, action) {
             state.filters.brands = action.payload
+            state.pageNumber = 1
         },
         updateCategories(state, action) {
             state.filters.categories = action.payload
+            state.pageNumber = 1
         },
         updateIndividualCategories(state, action) {
             state.filters.individualCategories = action.payload
+            state.pageNumber = 1
         },
         updatePriceRanges(state, action) {
             state.filters.priceRanges = action.payload
+            state.pageNumber = 1
         },
         updateProductCount(state, action) {
             state.filters.productCount = action.payload
