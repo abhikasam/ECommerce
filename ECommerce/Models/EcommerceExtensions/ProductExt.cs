@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Hosting;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Claims;
 using System.Web;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace ECommerce.Models.Ecommerce
 {
@@ -30,7 +32,42 @@ namespace ECommerce.Models.Ecommerce
             var noImage = @"D:\project\ECommerce\ECommerce\ClientApp\src\images\no-image.png";
             byte[] bytes = System.IO.File.ReadAllBytes(noImage);
 
-            var productDtoList = products.Select(i => new ProductDto()
+            var hasPriceRangeFilers = filters != null && filters.PriceRange.Count() > 0;
+            var filteredProducts = products.Where(i => !hasPriceRangeFilers );
+            if (hasPriceRangeFilers)
+            {
+                if (filters.PriceRange.Contains("0-500"))
+                {
+                    filteredProducts = filteredProducts.Union(products.Where(i => i.FinalPrice >= 0 && i.FinalPrice < 500));
+                }
+
+                if (filters.PriceRange.Contains("500-1000"))
+                {
+                    filteredProducts = filteredProducts.Union(products.Where(i => i.FinalPrice >= 500 && i.FinalPrice < 1000));
+                }
+
+                if (filters.PriceRange.Contains("1000-5000"))
+                {
+                    filteredProducts = filteredProducts.Union(products.Where(i => i.FinalPrice >= 1000 && i.FinalPrice < 5000));
+                }
+
+                if (filters.PriceRange.Contains("5000-10000"))
+                {
+                    filteredProducts = filteredProducts.Union(products.Where(i => i.FinalPrice >= 5000 && i.FinalPrice < 10000));
+                }
+
+                if (filters.PriceRange.Contains("10000-15000"))
+                {
+                    filteredProducts = filteredProducts.Union(products.Where(i => i.FinalPrice >= 10000 && i.FinalPrice < 15000));
+                }
+
+                if (filters.PriceRange.Contains("15000-50000"))
+                {
+                    filteredProducts = filteredProducts.Union(products.Where(i => i.FinalPrice >= 15000 && i.FinalPrice < 50000));
+                }
+            }
+
+            var productDtos = filteredProducts.Select(i => new ProductDto()
             {
                 ProductId = i.ProductId,
                 BrandId = i.BrandId,
@@ -51,45 +88,7 @@ namespace ECommerce.Models.Ecommerce
             });
 
             if(filters != null)
-            {
-                var productDtos = productDtoList.Where(i => false);
-                if (filters.PriceRange.Count() > 0)
-                {
-                    if (filters.PriceRange.Contains("0-500"))
-                    {
-                        productDtos = productDtos.Union(productDtoList.Where(i => i.FinalPrice >= 0 && i.FinalPrice < 500));
-                    }
-
-                    if (filters.PriceRange.Contains("500-1000"))
-                    {
-                        productDtos = productDtos.Union(productDtoList.Where(i => i.FinalPrice >= 500 && i.FinalPrice < 1000));
-                    }
-
-                    if (filters.PriceRange.Contains("1000-5000"))
-                    {
-                        productDtos = productDtos.Union(productDtoList.Where(i => i.FinalPrice >= 1000 && i.FinalPrice < 5000));
-                    }
-
-                    if (filters.PriceRange.Contains("5000-10000"))
-                    {
-                        productDtos = productDtos.Union(productDtoList.Where(i => i.FinalPrice >= 5000 && i.FinalPrice < 10000));
-                    }
-
-                    if (filters.PriceRange.Contains("10000-15000"))
-                    {
-                        productDtos = productDtos.Union(productDtoList.Where(i => i.FinalPrice >= 10000 && i.FinalPrice < 15000));
-                    }
-
-                    if (filters.PriceRange.Contains("15000-50000"))
-                    {
-                        productDtos = productDtos.Union(productDtoList.Where(i => i.FinalPrice >= 15000 && i.FinalPrice < 50000));
-                    }
-                }
-                else
-                {
-                    productDtos = productDtoList;
-                }
-
+            {                
                 #region brand filter
                 if (filters.BrandIds.Count() > 0)
                 {
@@ -153,7 +152,7 @@ namespace ECommerce.Models.Ecommerce
                 return productDtos;
             }
 
-            return productDtoList;
+            return productDtos;
         }
 
         public static ProductDto GetProductDto(this Product product,ClaimsPrincipal claimsPrincipal)

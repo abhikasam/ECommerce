@@ -3,30 +3,23 @@ import { Fragment, useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
 import classes from './list-select.module.css';
 
-export default function ListSelect({ items, updateItems }) {
+export default function ListSelect({ items,selected, updateItems }) {
 
-    const [selected, setSelected] = useState([])
     const [search, setSearch] = useState('')
 
-    useEffect(() => {
-        updateItems(selected)
-    }, [selected, updateItems])
+    const [selectedItems] = useState(selected??[])
 
     const selectedChangeEvent = (event) => {
         if (event.target.checked) {
-            setSelected(prev => {
-                return [...prev, event.target.value];
-            })
+            updateItems([...selected, event.target.value])
         }
         else {
-            setSelected(prev => {
-                return prev.filter(id => id !== event.target.value)
-            })
+            updateItems([...(selected.filter(id => id !== event.target.value))])
         }
     }
 
     return (
-        <>
+        <div className="multiple-selector">
             <input type="text" className={"form-control " + classes.search} onChange={(event) => setSearch(event.target.value)} />
             <ul className={"list-group " + classes.ul}>
                 {items.map(item => {
@@ -36,13 +29,13 @@ export default function ListSelect({ items, updateItems }) {
                             <input className="form-check-input me-1"
                                 type="checkbox" value={item.key}
                                 id={item.key}
-                                onChange={(event) => { selectedChangeEvent(event) }} />
+                                onChange={selectedChangeEvent} />
                             <label className={"form-check-label " + classes.label} htmlFor={item.key}>{item.value}</label>
                         </li>
                     )
                 })}
             </ul>
-        </>
+        </div>
     )
 }
 

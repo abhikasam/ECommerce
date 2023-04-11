@@ -12,7 +12,7 @@ export const getProducts=()=>{
         async function getData() {
             var product = getState().product
             var queryString = ''
-
+            console.log(product)
             if (product.filters.productCount)
                 queryString += '&productCount=' + product.filters.productCount
             if (product.pageNumber)

@@ -16,6 +16,9 @@ const categorySlice = createSlice({
             state.categories = state.categories.sort(function (a, b) {
                 return action.payload.includes(a.key) > action.payload.includes(b.key) ? 1 : -1
             }).reverse()
+        },
+        clear(state) {
+            state.categories=[]
         }
     }
 })
