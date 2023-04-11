@@ -49,6 +49,12 @@ const productSlice = createSlice({
         },
         updateSortOrder(state, action) {
             state.filters.sortOrder = action.payload
+        },
+        clar(state) {
+            state.products = []
+            state.filters = {}
+            state.pageNumber = 1
+            state.totalPages=''
         }
     }
 })

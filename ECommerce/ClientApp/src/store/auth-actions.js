@@ -1,4 +1,8 @@
 ﻿import { authActions } from "./auth-slice"
+import { brandActions } from "./brand-slice"
+import { categoryActions } from "./category-slice"
+import { individualCategoryActions } from "./individual-category-slice"
+import { productActions } from "./product-slice"
 import { statusActions } from "./status-slice"
 
 export const fetchUser = () => {
@@ -33,6 +37,10 @@ export const setUser = (data) => {
 
             setTimeout(function () {
                 dispatch(authActions.logout())
+                dispatch(brandActions.clear())
+                dispatch(categoryActions.clear())
+                dispatch(individualCategoryActions.clear())
+                dispatch(productActions.clear())
             }, data.expiresIn * 1000);
         }
 

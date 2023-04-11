@@ -16,6 +16,9 @@ const brandSlice = createSlice({
             state.brands = state.brands.sort(function (a, b) {
                 return action.payload.includes(a.key) > action.payload.includes(b.key) ? 1 :-1
             }).reverse()
+        },
+        clear(state) {
+            state.brands=[]
         }
     }
 })

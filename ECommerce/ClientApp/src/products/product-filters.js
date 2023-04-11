@@ -2,11 +2,12 @@
 import ListSelect from "../shared/list-select"
 import { useDispatch, useSelector } from "react-redux"
 import { getBrands } from "../store/brand-actions"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { getCategories } from "../store/category-actions"
 import { getIndividualCategories } from "../store/individual-category-actions"
 import { productActions } from "../store/product-slice"
 import { useHistory } from "react-router-dom"
+import { individualCategoryActions } from "../store/individual-category-slice"
 
 
 export default function ProductFilters(props) {
@@ -19,6 +20,8 @@ export default function ProductFilters(props) {
     const { categories } = useSelector(state => state.category)
     const { individualCategories } = useSelector(state => state.individualCategory)
 
+    const { filters } = useSelector(state => state.product)
+
     useEffect(() => {
         dispatch(getBrands())
         dispatch(getCategories())
@@ -27,6 +30,26 @@ export default function ProductFilters(props) {
 
     function productCountChangeHandler(event) {
         dispatch(productActions.updateProductCount(event.target.value))
+        dispatch(productActions.updatePageNumber(1))
+    }
+
+    function priceRangesUpdateHandler(brands) {
+        dispatch(productActions.updatePriceRanges(brands))
+        dispatch(productActions.updatePageNumber(1))
+    }
+
+    function brandsUpdateHandler(priceRanges) {
+        dispatch(productActions.updatePriceRanges(priceRanges))
+        dispatch(productActions.updatePageNumber(1))
+    }
+
+    function individualCategoryUpdateHandler(individualCategories) {
+        dispatch(productActions.updateIndividualCategories(individualCategories))
+        dispatch(productActions.updatePageNumber(1))
+    }
+
+    function categoryUpdateHandler(categories) {
+        dispatch(productActions.updateCategories(categories))
         dispatch(productActions.updatePageNumber(1))
     }
 
@@ -46,7 +69,9 @@ export default function ProductFilters(props) {
                     <label>Product Count :</label>
                 </div>
                 <div className="col-4">
-                    <select className="form-control" onChange={(event) => productCountChangeHandler(event)}>
+                    <select className="form-control"
+                        value={filters.productCount??''}
+                        onChange={(event) => productCountChangeHandler(event)}>
                         <option value="50">50</option>
                         <option value="100">100</option>
                         <option value="200">200</option>
@@ -61,7 +86,9 @@ export default function ProductFilters(props) {
                     <label>Sort By :</label>
                 </div>
                 <div className="col-4">
-                    <select className="form-control" onChange={(event) => dispatch(productActions.updateSortBy(event.target.value))}>
+                    <select className="form-control"
+                        value={filters.sortBy??''}
+                        onChange={(event) => dispatch(productActions.updateSortBy(event.target.value))}>
                         <option value="Description">Name</option>
                         <option value="Brand">Brand</option>
                         <option value="Category">Category</option>
@@ -78,7 +105,9 @@ export default function ProductFilters(props) {
                     <label>Sort Order :</label>
                 </div>
                 <div className="col-4">
-                    <select className="form-control" onChange={(event) => dispatch(productActions.updateSortOrder(event.target.value))}>
+                    <select className="form-control"
+                        value={filters.sortOrder??''}
+                        onChange={(event) => dispatch(productActions.updateSortOrder(event.target.value))}>
                         <option value="asc">Asc</option>
                         <option value="desc">Desc</option>
                     </select>
@@ -94,9 +123,8 @@ export default function ProductFilters(props) {
                     collapseId="collapseBrands"
                     component={<ListSelect
                         items={brands}
-                        updateItems={(brands) => {
-                            dispatch(productActions.updateBrands(brands))
-                        }}
+                        selected={filters.brands}
+                        updateItems={brandsUpdateHandler}
                     />}></CollapseElement>
             </div>
 
@@ -107,7 +135,8 @@ export default function ProductFilters(props) {
                     collapseId="collapseCategories"
                     component={<ListSelect
                         items={categories}
-                        updateItems={(categories) => dispatch(productActions.updateCategories(categories))}
+                        selected={filters.categories}
+                        updateItems={categoryUpdateHandler}
                     />}></CollapseElement>
             </div>
 
@@ -118,7 +147,8 @@ export default function ProductFilters(props) {
                     collapseId="collapseIndividualCategories"
                     component={<ListSelect
                         items={individualCategories}
-                        updateItems={(individualCategories) => dispatch(productActions.updateIndividualCategories(individualCategories))}
+                        selected={filters.individualCategories}
+                        updateItems={individualCategoryUpdateHandler}
                     />}></CollapseElement>
             </div>
 
@@ -136,7 +166,8 @@ export default function ProductFilters(props) {
                             { key: '10000-15000', value: '10000-15000' },
                             { key: '15000-50000', value: 'above 15000' }
                         ]}
-                        updateItems={(priceRanges) => dispatch(productActions.updatePriceRanges(priceRanges))}
+                        selected={filters.priceRanges}
+                        updateItems={priceRangesUpdateHandler}
                     />}></CollapseElement>
             </div>
 
