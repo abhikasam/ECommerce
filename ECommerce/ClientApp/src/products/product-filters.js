@@ -25,6 +25,11 @@ export default function ProductFilters(props) {
         dispatch(getIndividualCategories())
     }, [dispatch])
 
+    function productCountChangeHandler(event) {
+        dispatch(productActions.updateProductCount(event.target.value))
+        dispatch(productActions.updatePageNumber(1))
+    }
+
     return (
         <div className="filters">
             <input type="button" className="btn btn-primary m-2" onClick={() => { props.onUpdate() }} value="Update" />
@@ -41,7 +46,7 @@ export default function ProductFilters(props) {
                     <label>Product Count :</label>
                 </div>
                 <div className="col-4">
-                    <select className="form-control" onChange={(event) => dispatch(productActions.updateProductCount(event.target.value)) }>
+                    <select className="form-control" onChange={(event) => productCountChangeHandler(event)}>
                         <option value="50">50</option>
                         <option value="100">100</option>
                         <option value="200">200</option>
@@ -89,7 +94,9 @@ export default function ProductFilters(props) {
                     collapseId="collapseBrands"
                     component={<ListSelect
                         items={brands}
-                        updateItems={(brands) => dispatch(productActions.updateBrands(brands))}
+                        updateItems={(brands) => {
+                            dispatch(productActions.updateBrands(brands))
+                        }}
                     />}></CollapseElement>
             </div>
 

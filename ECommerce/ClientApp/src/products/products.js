@@ -20,7 +20,7 @@ export default function Products() {
 
     useEffect(() => {
         dispatch(getProducts())
-    }, [dispatch, pageNumber])
+    }, [dispatch,pageNumber])
 
     function updatePageFilters() {
         dispatch(getProducts())
