@@ -32,36 +32,36 @@ namespace ECommerce.Models.Ecommerce
             var noImage = @"D:\project\ECommerce\ECommerce\ClientApp\src\images\no-image.png";
             byte[] bytes = System.IO.File.ReadAllBytes(noImage);
 
-            var hasPriceRangeFilers = filters != null && filters.PriceRange.Count() > 0;
-            var filteredProducts = products.Where(i => !hasPriceRangeFilers );
-            if (hasPriceRangeFilers)
+            var hasPriceRangesFilers = filters != null && filters.PriceRanges.Count() > 0;
+            var filteredProducts = products.Where(i => !hasPriceRangesFilers );
+            if (hasPriceRangesFilers)
             {
-                if (filters.PriceRange.Contains("0-500"))
+                if (filters.PriceRanges.Contains("0-500"))
                 {
                     filteredProducts = filteredProducts.Union(products.Where(i => i.FinalPrice >= 0 && i.FinalPrice < 500));
                 }
 
-                if (filters.PriceRange.Contains("500-1000"))
+                if (filters.PriceRanges.Contains("500-1000"))
                 {
                     filteredProducts = filteredProducts.Union(products.Where(i => i.FinalPrice >= 500 && i.FinalPrice < 1000));
                 }
 
-                if (filters.PriceRange.Contains("1000-5000"))
+                if (filters.PriceRanges.Contains("1000-5000"))
                 {
                     filteredProducts = filteredProducts.Union(products.Where(i => i.FinalPrice >= 1000 && i.FinalPrice < 5000));
                 }
 
-                if (filters.PriceRange.Contains("5000-10000"))
+                if (filters.PriceRanges.Contains("5000-10000"))
                 {
                     filteredProducts = filteredProducts.Union(products.Where(i => i.FinalPrice >= 5000 && i.FinalPrice < 10000));
                 }
 
-                if (filters.PriceRange.Contains("10000-15000"))
+                if (filters.PriceRanges.Contains("10000-15000"))
                 {
                     filteredProducts = filteredProducts.Union(products.Where(i => i.FinalPrice >= 10000 && i.FinalPrice < 15000));
                 }
 
-                if (filters.PriceRange.Contains("15000-50000"))
+                if (filters.PriceRanges.Contains("15000-50000"))
                 {
                     filteredProducts = filteredProducts.Union(products.Where(i => i.FinalPrice >= 15000 && i.FinalPrice < 50000));
                 }
@@ -90,23 +90,23 @@ namespace ECommerce.Models.Ecommerce
             if(filters != null)
             {                
                 #region brand filter
-                if (filters.BrandIds.Count() > 0)
+                if (filters.Brands.Count() > 0)
                 {
-                    productDtos = productDtos.Where(i => filters.BrandIds.Contains(i.BrandId));
+                    productDtos = productDtos.Where(i => filters.Brands.Contains(i.BrandId));
                 }
                 #endregion
 
                 #region category filter
-                if (filters.CategoryIds.Count() > 0)
+                if (filters.Categories.Count() > 0)
                 {
-                    productDtos = productDtos.Where(i => filters.CategoryIds.Contains(i.CategoryId));
+                    productDtos = productDtos.Where(i => filters.Categories.Contains(i.CategoryId));
                 }
                 #endregion
 
                 #region individual category filter
-                if (filters.IndividualCategoryIds.Count() > 0)
+                if (filters.IndividualCategories.Count() > 0)
                 {
-                    productDtos = productDtos.Where(i => filters.IndividualCategoryIds.Contains(i.IndividualCategoryId));
+                    productDtos = productDtos.Where(i => filters.IndividualCategories.Contains(i.IndividualCategoryId));
                 }
                 #endregion
 

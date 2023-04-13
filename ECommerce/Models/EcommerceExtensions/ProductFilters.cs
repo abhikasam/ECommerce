@@ -4,10 +4,10 @@
     {
         public int ProductCount { get; set; }
         public int PageNumber { get; set; }
-        public int[] BrandIds { get; set; }
-        public int[] CategoryIds { get; set; }
-        public int[] IndividualCategoryIds { get; set; }
-        public string[] PriceRange { get; set; }
+        public int[] Brands { get; set; }
+        public int[] Categories { get; set; }
+        public int[] IndividualCategories { get; set; }
+        public string[] PriceRanges { get; set; }
         public string[] SizeOptions { get; set; }
         public int[] Discounts { get; set; }
         public int[] Rating { get; set; }

@@ -1,20 +1,23 @@
 ﻿
 import { Fragment, useEffect, useState } from "react"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import classes from './list-select.module.css';
 
-export default function ListSelect({ items,selected, updateItems }) {
+export default function ListSelect({ items, selected, updateItems }) {
 
     const [search, setSearch] = useState('')
+    const [selectedItems,setSelectedItems]=useState([])
 
-    const [selectedItems] = useState(selected??[])
+    useEffect(() => {
+        updateItems(selectedItems)
+    }, [selectedItems])
 
-    const selectedChangeEvent = (event) => {
-        if (event.target.checked) {
-            updateItems([...selected, event.target.value])
+    function update(key) {
+        if (selectedItems.includes(key)) {
+            setSelectedItems(prev=> prev.filter(id => id !== key))
         }
         else {
-            updateItems([...(selected.filter(id => id !== event.target.value))])
+            setSelectedItems(prev=>[...prev, key])
         }
     }
 
@@ -24,19 +27,33 @@ export default function ListSelect({ items,selected, updateItems }) {
             <ul className={"list-group " + classes.ul}>
                 {items.map(item => {
                     return (
-                        <li className={"list-group-item " + classes.li} key={item.key}
-                            style={{ display: (item.value.toLowerCase().includes(search) ? "block" : "none") }} >
-                            <input className="form-check-input me-1"
-                                type="checkbox" value={item.key}
-                                id={item.key}
-                                onChange={selectedChangeEvent} />
-                            <label className={"form-check-label " + classes.label} htmlFor={item.key}>{item.value}</label>
-                        </li>
+                        <ListSelectItem key={item.key}
+                            item={item}
+                            search={search}
+                            selected={selectedItems}
+                            updateItems={()=>update(item.key)}
+                        ></ListSelectItem>
                     )
                 })}
             </ul>
         </div>
     )
 }
+
+
+export const ListSelectItem = ({ item, search,updateItems }) => {
+
+    return (
+        <li className={"list-group-item " + classes.li}
+            style={{ display: (item.value.toLowerCase().includes(search) ? "block" : "none") }} >
+            <input className="form-check-input me-1"
+                type="checkbox" value={item.key}
+                id={item.key}
+                onChange={updateItems} />
+            <label className={"form-check-label " + classes.label} htmlFor={item.key}>{item.value}</label>
+        </li>
+    )
+}
+
 
 

@@ -10,7 +10,7 @@ import { useHistory } from "react-router-dom"
 import { individualCategoryActions } from "../store/individual-category-slice"
 
 
-export default function ProductFilters(props) {
+export default function ProductFilters({ onUpdate }) {
     
     const dispatch = useDispatch()
     const history = useHistory()
@@ -19,8 +19,17 @@ export default function ProductFilters(props) {
     const { brands } = useSelector(state => state.brand)
     const { categories } = useSelector(state => state.category)
     const { individualCategories } = useSelector(state => state.individualCategory)
-
-    const { filters } = useSelector(state => state.product)
+    
+    const [filters, setFilters] = useState({
+        productCount: '',
+        pageNumber: 1,
+        sortBy: null,
+        sortOrder: null,
+        brands: [],
+        categories: [],
+        priceRanges: [],
+        individualCategories: []
+    })
 
     useEffect(() => {
         dispatch(getBrands())
@@ -29,33 +38,76 @@ export default function ProductFilters(props) {
     }, [dispatch])
 
     function productCountChangeHandler(event) {
-        dispatch(productActions.updateProductCount(event.target.value))
-        dispatch(productActions.updatePageNumber(1))
+        setFilters(prev => {
+            return {
+                ...prev,
+                productCount: event.target.value,
+                pageNumber:1
+            }
+        })
     }
 
-    function priceRangesUpdateHandler(brands) {
-        dispatch(productActions.updatePriceRanges(brands))
-        dispatch(productActions.updatePageNumber(1))
+    function priceRangesUpdateHandler(priceRanges) {
+        setFilters(prev => {
+            return {
+                ...prev,
+                priceRanges,
+                pageNumber: 1
+            }
+        })
     }
 
-    function brandsUpdateHandler(priceRanges) {
-        dispatch(productActions.updatePriceRanges(priceRanges))
-        dispatch(productActions.updatePageNumber(1))
+    function brandsUpdateHandler(brands) {
+        setFilters(prev => {
+            return {
+                ...prev,
+                brands,
+                pageNumber: 1
+            }
+        })
     }
 
     function individualCategoryUpdateHandler(individualCategories) {
-        dispatch(productActions.updateIndividualCategories(individualCategories))
-        dispatch(productActions.updatePageNumber(1))
+        setFilters(prev => {
+            return {
+                ...prev,
+                individualCategories,
+                pageNumber: 1
+            }
+        })
     }
 
     function categoryUpdateHandler(categories) {
-        dispatch(productActions.updateCategories(categories))
-        dispatch(productActions.updatePageNumber(1))
+        setFilters(prev => {
+            return {
+                ...prev,
+                categories,
+                pageNumber: 1
+            }
+        })
+    }
+
+    function sortByChangeHandler(sortBy) {
+        setFilters(prev => {
+            return {
+                ...prev,
+                sortBy
+            }
+        })
+    }
+
+    function sortOrderChangeHandler(sortOrder) {
+        setFilters(prev => {
+            return {
+                ...prev,
+                sortOrder
+            }
+        })
     }
 
     return (
         <div className="filters">
-            <input type="button" className="btn btn-primary m-2" onClick={() => { props.onUpdate() }} value="Update" />
+            <input type="button" className="btn btn-primary m-2" onClick={() => onUpdate(filters)} value="Update" />
             {isAuthenticated && user.isAdmin && 
                 <input type="button"
                     onClick={() => history.push('/product-edit')}
@@ -70,8 +122,8 @@ export default function ProductFilters(props) {
                 </div>
                 <div className="col-4">
                     <select className="form-control"
-                        value={filters.productCount??''}
-                        onChange={(event) => productCountChangeHandler(event)}>
+                        value={filters.productCount}
+                        onChange={productCountChangeHandler}>
                         <option value="50">50</option>
                         <option value="100">100</option>
                         <option value="200">200</option>
@@ -87,8 +139,8 @@ export default function ProductFilters(props) {
                 </div>
                 <div className="col-4">
                     <select className="form-control"
-                        value={filters.sortBy??''}
-                        onChange={(event) => dispatch(productActions.updateSortBy(event.target.value))}>
+                        value={filters.sortBy}
+                        onChange={sortByChangeHandler}>
                         <option value="Description">Name</option>
                         <option value="Brand">Brand</option>
                         <option value="Category">Category</option>
@@ -106,8 +158,8 @@ export default function ProductFilters(props) {
                 </div>
                 <div className="col-4">
                     <select className="form-control"
-                        value={filters.sortOrder??''}
-                        onChange={(event) => dispatch(productActions.updateSortOrder(event.target.value))}>
+                        value={filters.sortOrder}
+                        onChange={sortOrderChangeHandler}>
                         <option value="asc">Asc</option>
                         <option value="desc">Desc</option>
                     </select>
