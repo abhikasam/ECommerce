@@ -1,34 +1,6 @@
 ﻿import { favouriteActions } from "./favourite-slice";
 
 
-
-export const updateFavourites=()=>{
-    return async (dispatch, getState) => {
-
-        var pageNumber = getState().favourite.pageNumber;
-        var queryString = ''
-        queryString += '&pageNumber=' + pageNumber
-        queryString = '?' + queryString.slice(1)
-
-        async function getData() {
-            await fetch('/favourites' + queryString)
-                .then(result => {
-                    if (!result.ok) throw result;
-                    return result.json();
-                })
-                .then(response => {
-                    dispatch(favouriteActions.updateProducts(response.data))
-                })
-                .catch(error => {
-                    dispatch(favouriteActions.updateProducts([{ result: [], pageNumber:1,totalPages:1 }]))
-                    console.log(error)
-                })
-        }
-
-        getData();
-    }
-}
-
 export const addFavourite = (productId) => {
     return async (dispatch)=>{
         async function addData() {
@@ -51,7 +23,6 @@ export const addFavourite = (productId) => {
                 console.log(error)
             })
         }
-
         addData();
     }
 }

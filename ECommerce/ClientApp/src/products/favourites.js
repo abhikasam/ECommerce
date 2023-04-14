@@ -1,19 +1,18 @@
 ﻿
 import { useDispatch, useSelector } from "react-redux"
-import { updateFavourites } from "../store/favourite-actions"
 import { useEffect } from "react"
 import ProductCard from "./product-card"
 import Pagination from "../shared/pagination"
-import { favouriteActions } from "../store/favourite-slice"
+import { favouriteActions, getFavouritesAsync } from "../store/favourite-slice"
 
 
 export default function Favourites() {
 
     const dispatch = useDispatch()
-    const { products, pageNumber, totalPages } = useSelector(state => state.favourite)
+    const { products, pageNumber, totalPages, status } = useSelector(state => state.favourite)
 
     useEffect(() => {
-        dispatch(updateFavourites())
+        dispatch(getFavouritesAsync())
     }, [dispatch, pageNumber])
 
     function loadPage(page) {
@@ -29,6 +28,15 @@ export default function Favourites() {
                             totalPages={totalPages}
                             setPage={loadPage} ></Pagination>
                     </div>
+                    {status.isLoading &&
+                        <div className={"row rowpad5px align-items-center "} >
+                            <div className="col-8">
+                                <div className={status.alertClass + " alert"} style={{ whiteSpace: "pre-wrap" }}>
+                                    <div className={status.textClass}>{status.message}</div>
+                                </div>
+                            </div>
+                        </div>
+                    }
                     <div className="row">
                         {
                             products.map(product =>

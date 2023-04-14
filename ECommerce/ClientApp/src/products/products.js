@@ -5,10 +5,10 @@ import classes from './products.module.css';
 import Pagination from "../shared/pagination";
 import { getProductsAsync } from "../store/product-slice";
 import ProductFilters from "./product-filters";
-import { updateFavourites } from "../store/favourite-actions";
 import { useState } from "react";
 import { statusActions } from "../store/status-slice";
 import { updateFilters } from "../store/product-actions";
+import { getFavouritesAsync } from "../store/favourite-slice";
 
 
 export default function Products() {
@@ -20,7 +20,7 @@ export default function Products() {
     const [filters, setFilters] = useState(productFilters)
 
     useEffect(() => {
-        dispatch(updateFavourites())
+        dispatch(getFavouritesAsync())
     }, [dispatch])
 
     useEffect(() => {
