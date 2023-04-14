@@ -1,19 +1,20 @@
 ﻿import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { getProducts } from "../store/product-actions"
 import ProductCard from "./product-card"
 import classes from './products.module.css';
 import Pagination from "../shared/pagination";
-import { productActions } from "../store/product-slice";
+import { getProductsAsync } from "../store/product-slice";
 import ProductFilters from "./product-filters";
 import { updateFavourites } from "../store/favourite-actions";
 import { useState } from "react";
+import { statusActions } from "../store/status-slice";
+import { updateFilters } from "../store/product-actions";
 
 
 export default function Products() {
 
     const dispatch = useDispatch()
-    const { products, totalPages, filters: productFilters } = useSelector(state => state.product)
+    const { products, totalPages, filters: productFilters,status } = useSelector(state => state.product)
     const { pageNumber } = productFilters
 
     const [filters, setFilters] = useState(productFilters)
@@ -23,13 +24,8 @@ export default function Products() {
     }, [dispatch])
 
     useEffect(() => {
-        if (!products) {
-            dispatch(getProducts(filters))
-        }
-    }, [dispatch, products])
-
-    useEffect(() => {
-        dispatch(getProducts(filters))
+        const productsData = dispatch(getProductsAsync(filters))
+        dispatch(updateFilters(productsData))
     }, [dispatch, filters])
 
     function updatePageFilters(filters) {
@@ -57,6 +53,15 @@ export default function Products() {
                 <div className="row">
                     <Pagination pageNumber={pageNumber} totalPages={totalPages} setPage={loadPage} ></Pagination>
                 </div>
+                {status.isLoading &&
+                    <div className={"row rowpad5px align-items-center " + classes.alertbar} >
+                        <div className="col-8">
+                            <div className={status.alertClass + " alert"} style={{ whiteSpace: "pre-wrap" }}>
+                                <div className={status.textClass}>{status.message}</div>
+                            </div>
+                        </div>
+                    </div>
+                }
                 <div className="row">
                     {
                         products.map(product =>

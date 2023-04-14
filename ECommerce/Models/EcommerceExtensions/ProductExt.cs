@@ -83,7 +83,7 @@ namespace ECommerce.Models.Ecommerce
                 CategoryName = i.Category.CategoryName,
                 IndividualCategoryName = i.IndividualCategory.IndividualCategoryName,
                 IsFavourite= i.Favorites.IsFavorite(claimsPrincipal),
-                Photo= bytes,
+                Photo= i.Photo??bytes,
                 ProductQuantities =i.ProductQuantities.GetSizeMappingDtos()
             });
 

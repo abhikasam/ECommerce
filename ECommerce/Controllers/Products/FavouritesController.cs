@@ -45,6 +45,7 @@ namespace ECommerce.Controllers.Products
                                     .Include(i => i.Product).ThenInclude(i => i.Brand).DefaultIfEmpty()
                                     .Include(i => i.Product).ThenInclude(i => i.Category).DefaultIfEmpty()
                                     .Include(i => i.Product).ThenInclude(i => i.IndividualCategory).DefaultIfEmpty()
+                                    .Include(i=>i.Product).ThenInclude(i => i.ProductQuantities).ThenInclude(i => i.Size)
                                     .Where(i => i.UserId == userId)
                                     .OrderByDescending(i => i.AddedOn)
                                     .Select(i => i.Product).GetProductDtos(this.User);

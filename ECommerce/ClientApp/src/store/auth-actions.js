@@ -83,6 +83,7 @@ export const logoutUser = () => {
         dispatch(categoryActions.clear())
         dispatch(individualCategoryActions.clear())
         dispatch(productActions.clear())
+        dispatch(statusActions.clear())
 
         await fetch('logout'
             , {

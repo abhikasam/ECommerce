@@ -8,15 +8,19 @@ import { getCategoryMappings } from "../store/category-mapping-actions";
 import { getSizeMappings } from "../store/size-mapping-actions";
 import { useState } from "react";
 import ProductQuantitySelector from "../products/product-quantity-selector";
-import { addProduct } from "../store/product-actions";
 import { statusActions } from "../store/status-slice";
 import { useHistory } from "react-router-dom";
+import { saveProduct } from "../store/product-actions";
 
 
-export default function EditProduct() {
+export default function EditProduct(props) {
+
+    const state = props.location.state
+    const [product] = useState(state?.product)
 
     const dispatch = useDispatch()
-    const history=useHistory()
+    const history = useHistory()
+
     const { brands } = useSelector(state => state.brand)
     const { categories } = useSelector(state => state.category)
     const { individualCategories } = useSelector(state => state.individualCategory)
@@ -24,13 +28,15 @@ export default function EditProduct() {
     const { sizeMappings } = useSelector(state => state.sizeMapping)
 
     const [form, setForm] = useState({
-        description: '',
-        brandId:'',
-        categoryId: '',
-        individualCategoryId:'',
-        productQuantities: [],
-        originalPrice: '',
-        photo:null
+        productId: product?.productId,
+        description: product?.description,
+        brandId: product?.brandId,
+        categoryId: product?.categoryId,
+        individualCategoryId: product?.individualCategoryId,
+        productQuantities: (product && product.productQuantities) ? product.productQuantities:[],
+        originalPrice: product?.originalPrice,
+        photo: product?.photo,
+        finalPrice: product?.finalPrice
     })
 
     const [formValid,setFormValid]=useState(false)
@@ -42,7 +48,7 @@ export default function EditProduct() {
 
     useEffect(() => {
         validateForm()
-    }, [form])
+    }, [validateForm,form])
 
     function categoryChangeHandler(event) {
         setForm(prev => {
@@ -100,42 +106,35 @@ export default function EditProduct() {
         })
     }
 
+    function finalPriceChangeHandler(event) {
+        setForm(prev => {
+            return {
+                ...prev,
+                finalPrice: event.target.value
+            }
+        })
+    }
+
+
     function validateForm() {
-        var descriptionValidator = /^[a-zA-Z ]{20,}$/;
-        var originalPriceValidator = /^[1-9][0-9][0-9]+$/
+        var descriptionValidator = /^[a-zA-Z0-9 ]{20,}$/;
+        var priceValidator = /^[1-9][0-9][0-9]+$/
 
         setFormValid(prev => {
             return descriptionValidator.test(form.description) && form.brandId
                 && form.categoryId && form.individualCategoryId && form.productQuantities.length
-                && originalPriceValidator.test(form.originalPrice)
+                && priceValidator.test(form.originalPrice)
+                && priceValidator.test(form.finalPrice)
         })
     }
 
-    async function formSubmitHandler(event) {
+    function formSubmitHandler(event) {
         if (formValid) {
             event.preventDefault();
-            await fetch('products'
-                , {
-                    method: 'POST',
-                    body: JSON.stringify(form),
-                    headers: {
-                        'Content-Type': 'application/json;'
-                    }
-                }
-            )
-                .then(result => {
-                    if (!result.ok) throw result;
-                    return result.json();
-                })
-                .then(response => {
-                    dispatch(statusActions.add(response))
-                    setTimeout(() => {
-                        history.push('/products')
-                    }, 3000)
-                })
-                .catch(error =>
-                    dispatch(statusActions.add(error))
-                )
+            if (!product.productId) {
+                setFormValid(false)
+            }
+            dispatch(saveProduct(form, history))
         }
     }
 
@@ -153,7 +152,7 @@ export default function EditProduct() {
     }
 
     return (
-        <form method="post" onSubmit={event=>formSubmitHandler(event)}>
+        <form method="post" onSubmit={formSubmitHandler}>
             <div className="row">
                 <div className="col-3">
                     <input type="file" accept="image/*" onChange={handleFileSelect} />
@@ -171,7 +170,8 @@ export default function EditProduct() {
                                 className="form-control"
                                 name="description"
                                 required
-                                onChange={event=>descriptionChangeHandler(event)}
+                                value={form.description}
+                                onChange={descriptionChangeHandler}
                             />
                             <span className="text-danger" data-valmsg-for="description"></span>
                         </div>
@@ -181,8 +181,12 @@ export default function EditProduct() {
                             <label className={classes.label}>Brand :</label>
                         </div>
                         <div className={"col-4 "}>
-                            <select className="form-control" name="brand" onChange={(event)=> brandChangeHandler(event)}>
-                                <option key={0} value="" style={{}} >  select one </option>
+                            <select className="form-control"
+                                name="brand"
+                                value={form.brandId}
+                                onChange={brandChangeHandler}>
+                                <option key={0}
+                                    style={{}} >  select one </option>
                                 {brands.map(brand =>
                                     <option key={brand.key} value={brand.key}>{brand.value}</option>
                                 )}
@@ -197,7 +201,8 @@ export default function EditProduct() {
                         <div className={"col-4 "}>
                             <select className="form-control"
                                 name="category"
-                                onChange={(event) => categoryChangeHandler(event)}>
+                                value={form.categoryId}
+                                onChange={categoryChangeHandler}>
                                 <option key={0} value="" style={{}} >  select one </option>
                                 {categories.map(category =>
                                     <option key={category.key} value={category.key}>{category.value}</option>
@@ -214,7 +219,8 @@ export default function EditProduct() {
                             </div>
                             <div className={"col-4 "}>
                                 <select className="form-control" name="individualCategory"
-                                    onChange={(event) => individualCategoryChangeHandler(event)}>
+                                    value={form.individualCategoryId}
+                                    onChange={individualCategoryChangeHandler}>
                                     <option key={0} value="" style={{}} >  select one </option>
                                     {categoryMappings.filter(cm => cm.parentId === form.categoryId).map(categoryMapping =>
                                         <option key={categoryMapping.key} value={categoryMapping.childId}>{categoryMapping.childName}</option>
@@ -231,7 +237,9 @@ export default function EditProduct() {
                                 <label className={classes.label}>Size Options :</label>
                             </div>
                             <div className="col-4 ">
-                                <ProductQuantitySelector sizeMappings={sizeMappings}
+                                <ProductQuantitySelector
+                                    selected={form.productQuantities}
+                                    sizeMappings={sizeMappings}
                                     individualCategory={form.individualCategoryId}
                                     setProductQuantites={productQuantitiesChangeHandler}
                                 ></ProductQuantitySelector>
@@ -245,22 +253,29 @@ export default function EditProduct() {
                             <label className={classes.label}>Original Price :</label>
                         </div>
                         <div className="col-2">
-                            <input type="text" className="form-control" name="originalPrice" onChange={(event)=> originalPriceHandler(event)} />
+                            <input type="text" className="form-control"
+                                value={form.originalPrice}
+                                name="originalPrice" onChange={originalPriceHandler} />
                         </div>
                     </div>
 
                     <div className="row m-2">
                         <div className="col-2">
-                            <label className={classes.label}>Discount :</label>
+                            <label className={classes.label}>Final Price :</label>
                         </div>
                         <div className="col-1">
-                            <input type="text" className="form-control" />
+                            <input type="text"
+                                className="form-control"
+                                value={form.finalPrice}
+                                name="finalPrice"
+                                onChange={finalPriceChangeHandler}
+                            />
                         </div>
                     </div>
                     <div className="row m-2">
                         <div className="col-3"></div>
                         <div className="col-2">
-                            <input type="submit" value="Add" className="btn btn-danger"
+                            <input type="submit" value="Save" className="btn btn-danger"
                                 disabled={!formValid} />
                         </div>
                     </div>

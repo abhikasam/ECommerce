@@ -2,14 +2,19 @@
 import { useEffect } from "react"
 import classes from './product-quantity-selector.module.css';
 
-export default function ProductQuantitySelector({ sizeMappings, individualCategory, setProductQuantites }) {
+export default function ProductQuantitySelector({ selected,sizeMappings, individualCategory, setProductQuantites }) {
 
     useEffect(() => { }, [sizeMappings, individualCategory])
 
-    const [selectedOptions, setSelectedOptions] = useState([])
+    const [selectedOptions, setSelectedOptions] = useState(selected.map(i => {
+        return {
+            sizeId:i.sizeId,quantity:i.quantity
+        }
+    }))
 
     useEffect(() => {
         setProductQuantites(selectedOptions)
+        console.log(selectedOptions)
     }, [selectedOptions])
 
     function addMapping(mapping) {
@@ -31,6 +36,8 @@ export default function ProductQuantitySelector({ sizeMappings, individualCatego
                     id={sizeMapping.childId}
                     name={sizeMapping.childName}
                     addMapping={addMapping}
+                    selected={selectedOptions.map(i => i.sizeId).includes(sizeMapping.childId)}
+                    quantity={selectedOptions.find(i => i.sizeId === sizeMapping.childId)?.quantity}
                     removeMapping={removeMapping}
                 ></ProductQuantityRow>
             )}
@@ -39,21 +46,24 @@ export default function ProductQuantitySelector({ sizeMappings, individualCatego
 }
 
 
-export const ProductQuantityRow = ({ id, name, addMapping, removeMapping }) => {
+export const ProductQuantityRow = ({ selected,quantity, id, name, addMapping, removeMapping }) => {
 
     const [form, setForm] = useState({
-        selected: false,
-        quantity: '',
+        selected: selected,
+        quantity: quantity,
         sizeId: id,
         addDisable: true,
-        hideClear: true
+        hideClear: !selected
     })
 
     function mappingSelectedHandler(event) {
         setForm(prev => {
             return {
                 ...prev,
-                selected: event.target.checked
+                selected: event.target.checked,
+                hideClear: true,
+                addDisable: true,
+                quantity:''
             }
         })
 
@@ -104,19 +114,10 @@ export const ProductQuantityRow = ({ id, name, addMapping, removeMapping }) => {
             <div className="row align-items-center">
                 <div className="col-1">
                     <input className="form-check-input me-1"
-                        onChange={(event) => mappingSelectedHandler(event)}
                         type="checkbox"
                         value={id}
                         checked={form.selected}
-                        onChange={event => {
-                            setForm((prev) => {
-                                return {
-                                    ...prev,
-                                    hideClear: true,
-                                    selected: !form.selected
-                                }
-                            })
-                        }}
+                        onChange={mappingSelectedHandler}
                         htmlFor="sizeMapping"
                     />
                 </div>
@@ -129,7 +130,8 @@ export const ProductQuantityRow = ({ id, name, addMapping, removeMapping }) => {
                         <div className="col-3">
                             <input type="text"
                                 className="form-control"
-                                onKeyUp={(event) => quantityChangeHandler(event)}
+                                value={form.quantity}
+                                onChange={quantityChangeHandler}
                                 disabled={!form.hideClear}
                                 required />
                         </div>

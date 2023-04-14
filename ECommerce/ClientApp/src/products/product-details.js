@@ -1,4 +1,5 @@
-﻿import { useState } from "react"
+﻿import { useState } from "react";
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from "react-router-dom"
 import classes from './product-details.module.css'
 import NoPhoto from '../images/no-image.png';
@@ -11,13 +12,11 @@ export default function ProductDetails(props) {
     const state = props.location.state
     const [product] = useState(state?.product)
 
-    console.log(product)
-
     if (!product) {
         history.push('/notfound')
     }
 
-    console.log(product)
+    const { isAuthenticated, user } = useSelector(state => state.auth)
 
     function getDiscountColor() {
         if (product.discount >= 50)
@@ -27,6 +26,11 @@ export default function ProductDetails(props) {
         else return 'red';
     }
 
+    function openEditPage() {
+        history.push('/product-edit', {
+            product: product
+        })
+    }
 
     return (
         <>
@@ -35,6 +39,16 @@ export default function ProductDetails(props) {
                     <img src={"data:image/png;base64," + product.photo} alt={product.description} className={classes.photo}></img>
                 </div>
                 <div className="col-9">
+
+                    {
+                        isAuthenticated && user.isAdmin && 
+                        <div className="row">
+                            <div className="col-3">
+                                <button type="button" className="btn btn-primary" onClick={openEditPage}>Edit</button>
+                            </div>
+                        </div>
+                    }
+
                     <div className={"row " + classes.row}>
                         <div className={"col " + classes.description}>
                             {product.description}

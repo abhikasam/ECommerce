@@ -5,53 +5,53 @@ import { sortIndividualCategories } from "./individual-category-actions";
 import { productActions } from "./product-slice";
 import { statusActions } from "./status-slice";
 
+export const updateFilters=(response) => {
+    return async (dispatch) => {
+        response
+            .then(response => {
+                dispatch(productActions.update(response.payload.data))
+                dispatch(productActions.updateFilters(response.payload.data.filters))
+                dispatch(productActions.updateTotalPages(response.payload.data.totalPages))
+                dispatch(sortBrands())
+                dispatch(sortCategories())
+                dispatch(sortIndividualCategories())
+            })
+            .catch(error => {
+                dispatch(productActions.clear())
+            })
+    }
+}
 
-
-export const getProducts=(filters)=>{
-    return async (dispatch,getState) => {
-        async function getData() {
-            var queryString = ''
-            if (filters.productCount)
-                queryString += '&productCount=' + filters.productCount
-            if (filters.pageNumber)
-                queryString += '&pageNumber=' + filters.pageNumber
-            if (filters.sortBy)
-                queryString += '&sortBy=' + filters.sortBy
-            if (filters.sortOrder)
-                queryString += '&sortOrder=' + filters.sortOrder
-            if (filters.brands)
-                queryString += '&brands=' + filters.brands.join(',')
-            if (filters.categories)
-                queryString += '&categories=' + filters.categories.join(',')
-            if (filters.individualCategories)
-                queryString += '&individualCategories=' + filters.individualCategories.join(',')
-            if (filters.priceRanges)
-                queryString += '&priceRanges=' + filters.priceRanges.join(',')
-            queryString = '?' + queryString.slice(1)
-
-            await fetch('/products' + queryString)
+export const saveProduct = (form,history) => {
+    return async (dispatch) => {
+        async function postData() {
+            await fetch('products'
+                , {
+                    method: 'POST',
+                    body: JSON.stringify(form),
+                    headers: {
+                        'Content-Type': 'application/json;'
+                    }
+                }
+            )
             .then(result => {
                 if (!result.ok) throw result;
                 return result.json();
             })
             .then(response => {
-                dispatch(productActions.update(response.data))
-                dispatch(productActions.updateFilters(response.data.filters))
-                dispatch(productActions.updateTotalPages(response.data.totalPages))
-                dispatch(sortBrands())
-                dispatch(sortCategories())
-                dispatch(sortIndividualCategories())
+                dispatch(statusActions.add(response))
+                setTimeout(() => {
+                    history.push('/products')
+                }, 3000)
             })
-                .catch(error => {
-                    dispatch(productActions.clear())
-                console.log(error)
+            .catch(error => {
+                dispatch(statusActions.add(error))
             })
         }
 
-        getData();
+        postData();
     }
 }
-
 
 
 

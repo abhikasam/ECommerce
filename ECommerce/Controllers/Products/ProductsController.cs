@@ -100,45 +100,97 @@ namespace ECommerce.Controllers.Products
         }
 
         [HttpPost]
-        public async Task<JsonResult> Post([FromBody]object obj)
+        public async Task<JsonResult> Post([FromBody] object obj)
         {
             var message = new ResponseMessage();
             try
             {
                 var product = JsonConvert.DeserializeObject<Product>(obj.ToString());
-
-                if(!ModelState.IsValid)
+                if (product.ProductId == 0)
                 {
-                    message.Message = string.Join("; ", ModelState.Values
-                                            .SelectMany(x => x.Errors)
-                                            .Select(x => x.ErrorMessage));
-                    message.StatusCode = ResponseStatus.ERROR;
-                    return new JsonResult(message);
+                    if (!ModelState.IsValid)
+                    {
+                        message.Message = string.Join("; ", ModelState.Values
+                                                .SelectMany(x => x.Errors)
+                                                .Select(x => x.ErrorMessage));
+                        message.StatusCode = ResponseStatus.ERROR;
+                        return new JsonResult(message);
+                    }
+                    else
+                    {
+                        product.Quantity = product.ProductQuantities.Sum(x => x.Quantity);
+                        product.Available = product.Quantity;
+
+                        product.FinalPrice = product.FinalPrice ?? product.OriginalPrice;
+
+                        await ecommerceContext.Products.AddAsync(product);
+                        await ecommerceContext.SaveChangesAsync();
+
+                        message.Message = "Product added successfully." + Environment.NewLine + "You will be redirected to Products Page.";
+                        message.StatusCode = ResponseStatus.SUCCESS;
+                    }
                 }
                 else
                 {
-                    product.Quantity=product.ProductQuantities.Sum(x => x.Quantity);
-                    product.Available = product.Quantity;
+                    var dbProduct = await ecommerceContext.Products
+                        .Include(i => i.ProductQuantities).ThenInclude(i => i.Size)
+                .FirstOrDefaultAsync(x => x.ProductId == product.ProductId);
 
-                    product.FinalPrice = product.FinalPrice ?? product.OriginalPrice;
+                    if (dbProduct == null)
+                    {
+                        ModelState.AddModelError("", "Product not found.");
+                    }
 
-                    await ecommerceContext.Products.AddAsync(product);
-                    await ecommerceContext.SaveChangesAsync();
+                    if (!ModelState.IsValid)
+                    {
+                        message.Message = string.Join("; ", ModelState.Values
+                                                .SelectMany(x => x.Errors)
+                                                .Select(x => x.ErrorMessage));
+                        message.StatusCode = ResponseStatus.ERROR;
+                        return new JsonResult(message);
+                    }
+                    else
+                    {
+                        dbProduct.BrandId = product.BrandId;
+                        dbProduct.CategoryId = product.CategoryId;
+                        dbProduct.IndividualCategoryId = product.IndividualCategoryId;
+                        dbProduct.Description = product.Description;
+                        dbProduct.OriginalPrice = product.OriginalPrice;
+                        dbProduct.FinalPrice = product.FinalPrice;
+                        dbProduct.Photo = product.Photo;
 
-                    message.Message = "Product added successfully." + Environment.NewLine + "You will be redirected to Products Page.";
-                    message.StatusCode = ResponseStatus.SUCCESS;
+                        var existingProductSizes = dbProduct.ProductQuantities.Select(i => i.SizeId).ToList();
+                        foreach (var productQuantity in product.ProductQuantities)
+                        {
+                            if (existingProductSizes.Contains(productQuantity.SizeId))
+                            {
+                                var dbProductQuantity = dbProduct.ProductQuantities.FirstOrDefault(x => x.SizeId == productQuantity.SizeId);
+                                dbProductQuantity.Quantity = productQuantity.Quantity;
+                            }
+                            else
+                            {
+                                dbProduct.ProductQuantities.Add(productQuantity);
+                            }
+                        }
+
+                        dbProduct.Quantity = product.ProductQuantities.Sum(x => x.Quantity);
+                        dbProduct.Available = product.Quantity;
+
+                        //dbProduct.FinalPrice = product.FinalPrice ?? product.OriginalPrice;
+
+                        await ecommerceContext.SaveChangesAsync();
+
+                        message.Message = "Product added successfully." + Environment.NewLine + "You will be redirected to Products Page.";
+                        message.StatusCode = ResponseStatus.SUCCESS;
+                    }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 message.Message = ex.Message;
                 message.StatusCode = ResponseStatus.EXCEPTION;
             }
             return new JsonResult(message);
         }
-
-
-
-
     }
 }
