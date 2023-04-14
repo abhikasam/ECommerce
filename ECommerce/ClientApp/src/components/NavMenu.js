@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { authActions } from '../store/auth-slice';
 import { format } from '../shared/timeext';
 import { useEffect } from 'react';
+import { logoutUser } from '../store/auth-actions';
 
 export default function NavMenu() {
 
@@ -42,17 +43,7 @@ export default function NavMenu() {
     }
 
     async function logoutHandler() {
-
-        await fetch('logout'
-            , {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json;'
-                }
-            }
-        )
-
-        dispatch(authActions.logout());
+        dispatch(logoutUser())
     }
 
     return (

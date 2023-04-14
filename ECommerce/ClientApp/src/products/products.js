@@ -7,33 +7,49 @@ import Pagination from "../shared/pagination";
 import { productActions } from "../store/product-slice";
 import ProductFilters from "./product-filters";
 import { updateFavourites } from "../store/favourite-actions";
+import { useState } from "react";
 
 
 export default function Products() {
 
     const dispatch = useDispatch()
-    const { products, totalPages, pageNumber } = useSelector(state => state.product)
+    const { products, totalPages, filters: productFilters } = useSelector(state => state.product)
+    const { pageNumber } = productFilters
+
+    const [filters, setFilters] = useState(productFilters)
 
     useEffect(() => {
         dispatch(updateFavourites())
     }, [dispatch])
 
     useEffect(() => {
-        dispatch(getProducts())
-    }, [dispatch,pageNumber])
+        if (!products) {
+            dispatch(getProducts(filters))
+        }
+    }, [dispatch, products])
+
+    useEffect(() => {
+        dispatch(getProducts(filters))
+    }, [dispatch, filters])
 
     function updatePageFilters(filters) {
-        dispatch(getProducts(filters))
+        setFilters(filters)
     }
 
     function loadPage(page) {
-        dispatch(productActions.updatePageNumber(page))
+        setFilters(prev => {
+            return {
+                ...prev,
+                pageNumber: page
+            }
+        })        
     }
 
     return (
         <div className="row">
             <div className="col-2">
                 <ProductFilters
+                    initialFilters={filters}
                     onUpdate={updatePageFilters}
                 ></ProductFilters>
             </div>

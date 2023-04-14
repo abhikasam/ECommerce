@@ -17,12 +17,12 @@ namespace ECommerce.Models
             {
                 switch(StatusCode)
                 {
+                    case ResponseStatus.UNKNOWN:
                     case ResponseStatus.SUCCESS:
                         return "text-success";
                     case ResponseStatus.ERROR:
                     case ResponseStatus.EXCEPTION:
                     case ResponseStatus.WARNING:
-                    case ResponseStatus.UNKNOWN:
                         return "text-danger";
                 }
 
@@ -36,12 +36,12 @@ namespace ECommerce.Models
             {
                 switch (StatusCode)
                 {
+                    case ResponseStatus.UNKNOWN:
                     case ResponseStatus.SUCCESS:
                         return "alert-success";
                     case ResponseStatus.ERROR:
                     case ResponseStatus.EXCEPTION:
                     case ResponseStatus.WARNING:
-                    case ResponseStatus.UNKNOWN:
                         return "alert-danger";
                 }
 

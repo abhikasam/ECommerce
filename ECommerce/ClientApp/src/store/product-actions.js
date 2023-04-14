@@ -7,28 +7,26 @@ import { statusActions } from "./status-slice";
 
 
 
-export const getProducts=()=>{
+export const getProducts=(filters)=>{
     return async (dispatch,getState) => {
         async function getData() {
-            var product = getState().product
             var queryString = ''
-            console.log(product)
-            if (product.filters.productCount)
-                queryString += '&productCount=' + product.filters.productCount
-            if (product.pageNumber)
-                queryString += '&pageNumber=' + product.pageNumber
-            if (product.filters.sortBy)
-                queryString += '&sortBy=' + product.filters.sortBy
-            if (product.filters.sortOrder)
-                queryString += '&sortOrder=' + product.filters.sortOrder
-            if (product.filters.brands)
-                queryString += '&brands=' + product.filters.brands.join(',')
-            if (product.filters.categories)
-                queryString += '&categories=' + product.filters.categories.join(',')
-            if (product.filters.individualCategories)
-                queryString += '&individualCategories=' + product.filters.individualCategories.join(',')
-            if (product.filters.priceRanges)
-                queryString += '&priceRanges=' + product.filters.priceRanges.join(',')
+            if (filters.productCount)
+                queryString += '&productCount=' + filters.productCount
+            if (filters.pageNumber)
+                queryString += '&pageNumber=' + filters.pageNumber
+            if (filters.sortBy)
+                queryString += '&sortBy=' + filters.sortBy
+            if (filters.sortOrder)
+                queryString += '&sortOrder=' + filters.sortOrder
+            if (filters.brands)
+                queryString += '&brands=' + filters.brands.join(',')
+            if (filters.categories)
+                queryString += '&categories=' + filters.categories.join(',')
+            if (filters.individualCategories)
+                queryString += '&individualCategories=' + filters.individualCategories.join(',')
+            if (filters.priceRanges)
+                queryString += '&priceRanges=' + filters.priceRanges.join(',')
             queryString = '?' + queryString.slice(1)
 
             await fetch('/products' + queryString)
@@ -38,14 +36,14 @@ export const getProducts=()=>{
             })
             .then(response => {
                 dispatch(productActions.update(response.data))
-                dispatch(productActions.updatePageNumber(response.data.pageNumber))
+                dispatch(productActions.updateFilters(response.data.filters))
                 dispatch(productActions.updateTotalPages(response.data.totalPages))
                 dispatch(sortBrands())
                 dispatch(sortCategories())
                 dispatch(sortIndividualCategories())
             })
                 .catch(error => {
-                    dispatch(productActions.update([{ result: {}, pageNumber: 1, totalPages: 1, filters: {} }]))
+                    dispatch(productActions.clear())
                 console.log(error)
             })
         }

@@ -36,11 +36,7 @@ export const setUser = (data) => {
             dispatch(authActions.login(data))
 
             setTimeout(function () {
-                dispatch(authActions.logout())
-                dispatch(brandActions.clear())
-                dispatch(categoryActions.clear())
-                dispatch(individualCategoryActions.clear())
-                dispatch(productActions.clear())
+                dispatch(logoutUser())
             }, data.expiresIn * 1000);
         }
 
@@ -78,6 +74,27 @@ export const loginUser = (formData) => {
         login();
     }
 }
+
+export const logoutUser = () => {
+    return async (dispatch) => {
+
+        dispatch(authActions.logout())
+        dispatch(brandActions.clear())
+        dispatch(categoryActions.clear())
+        dispatch(individualCategoryActions.clear())
+        dispatch(productActions.clear())
+
+        await fetch('logout'
+            , {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json;'
+                }
+            }
+        )
+    }
+}
+
 
 
 

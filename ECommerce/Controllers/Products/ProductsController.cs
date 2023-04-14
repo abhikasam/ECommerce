@@ -65,10 +65,10 @@ namespace ECommerce.Controllers.Products
                     PageNumber=pageNumber.Value,
                     SortBy=sortBy,
                     SortOrder=sortOrder,
-                    BrandIds= Utilities.GetArray(brands,","),
-                    CategoryIds=Utilities.GetArray(categories,","),
-                    IndividualCategoryIds=Utilities.GetArray(individualCategories,","),
-                    PriceRange=priceRangeFilters
+                    Brands= Utilities.GetArray(brands,","),
+                    Categories=Utilities.GetArray(categories,","),
+                    IndividualCategories=Utilities.GetArray(individualCategories,","),
+                    PriceRanges=priceRangeFilters
                 };
 
                 var products = ecommerceContext.Products
@@ -88,7 +88,6 @@ namespace ECommerce.Controllers.Products
                 {
                     Result=productDtos.PaginateData(filters.PageNumber,filters.ProductCount),
                     TotalPages=totalPages,
-                    PageNumber=filters.PageNumber,
                     Filters=filters
                 };
             }

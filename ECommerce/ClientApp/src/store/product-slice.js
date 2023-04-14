@@ -3,12 +3,12 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialValue = {
     products: [],
-    pageNumber: 1,
     totalPages: '',
     filters: {
         productCount: '',
-        sortBy: null,
-        sortOrder: null,
+        pageNumber:1,
+        sortBy: '',
+        sortOrder: '',
         brands: [],
         categories: [],
         priceRanges:[],
@@ -27,7 +27,7 @@ const productSlice = createSlice({
             state.totalPages = action.payload
         },
         updatePageNumber(state, action) {
-            state.pageNumber = action.payload
+            state.filters.pageNumber = action.payload
         },
         updateBrands(state, action) {
             state.filters.brands = action.payload
@@ -50,11 +50,13 @@ const productSlice = createSlice({
         updateSortOrder(state, action) {
             state.filters.sortOrder = action.payload
         },
-        clar(state) {
-            state.products = []
-            state.filters = {}
-            state.pageNumber = 1
-            state.totalPages=''
+        updateFilters(state, action) {
+            state.filters = action.payload
+        },
+        clear(state) {
+            state.products = initialValue.products
+            state.filters = initialValue.filters
+            state.totalPages = initialValue.totalPages
         }
     }
 })

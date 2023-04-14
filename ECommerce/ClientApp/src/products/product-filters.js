@@ -10,7 +10,7 @@ import { useHistory } from "react-router-dom"
 import { individualCategoryActions } from "../store/individual-category-slice"
 
 
-export default function ProductFilters(props) {
+export default function ProductFilters({ initialFilters,onUpdate }) {
     
     const dispatch = useDispatch()
     const history = useHistory()
@@ -20,7 +20,7 @@ export default function ProductFilters(props) {
     const { categories } = useSelector(state => state.category)
     const { individualCategories } = useSelector(state => state.individualCategory)
 
-    const { filters } = useSelector(state => state.product)
+    const [filters, setFilters] = useState(initialFilters)
 
     useEffect(() => {
         dispatch(getBrands())
@@ -29,33 +29,105 @@ export default function ProductFilters(props) {
     }, [dispatch])
 
     function productCountChangeHandler(event) {
-        dispatch(productActions.updateProductCount(event.target.value))
-        dispatch(productActions.updatePageNumber(1))
+        setFilters(prev => {
+            return {
+                ...prev,
+                productCount: event.target.value,
+                pageNumber:1
+            }
+        })
     }
 
-    function priceRangesUpdateHandler(brands) {
-        dispatch(productActions.updatePriceRanges(brands))
-        dispatch(productActions.updatePageNumber(1))
+    function priceRangesUpdateHandler(priceRange) {
+        setFilters(prev => {
+            let currentPriceRanges = prev.priceRanges;
+            if (currentPriceRanges.includes(priceRange)) {
+                currentPriceRanges = currentPriceRanges.filter(id => id !== priceRange)
+            }
+            else {
+                currentPriceRanges = [...currentPriceRanges, priceRange]
+            }
+
+            return {
+                ...prev,
+                priceRanges: currentPriceRanges,
+                pageNumber: 1
+            }
+        })
     }
 
-    function brandsUpdateHandler(priceRanges) {
-        dispatch(productActions.updatePriceRanges(priceRanges))
-        dispatch(productActions.updatePageNumber(1))
+    function brandsUpdateHandler(brand) {
+        setFilters(prev => {
+            let currentBrands = prev.brands;
+            if (currentBrands.includes(brand)) {
+                currentBrands = currentBrands.filter(id => id !== brand)
+            }
+            else {
+                currentBrands = [...currentBrands,brand]
+            }
+            return {
+                ...prev,
+                brands: currentBrands,
+                pageNumber: 1
+            }
+        })
     }
 
-    function individualCategoryUpdateHandler(individualCategories) {
-        dispatch(productActions.updateIndividualCategories(individualCategories))
-        dispatch(productActions.updatePageNumber(1))
+    function individualCategoryUpdateHandler(individualCategory) {
+        setFilters(prev => {
+            let currentIndividualCategories = prev.individualCategories;
+            if (currentIndividualCategories.includes(individualCategory)) {
+                currentIndividualCategories = currentIndividualCategories.filter(id => id !== individualCategory)
+            }
+            else {
+                currentIndividualCategories = [...currentIndividualCategories, individualCategory]
+            }
+            return {
+                ...prev,
+                individualCategories: currentIndividualCategories,
+                pageNumber: 1
+            }
+        })
     }
 
-    function categoryUpdateHandler(categories) {
-        dispatch(productActions.updateCategories(categories))
-        dispatch(productActions.updatePageNumber(1))
+    function categoryUpdateHandler(category) {
+        setFilters(prev => {
+            let currentCategories = prev.categories;
+            if (currentCategories.includes(category)) {
+                currentCategories = currentCategories.filter(id => id !== category)
+            }
+            else {
+                currentCategories = [...currentCategories, category]
+            }
+            return {
+                ...prev,
+                categories: currentCategories,
+                pageNumber: 1
+            }
+        })
+    }
+
+    function sortByChangeHandler(sortBy) {
+        setFilters(prev => {
+            return {
+                ...prev,
+                sortBy
+            }
+        })
+    }
+
+    function sortOrderChangeHandler(sortOrder) {
+        setFilters(prev => {
+            return {
+                ...prev,
+                sortOrder
+            }
+        })
     }
 
     return (
         <div className="filters">
-            <input type="button" className="btn btn-primary m-2" onClick={() => { props.onUpdate() }} value="Update" />
+            <input type="button" className="btn btn-primary m-2" onClick={() => onUpdate(filters)} value="Update" />
             {isAuthenticated && user.isAdmin && 
                 <input type="button"
                     onClick={() => history.push('/product-edit')}
@@ -70,8 +142,8 @@ export default function ProductFilters(props) {
                 </div>
                 <div className="col-4">
                     <select className="form-control"
-                        value={filters.productCount??''}
-                        onChange={(event) => productCountChangeHandler(event)}>
+                        value={filters.productCount}
+                        onChange={productCountChangeHandler}>
                         <option value="50">50</option>
                         <option value="100">100</option>
                         <option value="200">200</option>
@@ -87,8 +159,8 @@ export default function ProductFilters(props) {
                 </div>
                 <div className="col-4">
                     <select className="form-control"
-                        value={filters.sortBy??''}
-                        onChange={(event) => dispatch(productActions.updateSortBy(event.target.value))}>
+                        value={filters.sortBy}
+                        onChange={sortByChangeHandler}>
                         <option value="Description">Name</option>
                         <option value="Brand">Brand</option>
                         <option value="Category">Category</option>
@@ -106,8 +178,8 @@ export default function ProductFilters(props) {
                 </div>
                 <div className="col-4">
                     <select className="form-control"
-                        value={filters.sortOrder??''}
-                        onChange={(event) => dispatch(productActions.updateSortOrder(event.target.value))}>
+                        value={filters.sortOrder}
+                        onChange={sortOrderChangeHandler}>
                         <option value="asc">Asc</option>
                         <option value="desc">Desc</option>
                     </select>
@@ -123,6 +195,7 @@ export default function ProductFilters(props) {
                     collapseId="collapseBrands"
                     component={<ListSelect
                         items={brands}
+                        type="brand"
                         selected={filters.brands}
                         updateItems={brandsUpdateHandler}
                     />}></CollapseElement>
@@ -135,6 +208,7 @@ export default function ProductFilters(props) {
                     collapseId="collapseCategories"
                     component={<ListSelect
                         items={categories}
+                        type="category"
                         selected={filters.categories}
                         updateItems={categoryUpdateHandler}
                     />}></CollapseElement>
@@ -147,6 +221,7 @@ export default function ProductFilters(props) {
                     collapseId="collapseIndividualCategories"
                     component={<ListSelect
                         items={individualCategories}
+                        type="individualCategory"
                         selected={filters.individualCategories}
                         updateItems={individualCategoryUpdateHandler}
                     />}></CollapseElement>
@@ -166,6 +241,7 @@ export default function ProductFilters(props) {
                             { key: '10000-15000', value: '10000-15000' },
                             { key: '15000-50000', value: 'above 15000' }
                         ]}
+                        type="priceRange"
                         selected={filters.priceRanges}
                         updateItems={priceRangesUpdateHandler}
                     />}></CollapseElement>
