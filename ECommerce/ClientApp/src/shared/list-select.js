@@ -3,23 +3,9 @@ import { Fragment, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import classes from './list-select.module.css';
 
-export default function ListSelect({ items, selected, updateItems }) {
+export default function ListSelect({ items,type, selected, updateItems }) {
 
     const [search, setSearch] = useState('')
-    const [selectedItems,setSelectedItems]=useState([])
-
-    useEffect(() => {
-        updateItems(selectedItems)
-    }, [selectedItems])
-
-    function update(key) {
-        if (selectedItems.includes(key)) {
-            setSelectedItems(prev=> prev.filter(id => id !== key))
-        }
-        else {
-            setSelectedItems(prev=>[...prev, key])
-        }
-    }
 
     return (
         <div className="multiple-selector">
@@ -29,9 +15,10 @@ export default function ListSelect({ items, selected, updateItems }) {
                     return (
                         <ListSelectItem key={item.key}
                             item={item}
+                            type={type}
                             search={search}
-                            selected={selectedItems}
-                            updateItems={()=>update(item.key)}
+                            selected={selected.includes(item.key)}
+                            updateItems={() => updateItems(item.key)}
                         ></ListSelectItem>
                     )
                 })}
@@ -41,14 +28,20 @@ export default function ListSelect({ items, selected, updateItems }) {
 }
 
 
-export const ListSelectItem = ({ item, search,updateItems }) => {
+export const ListSelectItem = ({ item, type, search, selected, updateItems }) => {
+
+    useEffect(() => {
+        if (selected) {
+            document.getElementById(type+"-" + item.key).checked = true
+        }
+    },[selected,type,item.key])
 
     return (
         <li className={"list-group-item " + classes.li}
             style={{ display: (item.value.toLowerCase().includes(search) ? "block" : "none") }} >
-            <input className="form-check-input me-1"
+            <input className="form-check-input me-1" 
                 type="checkbox" value={item.key}
-                id={item.key}
+                id={type + "-" + item.key}
                 onChange={updateItems} />
             <label className={"form-check-label " + classes.label} htmlFor={item.key}>{item.value}</label>
         </li>

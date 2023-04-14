@@ -16,11 +16,17 @@ export default function Products() {
     const { products, totalPages, filters: productFilters } = useSelector(state => state.product)
     const { pageNumber } = productFilters
 
-    const [filters, setFilters] = useState({})
+    const [filters, setFilters] = useState(productFilters)
 
     useEffect(() => {
         dispatch(updateFavourites())
     }, [dispatch])
+
+    useEffect(() => {
+        if (!products) {
+            dispatch(getProducts(filters))
+        }
+    }, [dispatch, products])
 
     useEffect(() => {
         dispatch(getProducts(filters))
@@ -43,6 +49,7 @@ export default function Products() {
         <div className="row">
             <div className="col-2">
                 <ProductFilters
+                    initialFilters={filters}
                     onUpdate={updatePageFilters}
                 ></ProductFilters>
             </div>

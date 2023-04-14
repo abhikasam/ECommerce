@@ -10,7 +10,7 @@ import { useHistory } from "react-router-dom"
 import { individualCategoryActions } from "../store/individual-category-slice"
 
 
-export default function ProductFilters({ onUpdate }) {
+export default function ProductFilters({ initialFilters,onUpdate }) {
     
     const dispatch = useDispatch()
     const history = useHistory()
@@ -19,17 +19,8 @@ export default function ProductFilters({ onUpdate }) {
     const { brands } = useSelector(state => state.brand)
     const { categories } = useSelector(state => state.category)
     const { individualCategories } = useSelector(state => state.individualCategory)
-    
-    const [filters, setFilters] = useState({
-        productCount: '',
-        pageNumber: 1,
-        sortBy: null,
-        sortOrder: null,
-        brands: [],
-        categories: [],
-        priceRanges: [],
-        individualCategories: []
-    })
+
+    const [filters, setFilters] = useState(initialFilters)
 
     useEffect(() => {
         dispatch(getBrands())
@@ -47,41 +38,70 @@ export default function ProductFilters({ onUpdate }) {
         })
     }
 
-    function priceRangesUpdateHandler(priceRanges) {
+    function priceRangesUpdateHandler(priceRange) {
         setFilters(prev => {
+            let currentPriceRanges = prev.priceRanges;
+            if (currentPriceRanges.includes(priceRange)) {
+                currentPriceRanges = currentPriceRanges.filter(id => id !== priceRange)
+            }
+            else {
+                currentPriceRanges = [...currentPriceRanges, priceRange]
+            }
+
             return {
                 ...prev,
-                priceRanges,
+                priceRanges: currentPriceRanges,
                 pageNumber: 1
             }
         })
     }
 
-    function brandsUpdateHandler(brands) {
+    function brandsUpdateHandler(brand) {
         setFilters(prev => {
+            let currentBrands = prev.brands;
+            if (currentBrands.includes(brand)) {
+                currentBrands = currentBrands.filter(id => id !== brand)
+            }
+            else {
+                currentBrands = [...currentBrands,brand]
+            }
             return {
                 ...prev,
-                brands,
+                brands: currentBrands,
                 pageNumber: 1
             }
         })
     }
 
-    function individualCategoryUpdateHandler(individualCategories) {
+    function individualCategoryUpdateHandler(individualCategory) {
         setFilters(prev => {
+            let currentIndividualCategories = prev.individualCategories;
+            if (currentIndividualCategories.includes(individualCategory)) {
+                currentIndividualCategories = currentIndividualCategories.filter(id => id !== individualCategory)
+            }
+            else {
+                currentIndividualCategories = [...currentIndividualCategories, individualCategory]
+            }
             return {
                 ...prev,
-                individualCategories,
+                individualCategories: currentIndividualCategories,
                 pageNumber: 1
             }
         })
     }
 
-    function categoryUpdateHandler(categories) {
+    function categoryUpdateHandler(category) {
         setFilters(prev => {
+            let currentCategories = prev.categories;
+            if (currentCategories.includes(category)) {
+                currentCategories = currentCategories.filter(id => id !== category)
+            }
+            else {
+                currentCategories = [...currentCategories, category]
+            }
             return {
                 ...prev,
-                categories,
+                categories: currentCategories,
                 pageNumber: 1
             }
         })
@@ -175,6 +195,7 @@ export default function ProductFilters({ onUpdate }) {
                     collapseId="collapseBrands"
                     component={<ListSelect
                         items={brands}
+                        type="brand"
                         selected={filters.brands}
                         updateItems={brandsUpdateHandler}
                     />}></CollapseElement>
@@ -187,6 +208,7 @@ export default function ProductFilters({ onUpdate }) {
                     collapseId="collapseCategories"
                     component={<ListSelect
                         items={categories}
+                        type="category"
                         selected={filters.categories}
                         updateItems={categoryUpdateHandler}
                     />}></CollapseElement>
@@ -199,6 +221,7 @@ export default function ProductFilters({ onUpdate }) {
                     collapseId="collapseIndividualCategories"
                     component={<ListSelect
                         items={individualCategories}
+                        type="individualCategory"
                         selected={filters.individualCategories}
                         updateItems={individualCategoryUpdateHandler}
                     />}></CollapseElement>
@@ -218,6 +241,7 @@ export default function ProductFilters({ onUpdate }) {
                             { key: '10000-15000', value: '10000-15000' },
                             { key: '15000-50000', value: 'above 15000' }
                         ]}
+                        type="priceRange"
                         selected={filters.priceRanges}
                         updateItems={priceRangesUpdateHandler}
                     />}></CollapseElement>

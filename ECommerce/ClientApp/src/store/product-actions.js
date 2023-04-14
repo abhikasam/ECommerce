@@ -35,16 +35,15 @@ export const getProducts=(filters)=>{
                 return result.json();
             })
             .then(response => {
-                console.log(response)
                 dispatch(productActions.update(response.data))
-                dispatch(productActions.updatePageNumber(response.data.filters.pageNumber))
+                dispatch(productActions.updateFilters(response.data.filters))
                 dispatch(productActions.updateTotalPages(response.data.totalPages))
                 dispatch(sortBrands())
                 dispatch(sortCategories())
                 dispatch(sortIndividualCategories())
             })
                 .catch(error => {
-                    dispatch(productActions.update([{ result: {}, totalPages: 1, filters: { pageNumber:1 } }]))
+                    dispatch(productActions.clear())
                 console.log(error)
             })
         }
