@@ -7,6 +7,7 @@ namespace ECommerce.Models.Ecommerce
     {
         public Product()
         {
+            Carts = new HashSet<Cart>();
             ProductQuantities = new HashSet<ProductQuantity>();
         }
 
@@ -27,6 +28,7 @@ namespace ECommerce.Models.Ecommerce
         public virtual Brand Brand { get; set; }
         public virtual Category Category { get; set; }
         public virtual IndividualCategory IndividualCategory { get; set; }
+        public virtual ICollection<Cart> Carts { get; set; }
         public virtual ICollection<ProductQuantity> ProductQuantities { get; set; }
     }
 }

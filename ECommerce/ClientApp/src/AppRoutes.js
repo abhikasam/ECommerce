@@ -1,3 +1,4 @@
+
 import { Route, Switch } from "react-router-dom";
 import Register from "./auth/register/register";
 import { Counter } from "./components/Counter";
@@ -10,6 +11,7 @@ import Products from "./products/products";
 import Favourites from "./products/favourites";
 import ProductDetails from "./products/product-details";
 import EditProduct from "./products/product-edit";
+import Cart from "./products/cart";
 
 function AppRoutes() {
 
@@ -28,6 +30,7 @@ function AppRoutes() {
                     {isAuthenticated && <Route path='/product-details' component={ProductDetails} />}
                     {isAuthenticated && !user.isAdmin && <Route path='/favourites' component={Favourites} />}
                     {isAuthenticated && user.isAdmin && <Route path='/product-edit' component={EditProduct} />}
+                    {isAuthenticated && !user.isAdmin && <Route path="/cart" component={Cart} />}
                     <Route component={NotFound} />
                 </Switch>
             )} />

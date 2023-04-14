@@ -16,6 +16,7 @@ const context =  [
     "/favourites",
     "/categorymappings",
     "/sizemappings",
+    "/cart",
 ];
 
 module.exports = function(app) {

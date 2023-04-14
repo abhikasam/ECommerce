@@ -4,14 +4,16 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import { useHistory } from "react-router-dom"
 import { addFavourite, removeFavourite, updateFourites } from '../store/favourite-actions';
+import { addToCart, removeFromCart } from '../store/cart-actions';
 
 
 export default function ProductCard({ product }) {
 
     const dispatch = useDispatch()
-    const history=useHistory()
+    const history = useHistory()
     const { user } = useSelector(state => state.auth)
-    const { products:favourites } = useSelector(state => state.favourite)
+    const { products: favourites } = useSelector(state => state.favourite)
+    const {products: cartProducts} =useSelector(state=>state.cart)
 
     function getDiscountColor() {
         if (product.discount >= 50)
@@ -60,24 +62,34 @@ export default function ProductCard({ product }) {
                 </div>
             </div>
             <div className={classes.actions}>
-                <div className={"row "+classes.icons }>
-                    <div className="col-4 text-center">
-                        <i className={"fa fa-shopping-cart "+classes.icon} aria-hidden="true"></i>
-                    </div>
-                    <div className="col-4 text-center">
-                        <i className={"fa fa-external-link " + classes.icon}
-                            onClick={openProductDetails} aria-hidden="true"></i>
-                    </div>
-                    <div className="col-4 text-center">
-                        {
-                            user.isAdmin &&
-                            <>
-                                <i className={"fa fa-bar-chart " + classes.icon} aria-hidden="true"></i>
-                            </>
-                        }
-                        {
-                            !user.isAdmin &&
-                            <>
+                <div className={"row align-items-center "+classes.icons }>
+                    {
+                        !user.isAdmin && 
+                        <>
+                            {cartProducts.map(i => i.productId).includes(product.productId) && 
+                                <div className="col-4 text-center">
+                                    <i className={"fa fa-shopping-cart " + classes.icon}
+                                        style={{color:'blue'}}
+                                        onClick={() => { dispatch(removeFromCart(product.productId)) }}
+                                        aria-hidden="true"></i>
+                                </div>
+                            }
+
+                            {!cartProducts.map(i => i.productId).includes(product.productId) &&
+                                <div className="col-4 text-center">
+                                    <i className={"fa fa-shopping-cart " + classes.icon}
+                                        style={{ color: 'gray' }}
+                                        onClick={() => { dispatch(addToCart(product.productId)) }}
+                                        aria-hidden="true"></i>
+                                </div>                              
+                            }
+
+                            <div className="col-4 text-center">
+                                <i className={"fa fa-external-link " + classes.icon}
+                                    onClick={openProductDetails} aria-hidden="true"></i>
+                            </div>
+
+                            <div className="col-4 text-center">
                                 {!favourites.map(i => i.productId).includes(product.productId) &&
                                     <i className={"fa fa-heart-o " + classes.icon}
                                         onClick={(event) => dispatch(addFavourite(product.productId))}
@@ -89,10 +101,27 @@ export default function ProductCard({ product }) {
                                         onClick={(event) => dispatch(removeFavourite(product.productId))}
                                         aria-hidden="true"></i>
                                 }
-                            </>
-                        }
+                            </div>
+                        </>
 
-                    </div>
+                    }
+
+                    {
+                        user.isAdmin &&
+                        <>
+                            <div className="col-4 text-center">
+                                <i className={"fa fa-bar-chart " + classes.icon} aria-hidden="true"></i>
+                            </div>
+                            <div className="col-4 text-center">
+                                <i className={"fa fa-external-link " + classes.icon}
+                                    onClick={openProductDetails} aria-hidden="true"></i>
+                            </div>
+                            <div className="col-4 text-center">
+                                <i className={"fa fa-gratipay " + classes.icon}
+                                    aria-hidden="true"></i>
+                            </div>
+                        </>
+                    }
                 </div>
             </div>
         </div>

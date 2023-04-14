@@ -8,6 +8,7 @@ import individualCategoryReducer from './individual-category-slice';
 import favouriteReducer from './favourite-slice';
 import categoryMappingReducer from './category-mapping-slice'
 import sizeMappingReducer from './size-mapping-slice'
+import cartReducer from './cart-slice';
 
 
 const store = configureStore({
@@ -20,7 +21,8 @@ const store = configureStore({
         individualCategory: individualCategoryReducer,
         favourite: favouriteReducer,
         categoryMapping: categoryMappingReducer,
-        sizeMapping: sizeMappingReducer
+        sizeMapping: sizeMappingReducer,
+        cart:cartReducer
     }
 })
 

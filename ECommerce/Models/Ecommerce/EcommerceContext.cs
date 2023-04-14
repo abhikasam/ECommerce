@@ -17,6 +17,7 @@ namespace ECommerce.Models.Ecommerce
         }
 
         public virtual DbSet<Brand> Brands { get; set; }
+        public virtual DbSet<Cart> Carts { get; set; }
         public virtual DbSet<Category> Categories { get; set; }
         public virtual DbSet<CategoryMapping> CategoryMappings { get; set; }
         public virtual DbSet<Favourite> Favourites { get; set; }
@@ -44,6 +45,26 @@ namespace ECommerce.Models.Ecommerce
                 entity.Property(e => e.BrandName)
                     .IsRequired()
                     .HasMaxLength(100);
+            });
+
+            modelBuilder.Entity<Cart>(entity =>
+            {
+                entity.HasKey(e => e.CartItemId)
+                    .HasName("PK_Cart_1");
+
+                entity.ToTable("Cart");
+
+                entity.Property(e => e.UpdatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.UserId)
+                    .IsRequired()
+                    .HasMaxLength(450);
+
+                entity.HasOne(d => d.Product)
+                    .WithMany(p => p.Carts)
+                    .HasForeignKey(d => d.ProductId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Cart_Product");
             });
 
             modelBuilder.Entity<Category>(entity =>

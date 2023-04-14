@@ -9,6 +9,7 @@ import { useState } from "react";
 import { statusActions } from "../store/status-slice";
 import { updateFilters } from "../store/product-actions";
 import { getFavouritesAsync } from "../store/favourite-slice";
+import { getCartAsync } from "../store/cart-slice";
 
 
 export default function Products() {
@@ -21,6 +22,7 @@ export default function Products() {
 
     useEffect(() => {
         dispatch(getFavouritesAsync())
+        dispatch(getCartAsync())
     }, [dispatch])
 
     useEffect(() => {

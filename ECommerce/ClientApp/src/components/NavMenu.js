@@ -13,16 +13,16 @@ export default function NavMenu() {
     const dispatch = useDispatch();
     const location = useLocation();
 
-    const { isAuthenticated, expiresIn,user } = useSelector(state => state.auth)
+    const { isAuthenticated, expiresIn, user } = useSelector(state => state.auth)
     const [counter, setCounter] = useState(expiresIn);
-    
+
     useEffect(() => {
         setCounter(expiresIn)
     }, [expiresIn]);
 
     useEffect(() => {
         let timer;
-        
+
         if (counter > 0) {
             timer = setTimeout(() => {
                 setCounter(c => c - 1)
@@ -59,7 +59,7 @@ export default function NavMenu() {
                     }
                     <ul className="navbar-nav flex-grow">
                         {
-                            isAuthenticated && 
+                            isAuthenticated &&
                             <NavLink tag={Link} className="text-dark" to="/products">Products</NavLink>
                         }
 
@@ -68,6 +68,12 @@ export default function NavMenu() {
                             <NavLink tag={Link} className="text-dark" to="/favourites">Favourites</NavLink>
                         }
 
+                        {
+                            isAuthenticated && !user.isAdmin &&
+                            <NavItem>
+                                <NavLink tag={Link} className="text-dark" to="/cart">Cart</NavLink>
+                            </NavItem>
+                        }
                         {isAuthenticated &&
                             <NavItem>
                                 <NavLink tag={Link} className="text-dark" to="/login" onClick={logoutHandler}>Logout</NavLink>
