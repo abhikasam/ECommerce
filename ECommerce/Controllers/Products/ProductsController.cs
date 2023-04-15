@@ -39,8 +39,9 @@ namespace ECommerce.Controllers.Products
         public JsonResult Get(
             int? productCount,
             int? pageNumber,
+            string search,
             string sortBy,
-            string sortOrder, 
+            string sortOrder,
             string brands=null,
             string categories=null,
             string priceRanges=null,
@@ -53,6 +54,8 @@ namespace ECommerce.Controllers.Products
                 pageNumber= pageNumber ?? this.filters.Value.PageNumber;
                 sortBy = sortBy ?? this.filters.Value.SortBy;
                 sortOrder = sortOrder ?? this.filters.Value.SortOrder;
+                search=search??string.Empty;
+
                 var priceRangeFilters = new string[] { };
                 if(!string.IsNullOrWhiteSpace(priceRanges))
                 {
@@ -65,6 +68,7 @@ namespace ECommerce.Controllers.Products
                     PageNumber=pageNumber.Value,
                     SortBy=sortBy,
                     SortOrder=sortOrder,
+                    Search=search,
                     Brands= Utilities.GetArray(brands,","),
                     Categories=Utilities.GetArray(categories,","),
                     IndividualCategories=Utilities.GetArray(individualCategories,","),

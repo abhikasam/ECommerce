@@ -8,6 +8,7 @@ const initialValue = {
     products: [],
     totalPages: '',
     filters: {
+        search:'',
         productCount: '',
         pageNumber:1,
         sortBy: '',
@@ -34,6 +35,8 @@ export const getProductsAsync = createAsyncThunk(
             queryString += '&productCount=' + filters.productCount
         if (filters.pageNumber)
             queryString += '&pageNumber=' + filters.pageNumber
+        if (filters.search)
+            queryString += '&search=' + filters.search
         if (filters.sortBy)
             queryString += '&sortBy=' + filters.sortBy
         if (filters.sortOrder)
@@ -87,6 +90,9 @@ const productSlice = createSlice({
         },
         updatePageNumber(state, action) {
             state.filters.pageNumber = action.payload
+        },
+        updateSearch(state, action) {
+            state.filters.search = action.payload
         },
         updateBrands(state, action) {
             state.filters.brands = action.payload

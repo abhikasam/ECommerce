@@ -54,9 +54,6 @@ const favouriteSlice = createSlice({
                 let index = state.products.findIndex(x => x.productId == action.payload.productId)
                 state.products[index] = action.payload
             }
-            else {
-                state.products.push(action.payload)
-            }
         },
         addProduct(state, action) {
             state.products = [...state.products, action.payload]

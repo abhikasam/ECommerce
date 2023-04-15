@@ -94,7 +94,14 @@ namespace ECommerce.Models.Ecommerce
             });
 
             if(filters != null)
-            {                
+            {
+                #region search
+                if(filters.Search.Length> 0)
+                {
+                    productDtos=productDtos.Where(i=>i.Description.ToLower().Contains(filters.Search.ToLower()));
+                }
+                #endregion
+
                 #region brand filter
                 if (filters.Brands.Count() > 0)
                 {

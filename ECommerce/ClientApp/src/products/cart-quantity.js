@@ -1,12 +1,15 @@
 ﻿
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ReactDom from 'react-dom';
 
 
 
 export default function CartQuantity({ product,updateCart }) {
 
-    const [quantity, setQuantity] = useState(product.isInCart?product.cartItem.quantity:0)
+    useEffect(() => { }, [product])
+
+    const intitialQantity = product.isInCart ? product.cartItem.quantity : 0
+    const [quantity, setQuantity] = useState(intitialQantity)
 
     return ReactDom.createPortal(
         <div className="modal" id={"cartCounter" + product.productId} tabIndex="-1">
@@ -66,7 +69,9 @@ export default function CartQuantity({ product,updateCart }) {
                         <button type="button"
                             className="btn btn-primary"
                             data-bs-dismiss="modal"
-                            onClick={() => updateCart(quantity)}
+                            onClick={() => {
+                                updateCart(quantity)
+                            }}
                         >Save</button>
                     </div>
                 </div>

@@ -15,10 +15,10 @@ import { getCartAsync } from "../store/cart-slice";
 export default function Products() {
 
     const dispatch = useDispatch()
-    const { products, totalPages, filters: productFilters,status } = useSelector(state => state.product)
+    const { products, totalPages, filters: productFilters, status } = useSelector(state => state.product)
     const { pageNumber } = productFilters
-
     const [filters, setFilters] = useState(productFilters)
+    const [search, setSearch] = useState(filters.search)
 
     useEffect(() => {
         dispatch(getFavouritesAsync())
@@ -40,39 +40,65 @@ export default function Products() {
                 ...prev,
                 pageNumber: page
             }
-        })        
+        })
+    }
+
+    function searchProducts() {
+        setFilters(prev => {
+            return {
+                ...prev,
+                search
+            }
+        })
     }
 
     return (
-        <div className="row">
-            <div className="col-2">
-                <ProductFilters
-                    initialFilters={filters}
-                    onUpdate={updatePageFilters}
-                ></ProductFilters>
-            </div>
-            <div className="col-10">
-                <div className="row">
-                    <Pagination pageNumber={pageNumber} totalPages={totalPages} setPage={loadPage} ></Pagination>
+        <>
+            <div className="row">
+                <div className="col-2">
+                    <ProductFilters
+                        initialFilters={filters}
+                        onUpdate={updatePageFilters}
+                    ></ProductFilters>
                 </div>
-                {status.isLoading &&
-                    <div className={"row rowpad5px align-items-center " + classes.alertbar} >
-                        <div className="col-8">
-                            <div className={status.alertClass + " alert"} style={{ whiteSpace: "pre-wrap" }}>
-                                <div className={status.textClass}>{status.message}</div>
+                <div className="col-10">
+                    <div className="row">
+                        <div className="col-6">
+                            <input type="search"
+                                className="form-control"
+                                value={search}
+                                onChange={(event) => setSearch(event.target.value)}
+                            />
+                        </div>
+                        <div className="col-1">
+                            <button type="button"
+                                className="btn btn-danger"
+                                onClick={searchProducts}
+                            >
+                                <i className="fa fa-search" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                        <Pagination pageNumber={pageNumber} totalPages={totalPages} setPage={loadPage} ></Pagination>
+                    </div>
+                    {status.isLoading &&
+                        <div className={"row rowpad5px align-items-center " + classes.alertbar} >
+                            <div className="col-8">
+                                <div className={status.alertClass + " alert"} style={{ whiteSpace: "pre-wrap" }}>
+                                    <div className={status.textClass}>{status.message}</div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                }
-                <div className="row">
-                    {
-                        products.map(product =>
-                            <ProductCard key={product.productId} product={product}></ProductCard>
-                        )
                     }
+                    <div className="row">
+                        {
+                            products.map(product =>
+                                <ProductCard key={product.productId} product={product}></ProductCard>
+                            )
+                        }
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     )
 }
 

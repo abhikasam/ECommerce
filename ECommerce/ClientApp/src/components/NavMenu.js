@@ -38,6 +38,12 @@ export default function NavMenu() {
 
     const [collapsed, setCollapsed] = useState(false)
 
+
+    function timerColor(time) {
+        return time < 90 ? 'btn-danger' : 'btn-success';
+    }
+
+
     const toggleNavbar = () => {
         setCollapsed(prev => !prev)
     }
@@ -53,9 +59,13 @@ export default function NavMenu() {
                 <NavbarToggler onClick={toggleNavbar} className="mr-2" />
                 <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!collapsed} navbar>
                     {isAuthenticated &&
-                        <div>
-                            {format(counter)}
-                        </div>
+                        <>
+                        <button type="button" className={"btn "+timerColor(counter) }>
+                            <div className="fw-bold">
+                                    {format(counter)}
+                                </div>
+                            </button>
+                        </>
                     }
                     <ul className="navbar-nav flex-grow">
                         {
