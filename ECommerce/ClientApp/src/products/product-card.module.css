@@ -3,7 +3,7 @@
 
 .card {
     height: auto;
-    width: 15em;
+    max-width: 17em;
     border-style: groove;
     margin: 0.5em;
 }

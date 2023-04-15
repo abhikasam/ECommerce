@@ -49,8 +49,15 @@ const cartSlice = createSlice({
         updatePageNumber(state, action) {
             state.pageNumber = action.payload
         },
-        addProduct(state, action) {
-            state.products = [...state.products, action.payload]
+        updateProduct(state, action) {
+            let productIds = state.products.map(i => i.productId)
+            if (productIds.includes(action.payload.productId)) {
+                let index = state.products.findIndex(x => x.productId == action.payload.productId)
+                state.products[index] = action.payload
+            }
+            else {
+                state.products.push(action.payload)
+            }
         },
         removeProduct(state, action) {
             state.products = state.products.filter(i => i.productId != action.payload)

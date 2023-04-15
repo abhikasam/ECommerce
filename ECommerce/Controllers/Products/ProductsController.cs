@@ -76,7 +76,8 @@ namespace ECommerce.Controllers.Products
                                 .Include(i => i.Category).DefaultIfEmpty()
                                 .Include(i => i.IndividualCategory).DefaultIfEmpty()
                                 .Include(i=>i.Favorites).DefaultIfEmpty()
-                                .Include(i=>i.ProductQuantities).ThenInclude(i=>i.Size).DefaultIfEmpty();
+                                .Include(i=>i.ProductQuantities).ThenInclude(i=>i.Size).DefaultIfEmpty()
+                                .Include(i=>i.Carts);
 
 
                 var productDtos = products.GetProductDtos(this.User, filters);

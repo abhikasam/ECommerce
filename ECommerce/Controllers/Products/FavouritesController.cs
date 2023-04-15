@@ -46,6 +46,7 @@ namespace ECommerce.Controllers.Products
                                     .Include(i => i.Product).ThenInclude(i => i.Category).DefaultIfEmpty()
                                     .Include(i => i.Product).ThenInclude(i => i.IndividualCategory).DefaultIfEmpty()
                                     .Include(i=>i.Product).ThenInclude(i => i.ProductQuantities).ThenInclude(i => i.Size)
+                                    .Include(i=>i.Product).ThenInclude(i=>i.Carts).DefaultIfEmpty()
                                     .Where(i => i.UserId == userId)
                                     .OrderByDescending(i => i.AddedOn)
                                     .Select(i => i.Product).GetProductDtos(this.User);
@@ -85,6 +86,7 @@ namespace ECommerce.Controllers.Products
                                     .Include(i => i.Category)
                                     .Include(i => i.IndividualCategory)
                                     .Include(i => i.Favorites)
+                                    .Include(i=>i.Carts)
                                     .Where(i => i.ProductId == productId);
                 if (!product.Any())
                 {

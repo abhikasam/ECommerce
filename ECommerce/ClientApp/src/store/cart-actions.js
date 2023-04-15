@@ -1,16 +1,17 @@
 ﻿import { cartActions } from "./cart-slice";
+import { favouriteActions } from "./favourite-slice";
+import { productActions } from "./product-slice";
 
-
-export const addToCart = (productId) => {
+export const upadteProductCart = (productId,quantity) => {
     return async (dispatch) => {
-        async function add() {
+        async function update() {
 
             let cartItem = {
                 productId,
-                quantity: 1
+                quantity: quantity
             }
 
-            await fetch('/cart/add',
+            await fetch('/cart/update',
                 {
                     method: 'POST',
                     body: JSON.stringify(cartItem),
@@ -23,48 +24,21 @@ export const addToCart = (productId) => {
                     return result.json();
                 })
                 .then(response => {
-                    dispatch(cartActions.addProduct(response.data))
-                    console.log(response)
-                })
-                .catch(error => {
-                    console.log(error)
-                })
-        }
-
-        add();
-    }
-}
-
-export const removeFromCart = (productId) => {
-    return async (dispatch) => {
-        async function remove() {
-
-            let cartItem = {
-                productId,
-                quantity: 1
-            }
-
-            await fetch('/cart/remove',
-                {
-                    method: 'POST',
-                    body: JSON.stringify(cartItem),
-                    headers: {
-                        'Content-Type': 'application/json;'
+                    if (quantity === 0) {
+                        dispatch(cartActions.removeProduct(productId))
+                    }
+                    else {
+                        dispatch(cartActions.updateProduct(response.data))
+                        dispatch(favouriteActions.updateProduct(response.data))
+                        dispatch(productActions.updateProduct(response.data))
                     }
                 })
-                .then(result => {
-                    if (!result.ok) throw result;
-                    return result.json();
-                })
-                .then(response => {
-                    dispatch(cartActions.removeProduct(productId))
-                })
                 .catch(error => {
                     console.log(error)
                 })
         }
 
-        remove();
+        update();
     }
 }
 

@@ -21,6 +21,10 @@ namespace ECommerce.Models.Ecommerce
 
     public static class ProductExt
     {
+        public static Cart GetCart(this ICollection<Cart> carts,ClaimsPrincipal claimsPrincipal)
+        {
+            return carts != null ? carts.FirstOrDefault(i=>i.UserId==claimsPrincipal.Identity.GetUserId()) : null;
+        }
         public static bool IsFavorite(this ICollection<Favourite> favourites,ClaimsPrincipal claimsPrincipal)
         {
             return favourites != null && favourites.Any(i => i.UserId == claimsPrincipal.Identity.GetUserId());
@@ -76,6 +80,7 @@ namespace ECommerce.Models.Ecommerce
                 Description = i.Description,
                 OriginalPrice = i.OriginalPrice,
                 FinalPrice = i.FinalPrice,
+                Quantity= i.Quantity,
                 Rating = i.Rating,
                 Reviews = i.Reviews,
                 Url = i.Url,
@@ -83,6 +88,7 @@ namespace ECommerce.Models.Ecommerce
                 CategoryName = i.Category.CategoryName,
                 IndividualCategoryName = i.IndividualCategory.IndividualCategoryName,
                 IsFavourite= i.Favorites.IsFavorite(claimsPrincipal),
+                CartItem=i.Carts.GetCart(claimsPrincipal).GetCartDto(),
                 Photo= i.Photo??bytes,
                 ProductQuantities =i.ProductQuantities.GetSizeMappingDtos()
             });
@@ -157,6 +163,8 @@ namespace ECommerce.Models.Ecommerce
 
         public static ProductDto GetProductDto(this Product product,ClaimsPrincipal claimsPrincipal)
         {
+            var noImage = @"D:\project\ECommerce\ECommerce\ClientApp\src\images\no-image.png";
+            byte[] bytes = System.IO.File.ReadAllBytes(noImage);
             var productDto = new ProductDto()
             {
                 ProductId = product.ProductId,
@@ -166,13 +174,16 @@ namespace ECommerce.Models.Ecommerce
                 Description = product.Description,
                 OriginalPrice = product.OriginalPrice,
                 FinalPrice = product.FinalPrice,
+                Quantity= product.Quantity,
                 Rating = product.Rating,
                 Reviews = product.Reviews,
+                Photo= product.Photo??bytes,
                 Url = product.Url,
                 BrandName = product.Brand.BrandName,
                 CategoryName = product.Category.CategoryName,
                 IndividualCategoryName = product.IndividualCategory.IndividualCategoryName,
-                IsFavourite = product.Favorites.IsFavorite(claimsPrincipal)
+                IsFavourite = product.Favorites.IsFavorite(claimsPrincipal),
+                CartItem=product.Carts.GetCart(claimsPrincipal).GetCartDto()
             };
 
             return productDto;

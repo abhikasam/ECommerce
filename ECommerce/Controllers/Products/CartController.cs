@@ -72,6 +72,7 @@ namespace ECommerce.Controllers.Products
                          .Include(i => i.Category)
                          .Include(i => i.IndividualCategory)
                          .Include(i => i.Favorites)
+                         .Include(i=>i.Carts)
                          .Where(i => i.ProductId == cartItem.ProductId);
 
                     message.Data = product.First().GetProductDto(this.User);
@@ -166,5 +167,62 @@ namespace ECommerce.Controllers.Products
 
             return new JsonResult(message);
         }
+
+
+        [HttpPost]
+        [Route("[action]")]
+        [ActionName("Update")]
+        public async Task<IActionResult> Update([FromBody]object obj)
+        {
+            var message=new ResponseMessage();
+            try
+            {
+                var currentUserId = this.User.Identity.GetUserId();
+                var cartItem = JsonConvert.DeserializeObject<Cart>(obj.ToString());
+                var dbCartItem = ecommerceContext.Carts
+                                .Where(i => i.ProductId == cartItem.ProductId && i.UserId == currentUserId);
+
+                if(cartItem.Quantity==0 && dbCartItem.Any())
+                {
+                    ecommerceContext.Carts.Remove(dbCartItem.First());
+                }
+                else if(cartItem.Quantity>0)
+                {
+                    if (dbCartItem.Any())
+                    {
+                        dbCartItem.First().Quantity = cartItem.Quantity;
+                        dbCartItem.First().UpdatedOn = DateTime.Now;
+                    }
+                    else
+                    {
+                        cartItem.UserId=currentUserId;
+                        cartItem.UpdatedOn = DateTime.Now;
+                        ecommerceContext.Carts.Add(cartItem);
+                    }
+                }
+
+                await ecommerceContext.SaveChangesAsync();
+
+                var product = ecommerceContext.Products
+                    .Include(i => i.Brand)
+                    .Include(i => i.Category)
+                    .Include(i => i.IndividualCategory)
+                    .Include(i => i.Favorites)
+                    .Include(i => i.Carts)
+                    .Where(i => i.ProductId == cartItem.ProductId);
+
+                message.Data = product.First().GetProductDto(this.User);
+                message.Message = "Updated Successfully.";
+                message.StatusCode = ResponseStatus.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                message.Message = ex.Message;
+                message.StatusCode = ResponseStatus.ERROR;
+            }
+            return new JsonResult(message);
+        }
+
+
     }
 }

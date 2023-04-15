@@ -28,7 +28,7 @@ const initialValue = {
 
 export const getProductsAsync = createAsyncThunk(
     'product/getProductsAsync',
-    async (filters, { dispatch: getState })=>{
+    async (filters, { dispatch, getState })=>{
         var queryString = ''
         if (filters.productCount)
             queryString += '&productCount=' + filters.productCount
@@ -49,10 +49,10 @@ export const getProductsAsync = createAsyncThunk(
         queryString = '?' + queryString.slice(1)
 
         const response = await fetch('/products' + queryString)
-                        .then(result => {
-                            if (!result.ok) throw result;
-                            return result.json();
-                        })
+            .then(result => {
+                if (!result.ok) throw result;
+                return result.json();
+            })
         return response;
     }
 )
@@ -117,6 +117,16 @@ const productSlice = createSlice({
             state.filters = initialValue.filters
             state.totalPages = initialValue.totalPages
             state.status = initialValue.status
+        },
+        updateProduct(state, action) {
+            let productIds = state.products.map(i => i.productId)
+            if (productIds.includes(action.payload.productId)) {
+                let index = state.products.findIndex(x => x.productId == action.payload.productId)
+                state.products[index] = action.payload
+            }
+            else {
+                state.products.push(action.payload)
+            }
         }
     },
     extraReducers:(builder) => {
