@@ -4,11 +4,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ECommerce.Data.Shared;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ECommerce.Controllers.Products
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize]
     public class CategoryMappingsController : ControllerBase
     {
         private readonly EcommerceContext ecommerceContext;

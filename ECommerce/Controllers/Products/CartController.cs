@@ -4,6 +4,7 @@ using ECommerce.Models;
 using ECommerce.Models.Ecommerce;
 using ECommerce.Models.EcommerceExtensions;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
@@ -15,6 +16,7 @@ namespace ECommerce.Controllers.Products
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize]
     public class CartController : ControllerBase
     {
         private readonly EcommerceContext ecommerceContext;

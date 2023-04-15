@@ -1,5 +1,6 @@
 ﻿using ECommerce.Models;
 using ECommerce.Models.Ecommerce;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ namespace ECommerce.Controllers.Products
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize]
     public class CategoriesController : ControllerBase
     {
         private readonly EcommerceContext ecommerceContext;

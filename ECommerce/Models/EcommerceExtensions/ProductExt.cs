@@ -7,6 +7,7 @@ using System.Security.Claims;
 using System.Web;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace ECommerce.Models.Ecommerce
 {
@@ -71,13 +72,30 @@ namespace ECommerce.Models.Ecommerce
                 }
             }
 
+            #region search
+            if (filters!=null && filters.Search.Length > 0)
+            {
+                var keywords = filters.Search.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+                var searchFilteredProducts = filteredProducts.Where(i => keywords.Length == 0);
+
+                foreach (var keyword in keywords)
+                {
+                    searchFilteredProducts = searchFilteredProducts.Union(filteredProducts.Where(i => i.Description.Contains(keyword)));
+                }
+
+                filteredProducts = searchFilteredProducts;
+
+            }
+            #endregion
+
+
             var productDtos = filteredProducts.Select(i => new ProductDto()
             {
                 ProductId = i.ProductId,
                 BrandId = i.BrandId,
                 CategoryId = i.CategoryId,
                 IndividualCategoryId = i.IndividualCategoryId,
-                Description = i.Description,
+                Description = i.Description.ToLower(),
                 OriginalPrice = i.OriginalPrice,
                 FinalPrice = i.FinalPrice,
                 Quantity= i.Quantity,
@@ -95,13 +113,6 @@ namespace ECommerce.Models.Ecommerce
 
             if(filters != null)
             {
-                #region search
-                if(filters.Search.Length> 0)
-                {
-                    productDtos=productDtos.Where(i=>i.Description.ToLower().Contains(filters.Search.ToLower()));
-                }
-                #endregion
-
                 #region brand filter
                 if (filters.Brands.Count() > 0)
                 {
@@ -138,8 +149,6 @@ namespace ECommerce.Models.Ecommerce
                             productDtos = productDtos.OrderBy(i => i.CategoryName).AsQueryable(); break;
                         case "IndividualCategory":
                             productDtos = productDtos.OrderBy(i => i.IndividualCategoryName).AsQueryable(); break;
-                        default:
-                            productDtos = productDtos.OrderBy(i => i.Description); break;
                     }
                 }
                 else
@@ -156,8 +165,6 @@ namespace ECommerce.Models.Ecommerce
                             productDtos = productDtos.OrderByDescending(i => i.CategoryName).AsQueryable(); break;
                         case "IndividualCategory":
                             productDtos = productDtos.OrderByDescending(i => i.IndividualCategoryName).AsQueryable(); break;
-                        default:
-                            productDtos = productDtos.OrderByDescending(i => i.Description); break;
                     }
                 }
                 #endregion

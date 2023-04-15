@@ -10,11 +10,13 @@ using ECommerce.Models.EcommerceExtensions;
 using Microsoft.Extensions.Options;
 using ECommerce.Data.Products;
 using ECommerce.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ECommerce.Controllers.Products
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize]
     public class FavouritesController : ControllerBase
     {
         private readonly EcommerceContext ecommerceContext;

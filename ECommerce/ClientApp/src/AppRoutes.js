@@ -12,6 +12,7 @@ import Favourites from "./products/favourites";
 import ProductDetails from "./products/product-details";
 import EditProduct from "./products/product-edit";
 import Cart from "./products/cart";
+import HomeAuthorized from "./components/HomeAuthorized";
 
 function AppRoutes() {
 
@@ -19,7 +20,8 @@ function AppRoutes() {
 
     return (
         <>
-            <Route exact path='/' component={Home} />
+            {!isAuthenticated && <Route exact path='/' component={Home} />}
+            {isAuthenticated && <Route exact path="/" component={HomeAuthorized} />}
             <Route path={'/(.+)'} render={() => (
                 <Switch>
                     <Route path="/fetch-data" component={FetchData} />

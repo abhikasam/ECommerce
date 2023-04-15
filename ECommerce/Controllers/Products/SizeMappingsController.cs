@@ -4,11 +4,13 @@ using ECommerce.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ECommerce.Controllers.Products
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize]
     public class SizeMappingsController : ControllerBase
     {
         private readonly EcommerceContext ecommerceContext;
