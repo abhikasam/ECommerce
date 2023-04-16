@@ -204,7 +204,9 @@ export default function ProductFilters({ initialFilters,onUpdate }) {
                     classNames="btn-success"
                     displayName="Brands"
                     collapseId="collapseBrands"
+                    isExpand={!!filters.brands.length}
                     component={<ListSelect
+                        showSearch={true}
                         items={brands}
                         type="brand"
                         selected={filters.brands}
@@ -217,7 +219,9 @@ export default function ProductFilters({ initialFilters,onUpdate }) {
                     classNames="btn-success"
                     displayName="Categories"
                     collapseId="collapseCategories"
+                    isExpand={!!filters.categories.length}
                     component={<ListSelect
+                        showSearch={true}
                         items={categories}
                         type="category"
                         selected={filters.categories}
@@ -230,7 +234,9 @@ export default function ProductFilters({ initialFilters,onUpdate }) {
                     classNames="btn-success"
                     displayName="Individual Categories"
                     collapseId="collapseIndividualCategories"
+                    isExpand={!!filters.individualCategories.length}
                     component={<ListSelect
+                        showSearch={true}
                         items={individualCategories}
                         type="individualCategory"
                         selected={filters.individualCategories}
@@ -243,7 +249,9 @@ export default function ProductFilters({ initialFilters,onUpdate }) {
                     classNames="btn-success"
                     displayName="Price Ranges"
                     collapseId="collapsePriceRanges"
+                    isExpand={!!filters.priceRanges.length}
                     component={<ListSelect
+                        showSearch={true}
                         items={[
                             { key: '0-500', value: 'below 500' },
                             { key: '500-1000', value: '500-1000' },

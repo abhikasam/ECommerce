@@ -87,7 +87,14 @@ namespace ECommerce.Controllers.Products
                 var productDtos = products.GetProductDtos(this.User, filters);
 
                 var totalRecords=productDtos.Count();
+                
                 var totalPages=(totalRecords+filters.ProductCount)/filters.ProductCount;
+                if (totalRecords % filters.ProductCount == 0)
+                {
+                    totalPages--;
+                }
+
+                filters.PageNumber= Math.Min(filters.PageNumber,totalPages);
 
                 message.Data = new
                 {

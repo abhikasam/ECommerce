@@ -9,30 +9,39 @@ import { getCategoryMappings } from '../store/category-mapping-actions';
 import ItemSelector from '../shared/item-selector';
 import ChildSelector from '../shared/child-selector';
 import { productActions } from '../store/product-slice';
+import ListSelect from '../shared/list-select';
+import UserProductFilters from '../shared/user-product-filters';
 
 export default function HomeAuthorized() {
 
     const dispatch = useDispatch()
-    const history=useHistory()
+    const history = useHistory()
 
     useEffect(() => {
         dispatch(getBrands())
         dispatch(getCategories())
         dispatch(getCategoryMappings())
+        dispatch(getIndividualCategories())
     }, [dispatch])
 
     const { user } = useSelector(state => state.auth);
     const { categories } = useSelector(state => state.category)
     const { categoryMappings } = useSelector(state => state.categoryMapping)
-
+    
     const [categoryId, setCategoryId] = useState('')
     const { filters } = useSelector(state => state.product)
+    const [showPreferences,setShowPreferences]=useState(false)
 
     function navigateProducts(value) {
         dispatch(productActions.updateFilters({
-            ...filters,
+            pageNumber: 1,
+            productCount: 50,
+            sortBy: 'Search',
+            sortOrder: 'asc',
+            brands: [],
+            priceRanges:[],
             categories: [categoryId],
-            individualCategories:[value]
+            individualCategories: [value]
         }))
         history.push('/products')
     }
@@ -40,33 +49,53 @@ export default function HomeAuthorized() {
     return (
         <>
             <div className="row">
-                {!categoryId && categories.map(category =>
-                    <Fragment key={category.key}>
-                        <ItemSelector item={category} setItem={setCategoryId} />
-                    </Fragment>
-                )}
+                <div className="col-2">
+                    <button className="btn btn-danger"
+                        type="button"
+                        onClick={()=>setShowPreferences(prev=> !prev)}
+                    >{!showPreferences ? "Show Preferences" :"Hide Preferences"}
+                    </button>
+                </div>
             </div>
 
-            {categoryId &&
+            {!showPreferences && 
                 <>
                 <div className="row">
-                    <div className="col-2">
-                        <button
-                            type="button"
-                            className="btn btn-primary"
-                            onClick={() => setCategoryId('')}
-                        >Select Category</button>
-                    </div>
+                    {!categoryId && categories.map(category =>
+                        <Fragment key={category.key}>
+                            <ItemSelector item={category} setItem={setCategoryId} />
+                        </Fragment>
+                    )}
                 </div>
-                    <div className="row">
-                        {categoryMappings.filter(cm => cm.parentId === categoryId).map(mapping =>
-                            <Fragment key={mapping.key}>
-                                <ChildSelector child={mapping} setChild={navigateProducts} />
-                            </Fragment>
-                        )}
-                    </div>
+                {categoryId &&
+                    <>
+                        <div className="row">
+                            <div className="col-2">
+                                <button
+                                    type="button"
+                                    className="btn btn-primary m-2 p-2"
+                                    onClick={() => setCategoryId('')}
+                                >Select Category</button>
+                            </div>
+                        </div>
+                        <div className="row">
+                            {categoryMappings.filter(cm => cm.parentId === categoryId).map(mapping =>
+                                <Fragment key={mapping.key}>
+                                    <ChildSelector child={mapping} setChild={navigateProducts} />
+                                </Fragment>
+                            )}
+                        </div>
+                    </>
+                }
                 </>
             }
+
+            {showPreferences &&
+                <UserProductFilters
+                    
+                ></UserProductFilters>
+            }
+
         </>
     )
 }

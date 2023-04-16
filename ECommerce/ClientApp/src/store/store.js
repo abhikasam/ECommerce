@@ -9,6 +9,7 @@ import favouriteReducer from './favourite-slice';
 import categoryMappingReducer from './category-mapping-slice'
 import sizeMappingReducer from './size-mapping-slice'
 import cartReducer from './cart-slice';
+import userProductFilterReducer from './user-product-filter-slice';
 
 const store = configureStore({
     reducer: {
@@ -21,7 +22,8 @@ const store = configureStore({
         favourite: favouriteReducer,
         categoryMapping: categoryMappingReducer,
         sizeMapping: sizeMappingReducer,
-        cart: cartReducer
+        cart: cartReducer,
+        userProductFilter: userProductFilterReducer
     }
 })
 

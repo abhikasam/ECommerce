@@ -4,6 +4,7 @@ import { categoryActions } from "./category-slice"
 import { individualCategoryActions } from "./individual-category-slice"
 import { productActions } from "./product-slice"
 import { statusActions } from "./status-slice"
+import { userProductFilterActions } from "./user-product-filter-slice"
 
 export const fetchUser = () => {
     return async (dispatch) => {
@@ -84,6 +85,7 @@ export const logoutUser = () => {
         dispatch(individualCategoryActions.clear())
         dispatch(productActions.clear())
         dispatch(statusActions.clear())
+        dispatch(userProductFilterActions.clear())
 
         await fetch('logout'
             , {

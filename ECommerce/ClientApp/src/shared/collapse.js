@@ -1,8 +1,8 @@
 ﻿import { useEffect, useState } from "react";
 import { Collapse } from "bootstrap"
 
-export default function CollapseElement({ classNames, collapseId, displayName, component }) {
-    var [toggle, setToggle] = useState(false);
+export default function CollapseElement({ classNames,isExpand, collapseId, displayName, component }) {
+    var [toggle, setToggle] = useState(isExpand);
 
     useEffect(() => {
         var myCollapse = document.getElementById(collapseId)

@@ -3,17 +3,20 @@ import { Fragment, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import classes from './list-select.module.css';
 
-export default function ListSelect({ items,type, selected, updateItems }) {
+export default function ListSelect({ items,type, selected, updateItems,showSearch,style }) {
 
     const [search, setSearch] = useState('')
 
     return (
         <div className="multiple-selector">
-            <input type="text" className={"form-control " + classes.search} onChange={(event) => setSearch(event.target.value)} />
-            <ul className={"list-group " + classes.ul}>
+            {showSearch && 
+                <input type="text" className={"form-control " + classes.search} onChange={(event) => setSearch(event.target.value)} />
+            }
+            <ul className={"list-group " + classes.ul} style={style}>
                 {items.map(item => {
                     return (
-                        <ListSelectItem key={item.key}
+                        <ListSelectItem
+                            key={item.key}
                             item={item}
                             type={type}
                             search={search}
@@ -28,7 +31,7 @@ export default function ListSelect({ items,type, selected, updateItems }) {
 }
 
 
-export const ListSelectItem = ({ item, type, search, selected, updateItems }) => {
+export const ListSelectItem = ({ item, type, search, selected, updateItems}) => {
 
     useEffect(() => {
         if (selected) {
