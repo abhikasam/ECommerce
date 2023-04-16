@@ -23,6 +23,16 @@ export default function ProductFilters({ initialFilters,onUpdate }) {
     const [filters, setFilters] = useState(initialFilters)
 
     useEffect(() => {
+        setFilters((prev) => {
+            return {
+                ...prev,
+                search: initialFilters.search
+            }
+        })
+    }, [initialFilters.search])
+
+
+    useEffect(() => {
         dispatch(getBrands())
         dispatch(getCategories())
         dispatch(getIndividualCategories())
@@ -161,6 +171,7 @@ export default function ProductFilters({ initialFilters,onUpdate }) {
                     <select className="form-control"
                         value={filters.sortBy}
                         onChange={sortByChangeHandler}>
+                        <option value="Search">Search</option>
                         <option value="Description">Name</option>
                         <option value="Brand">Brand</option>
                         <option value="Category">Category</option>

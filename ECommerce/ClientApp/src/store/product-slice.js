@@ -29,7 +29,7 @@ const initialValue = {
 
 export const getProductsAsync = createAsyncThunk(
     'product/getProductsAsync',
-    async (filters, { dispatch, getState })=>{
+    async (filters, { dispatch, getState }) => {
         var queryString = ''
         if (filters.productCount)
             queryString += '&productCount=' + filters.productCount

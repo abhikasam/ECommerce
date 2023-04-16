@@ -47,7 +47,7 @@ export default function Products() {
         setFilters(prev => {
             return {
                 ...prev,
-                search
+                search:search
             }
         })
     }

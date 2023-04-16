@@ -76,15 +76,36 @@ namespace ECommerce.Models.Ecommerce
             if (filters!=null && filters.Search.Length > 0)
             {
                 var keywords = filters.Search.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
-                var searchFilteredProducts = filteredProducts.Where(i => keywords.Length == 0);
+                //var searchFilteredProducts = filteredProducts.Where(i => keywords.Length == 0);
 
-                foreach (var keyword in keywords)
+                //foreach (var keyword in keywords)
+                //{
+                //    searchFilteredProducts = searchFilteredProducts.Union(filteredProducts.Where(i => i.Description.Contains(keyword)));
+                //}
+
+                //filteredProducts = searchFilteredProducts;
+
+                var searchFilters = filteredProducts.Select(i => new
                 {
-                    searchFilteredProducts = searchFilteredProducts.Union(filteredProducts.Where(i => i.Description.Contains(keyword)));
+                    Product = i,
+                    Matched = 0
+                });
+
+                foreach(var keyword in keywords)
+                {
+                    searchFilters = (from i in searchFilters
+                                     let isMatched = EF.Functions.Like(i.Product.Description, "%" + keyword + "%")
+                                     select new
+                                     {
+                                         Product = i.Product,
+                                         Matched = i.Matched + (isMatched?1:0)
+                                     });
                 }
 
-                filteredProducts = searchFilteredProducts;
-
+                filteredProducts = searchFilters
+                    .Where(i => i.Matched > 0)
+                    .OrderByDescending(i => i.Matched)
+                    .Select(i => i.Product);        
             }
             #endregion
 
@@ -149,6 +170,8 @@ namespace ECommerce.Models.Ecommerce
                             productDtos = productDtos.OrderBy(i => i.CategoryName).AsQueryable(); break;
                         case "IndividualCategory":
                             productDtos = productDtos.OrderBy(i => i.IndividualCategoryName).AsQueryable(); break;
+                        case "Search":
+                            break;
                     }
                 }
                 else
@@ -165,6 +188,8 @@ namespace ECommerce.Models.Ecommerce
                             productDtos = productDtos.OrderByDescending(i => i.CategoryName).AsQueryable(); break;
                         case "IndividualCategory":
                             productDtos = productDtos.OrderByDescending(i => i.IndividualCategoryName).AsQueryable(); break;
+                        case "Search":
+                            break;
                     }
                 }
                 #endregion
