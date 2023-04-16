@@ -156,7 +156,7 @@ namespace ECommerce.Models.Ecommerce
                 #endregion
 
                 #region sorting
-                if (filters.SortOrder == "asc")
+                if (filters.SortOrder.Equals("asc",StringComparison.InvariantCultureIgnoreCase))
                 {
                     switch (filters.SortBy)
                     {

@@ -14,7 +14,6 @@ export default function ProductQuantitySelector({ selected,sizeMappings, individ
 
     useEffect(() => {
         setProductQuantites(selectedOptions)
-        console.log(selectedOptions)
     }, [selectedOptions])
 
     function addMapping(mapping) {

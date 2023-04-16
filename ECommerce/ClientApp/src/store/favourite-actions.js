@@ -17,7 +17,6 @@ export const addFavourite = (productId) => {
             })
             .then(response => {
                 dispatch(favouriteActions.addProduct(response.data))
-                console.log(response)
             })
             .catch(error => {
                 console.log(error)
@@ -43,7 +42,6 @@ export const removeFavourite = (productId) => {
             })
             .then(response => {
                 dispatch(favouriteActions.removeProduct(productId))
-                console.log(response)
             })
             .catch(error => {
                 console.log(error)

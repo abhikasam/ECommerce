@@ -117,20 +117,20 @@ export default function ProductFilters({ initialFilters,onUpdate }) {
         })
     }
 
-    function sortByChangeHandler(sortBy) {
+    function sortByChangeHandler(event) {
         setFilters(prev => {
             return {
                 ...prev,
-                sortBy
+                sortBy: event.target.value
             }
         })
     }
 
-    function sortOrderChangeHandler(sortOrder) {
+    function sortOrderChangeHandler(event) {
         setFilters(prev => {
             return {
                 ...prev,
-                sortOrder
+                sortOrder: event.target.value
             }
         })
     }
