@@ -111,6 +111,41 @@ namespace ECommerce.Controllers.Products
             return new JsonResult(message);
         }
 
+
+        [HttpGet("{id}")]
+        public JsonResult Get(int id)
+        {
+            var message = new ResponseMessage();
+            try
+            {
+                var product = ecommerceContext.Products
+                .Include(i => i.Brand).DefaultIfEmpty()
+                .Include(i => i.Category).DefaultIfEmpty()
+                .Include(i => i.IndividualCategory).DefaultIfEmpty()
+                .Include(i => i.Favorites).DefaultIfEmpty()
+                .Include(i => i.ProductQuantities).ThenInclude(i => i.Size).DefaultIfEmpty()
+                .Include(i => i.Carts)
+                .Where(i => i.ProductId == id)
+                .FirstOrDefault();
+
+                if (product == null)
+                {
+                    message.Message = "Product not found";
+                    message.StatusCode = ResponseStatus.ERROR;
+                }
+                else
+                {
+                    message.Data= product.GetProductDto(this.User);
+                }
+            }
+            catch (Exception ex)
+            {
+                message.Message=ex.Message;
+                message.StatusCode=ResponseStatus.EXCEPTION;
+            }
+            return new JsonResult(message);
+        }
+
         [HttpPost]
         public async Task<JsonResult> Post([FromBody] object obj)
         {

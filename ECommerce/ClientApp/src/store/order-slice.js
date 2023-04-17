@@ -4,7 +4,7 @@ import { cartActions } from './cart-slice';
 
 
 const initialValue = {
-    orderItems: [],
+    orders: [],
     status: {
         message: '',
         textClass: '',
@@ -16,7 +16,21 @@ const initialValue = {
 export const fetchOrdersAsync = createAsyncThunk(
     'order/fetchOrdersAsync',
     async (_, { dispatch, getState }) => {
+        const response =
+            await fetch('/orders')
+                .then(result => {
+                    if (!result.ok) throw result;
+                    return result.json();
+                })
+                .then(response => {
+                    dispatch(orderActions.update(response.data))
+                    return response;
+                })
+                .catch(error => {
+                    return error;
+                })
 
+        return response;        
     }
 )
 
@@ -52,6 +66,9 @@ const orderSlice = createSlice({
     name: 'order',
     initialState: initialValue,
     reducers: {
+        update(state, action) {
+            state.orders = action.payload
+        },
         clearStatus(state) {
             state.status = initialValue.status
         }

@@ -78,6 +78,26 @@ export const updateFiltersAsync = createAsyncThunk(
     }
 )
 
+export const getProductAsync = createAsyncThunk(
+    'product/getProductAsync',
+    async (productId, { dispatch, getState }) => {
+        const response =
+            await fetch('/products/' + productId)
+            .then(result => {
+                if (!result.ok) throw result;
+                return result.json();
+            })
+            .then(response => {
+                return response;
+            })
+            .catch(error => {
+                return error;
+            })
+        return response;
+    }
+)
+
+
 const productSlice = createSlice({
     name: 'product',
     initialState: initialValue,

@@ -14,6 +14,8 @@ import EditProduct from "./products/product-edit";
 import Cart from "./products/cart";
 import HomeAuthorized from "./components/HomeAuthorized";
 import ConfirmOrder from "./products/confirm-order";
+import Orders from "./products/orders";
+import OrderDetails from "./products/order-details";
 
 function AppRoutes() {
 
@@ -29,6 +31,8 @@ function AppRoutes() {
                     <Route path='/login' component={Login} />
                     <Route path='/counter' component={Counter} />
                     <Route path='/register' component={Register} />
+                    {isAuthenticated && <Route path='/orders' component={Orders} />}
+                    {isAuthenticated && <Route path='/order-details' component={OrderDetails} />}
                     {isAuthenticated && <Route path='/products' component={Products} />}
                     {isAuthenticated && <Route path='/product-details' component={ProductDetails} />}
                     {isAuthenticated && !user.isAdmin && <Route path='/favourites' component={Favourites} />}

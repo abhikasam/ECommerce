@@ -52,8 +52,10 @@ export default function ConfirmOrder(props) {
 
     function placeOrder() {
         let orderItems = selectedProducts.filter(i => i.quantity>0)
-    
-        dispatch(placeOrderAsync(orderItems))
+        const response = dispatch(placeOrderAsync(orderItems))
+        response.then(result => {
+            setSelectedProducts([])
+        })
     }
 
     return (

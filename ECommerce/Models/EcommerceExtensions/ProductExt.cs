@@ -222,7 +222,8 @@ namespace ECommerce.Models.Ecommerce
                 CategoryName = product.Category.CategoryName,
                 IndividualCategoryName = product.IndividualCategory.IndividualCategoryName,
                 IsFavourite = product.Favorites.IsFavorite(claimsPrincipal),
-                CartItem=product.Carts.GetCart(claimsPrincipal).GetCartDto()
+                CartItem=product.Carts.GetCart(claimsPrincipal).GetCartDto(),
+                ProductQuantities=product.ProductQuantities.GetSizeMappingDtos()
             };
 
             return productDto;

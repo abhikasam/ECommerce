@@ -9,6 +9,8 @@ import { useEffect } from "react";
 export default function ProductDetails(props) {
 
     const history = useHistory()
+    const dispatch=useDispatch()
+
     const state = props.location.state
     const [product] = useState(state?.product)
 

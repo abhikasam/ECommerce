@@ -10,6 +10,11 @@ namespace ECommerce.Data
             return claimsPrincipal.Claims.Where(i => i.Type == "FullName").FirstOrDefault().Value;
         }
 
+        public static string GetFullName(IList<Claim> claims)
+        {
+            return claims.Where(i => i.Type == "FullName").FirstOrDefault().Value;
+        }
+
         public static int[] GetArray(string arrayString,string delimiter)
         {
             int[] values = new int[] { };

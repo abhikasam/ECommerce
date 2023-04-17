@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Microsoft.EntityFrameworkCore;
+using ECommerce.Data;
+using Microsoft.IdentityModel.Tokens;
+using ECommerce.Data.Account;
 
 namespace ECommerce.Controllers.Products
 {
@@ -18,12 +21,14 @@ namespace ECommerce.Controllers.Products
 
         private readonly ILogger<OrdersController> _logger;
         private readonly IConfiguration configuration;
+        private readonly Microsoft.AspNetCore.Identity.UserManager<User> userManager;
 
-        public OrdersController(EcommerceContext ecommerceContext, ILogger<OrdersController> logger, IConfiguration configuration)
+        public OrdersController(EcommerceContext ecommerceContext, ILogger<OrdersController> logger, IConfiguration configuration, Microsoft.AspNetCore.Identity.UserManager<User> userManager)
         {
             this.ecommerceContext = ecommerceContext;
             _logger = logger;
             this.configuration = configuration;
+            this.userManager = userManager;
         }
 
         [HttpGet]
@@ -33,11 +38,24 @@ namespace ECommerce.Controllers.Products
 
             try
             {
-                var orders = await ecommerceContext.Orders
-                                    .Include(i=>i.Product).DefaultIfEmpty()
-                                    .Where(i => i.UserId == this.User.Identity.GetUserId())
-                                    .ToListAsync();
-                message.Data = orders;
+                var orders = ecommerceContext.Orders
+                                    .Include(i => i.Product).ThenInclude(i => i.Brand).DefaultIfEmpty()
+                                    .Include(i => i.Product).ThenInclude(i => i.Category).DefaultIfEmpty()
+                                    .Include(i => i.Product).ThenInclude(i => i.IndividualCategory).DefaultIfEmpty()
+                                    .Include(i => i.Product).ThenInclude(i => i.ProductQuantities).ThenInclude(i => i.Size)
+                                    .Include(i => i.Product).ThenInclude(i => i.Carts).DefaultIfEmpty();
+
+                if (!this.User.Claims.Any(i => i.Type == "Admin"))
+                {
+                    orders = orders.Where(i => i.UserId == this.User.Identity.GetUserId());
+                }
+
+                orders = orders.OrderByDescending(i => i.ProductId);
+
+                var paginatedOrders = orders.PaginateData(1, 50);
+
+                var orderDtos = await paginatedOrders.GetOrderDtos(userManager,this.User);
+                message.Data = orderDtos;
             }
             catch (Exception ex)
             {
@@ -58,17 +76,19 @@ namespace ECommerce.Controllers.Products
                 var orderItems = JsonConvert.DeserializeObject<Order[]>(obj.ToString());
 
                 var currentUserId = this.User.Identity.GetUserId();
-                
-                var orderedProducts=orderItems.Select(i=>i.ProductId).ToArray();
 
-                var products=await ecommerceContext.Products
-                            .Where(i=> orderedProducts.Contains(i.ProductId))
+                var orderedProducts = orderItems.Select(i => i.ProductId).ToArray();
+
+                var products = await ecommerceContext.Products
+                            .Where(i => orderedProducts.Contains(i.ProductId))
                             .ToListAsync();
 
-                if(products.Count()!=orderedProducts.Length)
+                var orderInstanceId = ecommerceContext.Orders.Select(i => i.OrderInstanceId).Max();
+
+                if (products.Count() != orderedProducts.Length)
                 {
-                    var notFoundProducts = products.Where(p => !orderedProducts.Contains(p.ProductId)).Select(i=>i.ProductId);
-                    orderItems.ToList().RemoveAll(x=> notFoundProducts.Contains(x.ProductId));
+                    var notFoundProducts = products.Where(p => !orderedProducts.Contains(p.ProductId)).Select(i => i.ProductId);
+                    orderItems.ToList().RemoveAll(x => notFoundProducts.Contains(x.ProductId));
                 }
 
                 var productNotAvailables = products.Where(i => orderItems.Any(o => o.ProductId == i.ProductId && o.Quantity > i.Quantity));
@@ -83,6 +103,7 @@ namespace ECommerce.Controllers.Products
                     orderItems.ToList().ForEach(o =>
                     {
                         o.UserId = currentUserId;
+                        o.OrderInstanceId = orderInstanceId + 1;
                         o.PlacedOn = DateTime.Now;
                     });
 
@@ -98,8 +119,8 @@ namespace ECommerce.Controllers.Products
 
                     await ecommerceContext.SaveChangesAsync();
                 }
-                
-                message.Data= orderItems.Select(i=>i.ProductId);
+
+                message.Data = orderItems.Select(i => i.ProductId);
                 message.Message = "Products ordered";
                 message.StatusCode = ResponseStatus.SUCCESS;
             }
