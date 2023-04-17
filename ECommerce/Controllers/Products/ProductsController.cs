@@ -131,8 +131,6 @@ namespace ECommerce.Controllers.Products
                     else
                     {
                         product.Quantity = product.ProductQuantities.Sum(x => x.Quantity);
-                        product.Available = product.Quantity;
-
                         product.FinalPrice = product.FinalPrice ?? product.OriginalPrice;
 
                         await ecommerceContext.Products.AddAsync(product);
@@ -186,8 +184,7 @@ namespace ECommerce.Controllers.Products
                         }
 
                         dbProduct.Quantity = product.ProductQuantities.Sum(x => x.Quantity);
-                        dbProduct.Available = product.Quantity;
-
+                       
                         //dbProduct.FinalPrice = product.FinalPrice ?? product.OriginalPrice;
 
                         await ecommerceContext.SaveChangesAsync();

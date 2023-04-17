@@ -10,6 +10,7 @@ import categoryMappingReducer from './category-mapping-slice'
 import sizeMappingReducer from './size-mapping-slice'
 import cartReducer from './cart-slice';
 import userProductFilterReducer from './user-product-filter-slice';
+import orderReducer from './order-slice';
 
 const store = configureStore({
     reducer: {
@@ -23,7 +24,8 @@ const store = configureStore({
         categoryMapping: categoryMappingReducer,
         sizeMapping: sizeMappingReducer,
         cart: cartReducer,
-        userProductFilter: userProductFilterReducer
+        userProductFilter: userProductFilterReducer,
+        order: orderReducer
     }
 })
 

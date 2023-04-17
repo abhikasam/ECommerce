@@ -13,6 +13,7 @@ import ProductDetails from "./products/product-details";
 import EditProduct from "./products/product-edit";
 import Cart from "./products/cart";
 import HomeAuthorized from "./components/HomeAuthorized";
+import ConfirmOrder from "./products/confirm-order";
 
 function AppRoutes() {
 
@@ -33,6 +34,7 @@ function AppRoutes() {
                     {isAuthenticated && !user.isAdmin && <Route path='/favourites' component={Favourites} />}
                     {isAuthenticated && user.isAdmin && <Route path='/product-edit' component={EditProduct} />}
                     {isAuthenticated && !user.isAdmin && <Route path="/cart" component={Cart} />}
+                    {isAuthenticated && !user.isAdmin && <Route path="/confirm-order" component={ConfirmOrder} />}
                     <Route component={NotFound} />
                 </Switch>
             )} />

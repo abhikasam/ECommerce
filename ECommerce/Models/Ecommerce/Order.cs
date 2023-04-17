@@ -9,6 +9,7 @@ namespace ECommerce.Models.Ecommerce
         public string UserId { get; set; }
         public int ProductId { get; set; }
         public int Quantity { get; set; }
+        public DateTime PlacedOn { get; set; }
 
         public virtual Product Product { get; set; }
     }

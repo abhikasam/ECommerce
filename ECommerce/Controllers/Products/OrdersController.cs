@@ -48,6 +48,8 @@ namespace ECommerce.Controllers.Products
         }
 
         [HttpPost]
+        [Route("[action]")]
+        [ActionName("place")]
         public async Task<IActionResult> Post([FromBody] object obj)
         {
             var message = new ResponseMessage();
@@ -57,6 +59,49 @@ namespace ECommerce.Controllers.Products
 
                 var currentUserId = this.User.Identity.GetUserId();
                 
+                var orderedProducts=orderItems.Select(i=>i.ProductId).ToArray();
+
+                var products=await ecommerceContext.Products
+                            .Where(i=> orderedProducts.Contains(i.ProductId))
+                            .ToListAsync();
+
+                if(products.Count()!=orderedProducts.Length)
+                {
+                    var notFoundProducts = products.Where(p => !orderedProducts.Contains(p.ProductId)).Select(i=>i.ProductId);
+                    orderItems.ToList().RemoveAll(x=> notFoundProducts.Contains(x.ProductId));
+                }
+
+                var productNotAvailables = products.Where(i => orderItems.Any(o => o.ProductId == i.ProductId && o.Quantity > i.Quantity));
+                if (productNotAvailables.Any())
+                {
+                    var incorrectProducts = productNotAvailables.Select(i => i.ProductId).ToList();
+                    orderItems.ToList().RemoveAll(x => incorrectProducts.Contains(x.ProductId));
+                }
+
+                if (orderItems.Length > 0)
+                {
+                    orderItems.ToList().ForEach(o =>
+                    {
+                        o.UserId = currentUserId;
+                        o.PlacedOn = DateTime.Now;
+                    });
+
+                    await ecommerceContext.Orders.AddRangeAsync(orderItems);
+
+                    var cartItems = await ecommerceContext.Carts.Where(i => i.UserId == currentUserId && orderedProducts.Contains(i.ProductId)).ToListAsync();
+                    ecommerceContext.Carts.RemoveRange(cartItems);
+
+                    foreach (var product in products)
+                    {
+                        product.Quantity = product.Quantity - orderItems.Where(i => i.ProductId == product.ProductId).First().Quantity;
+                    }
+
+                    await ecommerceContext.SaveChangesAsync();
+                }
+                
+                message.Data= orderItems.Select(i=>i.ProductId);
+                message.Message = "Products ordered";
+                message.StatusCode = ResponseStatus.SUCCESS;
             }
             catch (Exception ex)
             {

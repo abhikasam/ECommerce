@@ -1,6 +1,7 @@
 ﻿
 import { useEffect, useState } from 'react';
 import ReactDom from 'react-dom';
+import QuantityHandler from '../shared/quantity-handler';
 
 
 
@@ -8,8 +9,8 @@ export default function CartQuantity({ product,updateCart }) {
 
     useEffect(() => { }, [product])
 
-    const intitialQantity = product.isInCart ? product.cartItem.quantity : 0
-    const [quantity, setQuantity] = useState(intitialQantity)
+    const initialQantity = product.isInCart ? product.cartItem.quantity : 0
+    const [quantity, setQuantity] = useState(initialQantity)
 
     return ReactDom.createPortal(
         <div className="modal" id={"cartCounter" + product.productId} tabIndex="-1">
@@ -34,29 +35,10 @@ export default function CartQuantity({ product,updateCart }) {
                             </div>
 
                             <div className="col-7 text-center">
-                                <div className="m-5 fs-4">
-                                    <button
-                                        type="button"
-                                        className="btn btn-danger"
-                                        onClick={() => setQuantity(prev => prev - 1)}
-                                        disabled={quantity<=0}
-                                    >
-                                        <i className="fa fa-minus"
-                                            aria-hidden="true"
-                                        ></i>
-                                    </button>
-                                    <span className="ms-3 me-3" >{quantity}</span>
-                                    <button
-                                        type="button"
-                                        className="btn btn-success"
-                                        onClick={() => setQuantity(prev => prev + 1)}
-                                        disabled={quantity >= product.quantity}
-                                    >
-                                        <i className="fa fa-plus"
-                                            aria-hidden="true"
-                                        ></i>
-                                    </button>
-                                </div>
+                                <QuantityHandler initialQuantity={initialQantity}
+                                    maxQuantity={product.quantity}
+                                    updateQuantity={(quantity) => setQuantity(quantity)}
+                                ></QuantityHandler>
                             </div>
 
                         </div>

@@ -24,7 +24,6 @@ namespace ECommerce.Models.Ecommerce
         public string Url { get; set; }
         public byte[] Photo { get; set; }
         public int Quantity { get; set; }
-        public int Available { get; set; }
 
         public virtual Brand Brand { get; set; }
         public virtual Category Category { get; set; }

@@ -14,7 +14,7 @@ const initialValue = {
 }
 
 export const getCartAsync = createAsyncThunk(
-    'favourite/getCartAsync',
+    'cart/getCartAsync',
     async (_, { dispatch, getState }) => {
         var pageNumber = getState().cart.pageNumber;
         var queryString = ''
@@ -52,7 +52,7 @@ const cartSlice = createSlice({
         updateProduct(state, action) {
             let productIds = state.products.map(i => i.productId)
             if (productIds.includes(action.payload.productId)) {
-                let index = state.products.findIndex(x => x.productId == action.payload.productId)
+                let index = state.products.findIndex(x => x.productId === action.payload.productId)
                 state.products[index] = action.payload
             }
             else {
@@ -60,7 +60,14 @@ const cartSlice = createSlice({
             }
         },
         removeProduct(state, action) {
-            state.products = state.products.filter(i => i.productId != action.payload)
+            state.products = state.products.filter(i => i.productId !== action.payload)
+        },
+        updateCartQuantity(state, action) {
+            let index = state.products.findIndex(x => x.productId === action.payload.productId)
+            state.products[index].cartItem.quantity = action.payload.quantity
+        },
+        removeProducts(state, action) {
+            state.products = state.products.filter(i => !action.payload.includes(i.productId))
         }
     },
     extraReducers: (builder) => {
