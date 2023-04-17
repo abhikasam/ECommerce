@@ -32,7 +32,7 @@ namespace ECommerce.Controllers.Products
         }
 
         [HttpGet]
-        public async Task<JsonResult> Get()
+        public async Task<JsonResult> Get(string dateFilter=null)
         {
             var message = new ResponseMessage();
 
@@ -52,9 +52,9 @@ namespace ECommerce.Controllers.Products
 
                 orders = orders.OrderByDescending(i => i.ProductId);
 
-                var paginatedOrders = orders.PaginateData(1, 50);
+                var orderDtos = await orders.GetOrderDtos(userManager,this.User,dateFilter);
 
-                var orderDtos = await paginatedOrders.GetOrderDtos(userManager,this.User);
+
                 message.Data = orderDtos;
             }
             catch (Exception ex)

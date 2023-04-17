@@ -15,9 +15,11 @@ const initialValue = {
 
 export const fetchOrdersAsync = createAsyncThunk(
     'order/fetchOrdersAsync',
-    async (_, { dispatch, getState }) => {
+    async (dateFilter, { dispatch, getState }) => {
+        let queryString = dateFilter ? ('?dateFilter=' + dateFilter):''
+            
         const response =
-            await fetch('/orders')
+            await fetch('/orders' + queryString)
                 .then(result => {
                     if (!result.ok) throw result;
                     return result.json();

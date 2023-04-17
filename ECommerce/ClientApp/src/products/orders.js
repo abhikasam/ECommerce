@@ -1,4 +1,4 @@
-﻿import { useEffect } from "react"
+﻿import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { fetchOrdersAsync } from "../store/order-slice"
 import { getProductAsync } from "../store/product-slice"
@@ -15,10 +15,15 @@ export default function Orders() {
         dispatch(fetchOrdersAsync())
     }, [dispatch])
 
+    function applyFilters(dateFilter) {
+        dispatch(fetchOrdersAsync(dateFilter))
+    }
+
     return (
         <>
             <div className="row">
                 <div className="col-2">
+                    <OrderListFilter applyFilters={applyFilters}></OrderListFilter>
                 </div>
                 <div className="col-10">
                     <div className="row">
@@ -33,6 +38,41 @@ export default function Orders() {
                 </div>
             </div>
         </>
+    )
+}
+
+
+const OrderListFilter = ({ applyFilters }) => {
+
+    const [dateFilter, setDateFilter]=useState('30')
+
+    return (
+        <div className="row">
+            <div className="col">
+                <div className="row">
+                    <div className="col-6">
+                        <button type="button"
+                            className="btn btn-primary"
+                            onClick={() => applyFilters(dateFilter)}
+                        >Update</button>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col">
+                        <label>Order with in :</label>
+                        <select className="form-control"
+                            value={dateFilter}
+                            onChange={(event) => setDateFilter(event.target.value)}
+                        >
+                            <option value="30">Last 30 days</option>
+                            <option value="90">Last 90 days</option>
+                            <option value="180">Last 180 days</option>
+                            <option value="365">Last 365 days</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
     )
 }
 

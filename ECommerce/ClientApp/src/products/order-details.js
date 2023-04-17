@@ -62,7 +62,6 @@ export default function OrderDetails(props) {
     )
 }
 
-
 const OrderItem = ({ product }) => {
 
     function getDiscountColor() {
