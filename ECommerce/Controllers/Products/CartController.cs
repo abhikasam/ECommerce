@@ -56,7 +56,7 @@ namespace ECommerce.Controllers.Products
                     message.StatusCode = ResponseStatus.ERROR;
                     return new JsonResult(message);
                 }
-                else if (cartItem.ProductId == 0 || cartItem.Quantity == 0)
+                else if (cartItem.ProductId == 0)
                 {
                     message.Message = "Can't add to cart";
                     message.StatusCode = ResponseStatus.ERROR;
@@ -147,7 +147,7 @@ namespace ECommerce.Controllers.Products
                     message.StatusCode = ResponseStatus.ERROR;
                     return new JsonResult(message);
                 }
-                else if (cartItem.ProductId == 0 || cartItem.Quantity == 0)
+                else if (cartItem.ProductId == 0)
                 {
                     message.Message = "Can't remove from cart";
                     message.StatusCode = ResponseStatus.ERROR;
@@ -170,7 +170,6 @@ namespace ECommerce.Controllers.Products
             return new JsonResult(message);
         }
 
-
         [HttpPost]
         [Route("[action]")]
         [ActionName("Update")]
@@ -184,23 +183,15 @@ namespace ECommerce.Controllers.Products
                 var dbCartItem = ecommerceContext.Carts
                                 .Where(i => i.ProductId == cartItem.ProductId && i.UserId == currentUserId);
 
-                if(cartItem.Quantity==0 && dbCartItem.Any())
+                if(dbCartItem.Any())
                 {
                     ecommerceContext.Carts.Remove(dbCartItem.First());
                 }
-                else if(cartItem.Quantity>0)
+                else
                 {
-                    if (dbCartItem.Any())
-                    {
-                        dbCartItem.First().Quantity = cartItem.Quantity;
-                        dbCartItem.First().UpdatedOn = DateTime.Now;
-                    }
-                    else
-                    {
-                        cartItem.UserId=currentUserId;
-                        cartItem.UpdatedOn = DateTime.Now;
-                        ecommerceContext.Carts.Add(cartItem);
-                    }
+                    cartItem.UserId = currentUserId;
+                    cartItem.UpdatedOn = DateTime.Now;
+                    ecommerceContext.Carts.Add(cartItem);
                 }
 
                 await ecommerceContext.SaveChangesAsync();

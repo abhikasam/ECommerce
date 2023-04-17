@@ -16,7 +16,6 @@ namespace ECommerce.Models.Ecommerce
             {
                 CartItemId = cart.CartItemId,
                 ProductId = cart.ProductId,
-                Quantity = cart.Quantity,
                 UserId = cart.UserId,
                 UpdatedOn = cart.UpdatedOn
             };

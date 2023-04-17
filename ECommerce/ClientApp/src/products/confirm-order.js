@@ -26,46 +26,34 @@ export default function ConfirmOrder(props) {
         dispatch(getCartAsync())
     }, [dispatch])
 
-    useEffect(() => {
-        setSelectedProducts((prev) => {
-            let currentProductIds = prev.map(i => i.productId)
-            return products.filter(i => currentProductIds.includes(i.productId))
-        })
-    }, [products, setSelectedProducts])
-
-    function updateCartQuantity(quantity, productId) {
-        dispatch(cartActions.updateCartQuantity({ quantity, productId }))
-    }
-
     function totalQuantity() {
-        return selectedProducts.reduce((acc, cum) => acc + cum.cartItem.quantity, 0)
+        return selectedProducts.reduce((acc, cum) => acc + cum.quantity, 0)
     }
 
     function totalPrice() {
-        return selectedProducts.reduce((acc, cum) => acc + (cum.cartItem.quantity * cum.finalPrice), 0)
+        return selectedProducts.reduce((acc, cum) => acc + (cum.quantity * cum.finalPrice), 0)
     }
 
-    function updateSelected(product) {
-        if (selectedProducts.map(i => i.productId).includes(product.productId)) {
+    function updateSelected(orderItem) {
+        if (orderItem.selected) {
             setSelectedProducts(prev => {
-                return prev.filter(i => i.productId != product.productId)
+                let remainingProducts = prev.filter(i => i.productId !== orderItem.productId)
+                return [...remainingProducts, {
+                    productId: orderItem.productId,
+                    quantity: orderItem.quantity,
+                    finalPrice: orderItem.finalPrice
+                }]
             })
         }
         else {
-            setSelectedProducts(prev => [...prev, product])
+            setSelectedProducts(prev => prev.filter(i => i.productId !== orderItem.productId))
         }
     }
 
     function placeOrder() {
-        let orderItems = selectedProducts.filter(i => i.cartItem.quantity>0).map(i => {
-            return {
-                productId: i.productId,
-                quantity: i.cartItem.quantity
-            }
-        })
-
+        let orderItems = selectedProducts.filter(i => i.quantity>0)
+    
         dispatch(placeOrderAsync(orderItems))
-
     }
 
     return (
@@ -84,9 +72,7 @@ export default function ConfirmOrder(props) {
                     {products.map(product =>
                         <Fragment key={product.productId}>
                             <OrderItem product={product}
-
-                                updateCartQuantity={(quantity) => updateCartQuantity(quantity, product.productId)}
-                                updateSelected={() => updateSelected(product)}
+                                updateSelected={updateSelected}
                             />
                         </Fragment>
                     )}
@@ -120,11 +106,8 @@ export default function ConfirmOrder(props) {
 
 
 
-const OrderItem = ({ product, updateCartQuantity,updateSelected }) => {
+const OrderItem = ({ product, updateSelected }) => {
 
-    function updateQuantity(quantity) {
-        updateCartQuantity(quantity)
-    }
 
     function getDiscountColor() {
         if (product.discount >= 50)
@@ -134,16 +117,26 @@ const OrderItem = ({ product, updateCartQuantity,updateSelected }) => {
         else return 'red';
     }
 
-    const [selected, setSelected] = useState(false)
+    const [orderItem, setOrderItem] = useState({
+        selected:false,
+        productId: product.productId,
+        quantity: 0,
+        finalPrice: product.finalPrice
+    })
+
+    useEffect(() => {
+        updateSelected(orderItem)
+    }, [orderItem])
 
     return (
-        <div className="row m-2 p-2 border" style={{ background: (selected ? 'gainsboro' : 'white') }}>
+        <div className="row m-2 p-2 border" style={{ background: (orderItem.selected ? 'gainsboro' : 'white') }}>
             <div className="col-1 p-5">
                 <input type="checkbox"
                     className="form-control-check"
                     onChange={() => {
-                        setSelected(prev => !prev)
-                        updateSelected()
+                        setOrderItem(prev => {
+                            return { ...prev, selected: !prev.selected }
+                        })
                     }}
                 />
             </div>
@@ -182,21 +175,25 @@ const OrderItem = ({ product, updateCartQuantity,updateSelected }) => {
                     </div>
                 </div>
             </div>
-            {selected &&
+            {orderItem.selected &&
                 <>
                     <div className="col-2">
-                        <QuantityHandler initialQuantity={product.cartItem.quantity}
-                            maxQuantity={product.quantity}
-                            updateQuantity={updateQuantity}
+                    <QuantityHandler initialQuantity={0}
+                        maxQuantity={product.quantity}
+                        updateQuantity={(quantity) => {
+                            setOrderItem(prev => {
+                                return { ...prev, quantity:quantity }
+                            })
+                        }}
                         ></QuantityHandler>
                     </div>
-                    <div className="col-2 fw-bold fs-5 pt-5 text-center">
-                        ₹{product.cartItem.quantity * product.finalPrice}
+                <div className="col-2 fw-bold fs-5 pt-5 text-center">
+                    ₹{orderItem.quantity * product.finalPrice}
                     </div>
                 </>
             }
 
-            {!selected &&
+            {!orderItem.selected &&
                 <div className="col-4 pt-5 ms-5 text-danger">
                     Please select the checkbox to consider this item to place order.
                 </div>

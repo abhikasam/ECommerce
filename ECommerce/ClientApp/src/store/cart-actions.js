@@ -2,13 +2,12 @@
 import { favouriteActions } from "./favourite-slice";
 import { productActions } from "./product-slice";
 
-export const upadteProductCart = (productId,quantity) => {
+export const upadteProductCart = (productId) => {
     return async (dispatch) => {
         async function update() {
 
             let cartItem = {
-                productId,
-                quantity: quantity
+                productId
             }
 
             await fetch('/cart/update',
@@ -24,14 +23,9 @@ export const upadteProductCart = (productId,quantity) => {
                     return result.json();
                 })
                 .then(response => {
-                    if (quantity === 0) {
-                        dispatch(cartActions.removeProduct(productId))
-                    }
-                    else {
-                        dispatch(cartActions.updateProduct(response.data))
-                        dispatch(favouriteActions.updateProduct(response.data))
-                        dispatch(productActions.updateProduct(response.data))
-                    }
+                    dispatch(cartActions.updateProduct(response.data))
+                    dispatch(favouriteActions.updateProduct(response.data))
+                    dispatch(productActions.updateProduct(response.data))
                 })
                 .catch(error => {
                     console.log(error)

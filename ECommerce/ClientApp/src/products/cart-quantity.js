@@ -9,9 +9,6 @@ export default function CartQuantity({ product,updateCart }) {
 
     useEffect(() => { }, [product])
 
-    const initialQantity = product.isInCart ? product.cartItem.quantity : 0
-    const [quantity, setQuantity] = useState(initialQantity)
-
     return ReactDom.createPortal(
         <div className="modal" id={"cartCounter" + product.productId} tabIndex="-1">
             <div className="modal-dialog">
@@ -35,12 +32,7 @@ export default function CartQuantity({ product,updateCart }) {
                             </div>
 
                             <div className="col-7 text-center">
-                                <QuantityHandler initialQuantity={initialQantity}
-                                    maxQuantity={product.quantity}
-                                    updateQuantity={(quantity) => setQuantity(quantity)}
-                                ></QuantityHandler>
                             </div>
-
                         </div>
                     </div>
                     <div className="modal-footer">
@@ -51,9 +43,6 @@ export default function CartQuantity({ product,updateCart }) {
                         <button type="button"
                             className="btn btn-primary"
                             data-bs-dismiss="modal"
-                            onClick={() => {
-                                updateCart(quantity)
-                            }}
                         >Save</button>
                     </div>
                 </div>

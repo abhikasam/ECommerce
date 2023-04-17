@@ -16,7 +16,6 @@ export default function ProductCard({ product }) {
     const { products: favourites } = useSelector(state => state.favourite)
     const { products: cartProducts } = useSelector(state => state.cart)
 
-    const [showModal, setShowModal] = useState(false);
 
     function getDiscountColor() {
         if (product.discount >= 50)
@@ -30,10 +29,6 @@ export default function ProductCard({ product }) {
         history.push('/product-details', {
             product: product
         })
-    }
-
-    function updateCart(quantity) {
-        dispatch(upadteProductCart(product.productId, quantity))
     }
 
     return (
@@ -76,25 +71,18 @@ export default function ProductCard({ product }) {
                     <>
                         <div className="col-6 text-center">
                             {cartProducts.map(i => i.productId).includes(product.productId) &&
-                                <div>
-                                    <span className="p1 fa-stack fa-1x has-badge ">
+                                    <span className="p1 fa-stack fa-1x">
                                         <i className="p2 fa fa-circle fa-stack-2x"></i>
-                                        <i className="p3 fa fa-shopping-cart fa-stack-1x fa-inverse" style={{ cursor: 'pointer' }}
-                                            onClick={() => setShowModal(true)}
-                                            data-bs-toggle="modal" data-bs-target={"#cartCounter" + product.productId}
-                                        ></i>
-                                        <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                            {product.cartItem.quantity}
-                                        </span>
+                                    <i className="p3 fa fa-shopping-cart fa-stack-1x fa-inverse" style={{ cursor: 'pointer' }}
+                                        onClick={() => dispatch(upadteProductCart(product.productId))}
+                                    ></i>
                                     </span>
-                                </div>
                             }
 
                             {!cartProducts.map(i => i.productId).includes(product.productId) &&
                                 <i className={"fa fa-shopping-cart " + classes.icon}
                                     style={{ color: 'gray' }}
-                                    onClick={() => setShowModal(true)}
-                                    data-bs-toggle="modal" data-bs-target={"#cartCounter" + product.productId}
+                                    onClick={() => dispatch(upadteProductCart(product.productId))}
                                     aria-hidden="true"></i>
                             }
                         </div>
@@ -129,7 +117,6 @@ export default function ProductCard({ product }) {
                     </>
                 }
             </div>
-            <CartQuantity setShowModal={setShowModal} product={product} updateCart={updateCart} ></CartQuantity>
         </div>
     )
 }
