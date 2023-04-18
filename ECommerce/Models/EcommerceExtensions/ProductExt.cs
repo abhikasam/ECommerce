@@ -35,7 +35,8 @@ namespace ECommerce.Models.Ecommerce
         public static IQueryable<ProductDto> GetProductDtos(this IQueryable<Product> products, 
             ClaimsPrincipal claimsPrincipal, ProductFilters filters=null)
         {
-            var noImage = @"D:\project\ECommerce\ECommerce\ClientApp\src\images\no-image.png";
+            var noImage = Directory.GetCurrentDirectory();
+            noImage+=@"\ClientApp\src\images\no-image.png";
             byte[] bytes = System.IO.File.ReadAllBytes(noImage);
 
             var hasPriceRangesFilers = filters != null && filters.PriceRanges.Count() > 0;
@@ -203,7 +204,9 @@ namespace ECommerce.Models.Ecommerce
 
         public static ProductDto GetProductDto(this Product product,ClaimsPrincipal claimsPrincipal)
         {
-            var noImage = @"D:\project\ECommerce\ECommerce\ClientApp\src\images\no-image.png";
+            var noImage = Directory.GetCurrentDirectory();
+            noImage += @"\ClientApp\src\images\no-image.png";
+
             byte[] bytes = System.IO.File.ReadAllBytes(noImage);
             var productDto = new ProductDto()
             {
