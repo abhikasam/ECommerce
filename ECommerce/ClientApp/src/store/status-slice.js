@@ -1,28 +1,22 @@
 ﻿
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { status } from '../shared/status';
+import { authActions } from './auth-slice';
 
 const initialValue = {
-    hasStatus:false,
-    message: '',
-    alertClass: '',
-    textClass: ''
+    status: status
 }
 
 const statusSlice = createSlice({
-    name: 'error',
+    name: 'status',
     initialState: initialValue,
     reducers: {
         clear(state) {
-            state.hasStatus = false;
-            state.message = '';
-            state.alertClass = '';
-            state.textClass = '';
+            state.status.message = ''
+            state.status.type = ''
         },
         add(state, action) {
-            state.hasStatus = true;
-            state.message = action.payload.message;
-            state.alertClass = action.payload.alertClass;
-            state.textClass = action.payload.textClass;
+            state.status = action.payload
         }
     }
 })

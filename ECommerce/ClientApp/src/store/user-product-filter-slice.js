@@ -1,6 +1,7 @@
 ﻿
 import { createSlice,createAsyncThunk } from '@reduxjs/toolkit';
 import { updateFilters } from './product-actions';
+import { status } from '../shared/status';
 
 const initialValue = {
     filters: {
@@ -13,12 +14,7 @@ const initialValue = {
         sortOrder: 'asc',
         pageNumber:''
     },
-    status: {
-        isLoading: false,
-        message: '',
-        textClass: '',
-        alertClass: ''
-    }
+    status: status
 }
 
 export const fetchUserProductFiltersAsync = createAsyncThunk(

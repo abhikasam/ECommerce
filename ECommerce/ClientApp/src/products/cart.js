@@ -4,6 +4,7 @@ import ProductCard from "./product-card"
 import Pagination from "../shared/pagination"
 import { cartActions, getCartAsync } from "../store/cart-slice";
 import { useHistory } from "react-router-dom";
+import Status from "../shared/status";
 
 
 export default function Cart() {
@@ -45,15 +46,7 @@ export default function Cart() {
                                 setPage={loadPage} ></Pagination>
                         </div>
                     </div>
-                    {status.isLoading &&
-                        <div className={"row rowpad5px align-items-center "} >
-                            <div className="col-8">
-                                <div className={status.alertClass + " alert"} style={{ whiteSpace: "pre-wrap" }}>
-                                    <div className={status.textClass}>{status.message}</div>
-                                </div>
-                            </div>
-                        </div>
-                    }
+                    <Status status={status}></Status>
                     <div className="row">
                         {
                             products.map(product =>

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import { useHistory } from "react-router-dom"
 import { addFavourite, removeFavourite, updateFourites } from '../store/favourite-actions';
-import { addToCart, removeFromCart, upadteProductCart } from '../store/cart-actions';
+import { upadteProductCart } from '../store/cart-slice';
 import CartQuantity from './cart-quantity';
 
 

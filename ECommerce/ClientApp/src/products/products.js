@@ -10,6 +10,7 @@ import { statusActions } from "../store/status-slice";
 import { updateFilters } from "../store/product-actions";
 import { getFavouritesAsync } from "../store/favourite-slice";
 import { getCartAsync } from "../store/cart-slice";
+import Status from "../shared/status";
 
 
 export default function Products() {
@@ -80,15 +81,7 @@ export default function Products() {
                         </div>
                         <Pagination pageNumber={pageNumber} totalPages={totalPages} setPage={loadPage} ></Pagination>
                     </div>
-                    {status.isLoading &&
-                        <div className={"row rowpad5px align-items-center " + classes.alertbar} >
-                            <div className="col-8">
-                                <div className={status.alertClass + " alert"} style={{ whiteSpace: "pre-wrap" }}>
-                                    <div className={status.textClass}>{status.message}</div>
-                                </div>
-                            </div>
-                        </div>
-                    }
+                    <Status status={status}></Status>
                     <div className="row">
                         {
                             products.map(product =>

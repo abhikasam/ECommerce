@@ -1,7 +1,6 @@
-﻿import { sortBrands } from "./brand-actions";
-import { brandActions } from "./brand-slice";
-import { sortCategories } from "./category-actions";
-import { sortIndividualCategories } from "./individual-category-actions";
+﻿import { sortBrands } from "./brand-slice";
+import { sortCategories } from "./category-slice";
+import { sortIndividualCategories } from "./individual-category-slice";
 import { productActions } from "./product-slice";
 import { statusActions } from "./status-slice";
 

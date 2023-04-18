@@ -2,6 +2,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from 'react-router-dom';
 import { statusActions } from "../../store/status-slice";
+import Status, { status } from "../../shared/status";
 
 export default function Register() {
 
@@ -44,11 +45,7 @@ export default function Register() {
         validationMessage: ''
     })
 
-    const [formResponseData, setFormResponseData] = useState({
-        textClass: '',
-        alertClass: '',
-        message: ''
-    })
+    const [formResponseData, setFormResponseData] = useState(status)
 
     function arePasswordMatched() {
         return registerData.password === registerData.confirmPassword;
@@ -160,13 +157,7 @@ export default function Register() {
             </h4>
             <form onSubmit={onFormSubmit}>
                 <div className="container">
-                    <div className="row rowpad5px align-items-center m-2">
-                        <div className="col-7">
-                            <div className={formResponseData.alertClass + " alert"} style={{ whiteSpace: "pre-wrap" }}>
-                                <div className={formResponseData.textClass}>{formResponseData.message}</div>
-                            </div>
-                        </div>
-                    </div>
+                    <Status status={formResponseData}></Status>
                     <div className="row rowpad5px align-items-center m-2">
                         <div className="col-3 text-end">
                             First Name

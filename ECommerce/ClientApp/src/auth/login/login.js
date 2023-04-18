@@ -1,11 +1,8 @@
 ﻿import { useContext, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useHistory } from "react-router-dom"
-import { authActions } from "../../store/auth-slice";
-import { loginUser, setUser } from "../../store/auth-actions";
-import { statusActions } from "../../store/status-slice";
+import { authActions, loginUserAsync } from "../../store/auth-slice";
 import { useEffect } from "react";
-
 
 export default function Login() {
 
@@ -88,7 +85,7 @@ export default function Login() {
 
     async function onFormSubmit(event) {
         event.preventDefault()
-        dispatch(loginUser(formData))
+        dispatch(loginUserAsync(formData))
     }
 
 

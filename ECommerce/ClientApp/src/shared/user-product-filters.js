@@ -4,7 +4,7 @@ import { useEffect } from "react"
 import { fetchUserProductFiltersAsync, saveUserProductFilterAsync } from "../store/user-product-filter-slice"
 import { useState } from "react"
 import { useHistory } from "react-router-dom"
-import { productActions } from "../store/product-slice"
+import { productActions, updateFiltersAsync } from "../store/product-slice"
 
 
 export default function UserProductFilters() {
@@ -110,7 +110,7 @@ export default function UserProductFilters() {
     }
 
     function getProducts() {
-        dispatch(productActions.updateFilters({
+        dispatch(updateFiltersAsync({
             brands: filters.brandIds,
             categories: filters.categoryIds,
             individualCategories: filters.individualCategoryIds,

@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { productActions } from "../store/product-slice"
 import { cartActions, getCartAsync } from "../store/cart-slice"
 import { orderActions, placeOrderAsync } from "../store/order-slice"
+import Status from "../shared/status"
 
 
 
@@ -60,15 +61,7 @@ export default function ConfirmOrder(props) {
 
     return (
         <div>
-            {status.message.length > 0 &&
-                <div className={"row rowpad5px align-items-center "} >
-                    <div className="col-8">
-                        <div className={status.alertClass + " alert"} style={{ whiteSpace: "pre-wrap" }}>
-                            <div className={status.textClass}>{status.message}</div>
-                        </div>
-                    </div>
-                </div>
-            }
+            <Status status={status}></Status>
             <div className="row product-details">
                 <div className="col" style={{ maxHeight: '40em', overflowY: 'auto' }}>
                     {products.map(product =>

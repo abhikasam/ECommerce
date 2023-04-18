@@ -1,13 +1,12 @@
 ﻿import CollapseElement from "../shared/collapse"
 import ListSelect from "../shared/list-select"
 import { useDispatch, useSelector } from "react-redux"
-import { getBrands } from "../store/brand-actions"
 import { useEffect, useState } from "react"
-import { getCategories } from "../store/category-actions"
-import { getIndividualCategories } from "../store/individual-category-actions"
 import { productActions } from "../store/product-slice"
 import { useHistory } from "react-router-dom"
-import { individualCategoryActions } from "../store/individual-category-slice"
+import { fetchIndividualCategoriesAsync, individualCategoryActions } from "../store/individual-category-slice"
+import { fetchBrands } from "../store/brand-slice"
+import { fetchCategoriesAsync } from "../store/category-slice"
 
 
 export default function ProductFilters({ initialFilters,onUpdate }) {
@@ -33,9 +32,9 @@ export default function ProductFilters({ initialFilters,onUpdate }) {
 
 
     useEffect(() => {
-        dispatch(getBrands())
-        dispatch(getCategories())
-        dispatch(getIndividualCategories())
+        dispatch(fetchBrands())
+        dispatch(fetchCategoriesAsync())
+        dispatch(fetchIndividualCategoriesAsync())
     }, [dispatch])
 
     function productCountChangeHandler(event) {

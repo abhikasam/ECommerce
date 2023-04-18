@@ -1,16 +1,12 @@
 ﻿
 import { createSlice,createAsyncThunk } from '@reduxjs/toolkit';
+import { status } from '../shared/status';
 
 const initialValue = {
     products: [],
     pageNumber: 1,
     totalPages: '',
-    status: {
-        isLoading: false,
-        message: '',
-        textClass: '',
-        alertClass: ''
-    }
+    status: status
 }
 
 export const getFavouritesAsync = createAsyncThunk(
@@ -65,23 +61,17 @@ const favouriteSlice = createSlice({
     extraReducers: (builder) => {
         builder.addCase(getFavouritesAsync.pending, (state, action) => {
             state.status.message = 'Loading favourites...';
-            state.status.textClass = 'text-warning';
-            state.status.alertClass = 'alert-warning';
-            state.status.isLoading = true;
+            state.status.type = 'warning';
         })
 
         builder.addCase(getFavouritesAsync.fulfilled, (state, action) => {
             state.status.message = '';
-            state.status.textClass = 'text-success';
-            state.status.alertClass = 'alert-success';
-            state.status.isLoading = false;
+            state.status.type = '';
         })
 
         builder.addCase(getFavouritesAsync.rejected, (state, action) => {
             state.status.message = '';
-            state.status.textClass = 'text-danger';
-            state.status.alertClass = 'alert-danger';
-            state.status.isLoading = false;
+            state.status.type = 'danger';
         })
     }
 })

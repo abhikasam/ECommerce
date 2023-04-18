@@ -4,13 +4,13 @@ import { useDispatch, useSelector } from "react-redux"
 import AddPhoto from '../images/add-image.png';
 import classes from './product-edit.module.css';
 import { useEffect } from "react";
-import { getCategoryMappings } from "../store/category-mapping-actions";
-import { getSizeMappings } from "../store/size-mapping-actions";
 import { useState } from "react";
 import ProductQuantitySelector from "../products/product-quantity-selector";
 import { statusActions } from "../store/status-slice";
 import { useHistory } from "react-router-dom";
 import { saveProduct } from "../store/product-actions";
+import { fetchCategoryMappingsAsync } from "../store/category-mapping-slice";
+import { fetchSizeMappingsAsync } from "../store/size-mapping-slice";
 
 
 export default function EditProduct(props) {
@@ -42,8 +42,8 @@ export default function EditProduct(props) {
     const [formValid,setFormValid]=useState(false)
 
     useEffect(() => {
-        dispatch(getCategoryMappings())
-        dispatch(getSizeMappings())
+        dispatch(fetchCategoryMappingsAsync())
+        dispatch(fetchSizeMappingsAsync())
     }, [dispatch])
 
     useEffect(() => {

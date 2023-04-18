@@ -3,10 +3,9 @@ import { Collapse, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink } from '
 import { Link, useLocation } from 'react-router-dom';
 import './NavMenu.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { authActions } from '../store/auth-slice';
+import { authActions, loginUserAsync, logoutUserAsync } from '../store/auth-slice';
 import { format } from '../shared/timeext';
 import { useEffect } from 'react';
-import { logoutUser } from '../store/auth-actions';
 
 export default function NavMenu() {
 
@@ -49,7 +48,7 @@ export default function NavMenu() {
     }
 
     async function logoutHandler() {
-        dispatch(logoutUser())
+        dispatch(logoutUserAsync())
     }
 
     return (

@@ -1,16 +1,14 @@
 ﻿
 import { createSlice,createAsyncThunk } from '@reduxjs/toolkit';
+import { favouriteActions } from "./favourite-slice";
+import { productActions } from "./product-slice";
+import { status } from '../shared/status';
 
 const initialValue = {
     products: [],
     pageNumber: 1,
     totalPages: '',
-    status: {
-        isLoading: false,
-        message: '',
-        textClass: '',
-        alertClass: ''
-    }
+    status: status
 }
 
 export const getCartAsync = createAsyncThunk(
@@ -21,21 +19,55 @@ export const getCartAsync = createAsyncThunk(
         queryString += '&pageNumber=' + pageNumber
         queryString = '?' + queryString.slice(1)
 
-        await fetch('/cart' + queryString)
-            .then(result => {
-                if (!result.ok) throw result;
-                return result.json();
+        const response=await fetch('/cart' + queryString)
+            .then(data => {
+                if (!data.ok) throw data;
+                return data.json();
             })
-            .then(response => {
-                dispatch(cartActions.updateProducts(response.data))
+            .then(result => {
+                dispatch(cartActions.updateProducts(result.data))
             })
             .catch(error => {
                 dispatch(cartActions.updateProducts([{ result: [], pageNumber: 1, totalPages: 1 }]))
                 console.log(error)
             })
+        return response;
     }
 )
 
+export const upadteProductCart = (productId) => {
+    return async (dispatch) => {
+        async function update() {
+
+            let cartItem = {
+                productId
+            }
+
+            await fetch('/cart/update',
+                {
+                    method: 'POST',
+                    body: JSON.stringify(cartItem),
+                    headers: {
+                        'Content-Type': 'application/json;'
+                    }
+                })
+                .then(result => {
+                    if (!result.ok) throw result;
+                    return result.json();
+                })
+                .then(response => {
+                    dispatch(cartActions.updateProduct(response.data))
+                    dispatch(favouriteActions.updateProduct(response.data))
+                    dispatch(productActions.updateProduct(response.data))
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+        }
+
+        update();
+    }
+}
 
 const cartSlice = createSlice({
     name: 'cart',
@@ -68,23 +100,17 @@ const cartSlice = createSlice({
     extraReducers: (builder) => {
         builder.addCase(getCartAsync.pending, (state, action) => {
             state.status.message = 'Loading cart...';
-            state.status.textClass = 'text-warning';
-            state.status.alertClass = 'alert-warning';
-            state.status.isLoading = true;
+            state.status.type = 'warning';
         })
 
         builder.addCase(getCartAsync.fulfilled, (state, action) => {
             state.status.message = '';
-            state.status.textClass = 'text-success';
-            state.status.alertClass = 'alert-success';
-            state.status.isLoading = false;
+            state.status.type = '';
         })
 
         builder.addCase(getCartAsync.rejected, (state, action) => {
-            state.status.message = '';
-            state.status.textClass = 'text-danger';
-            state.status.alertClass = 'alert-danger';
-            state.status.isLoading = false;
+            state.status.message = 'Unable to fetch cart';
+            state.status.type = 'danger';
         })
     }
 })

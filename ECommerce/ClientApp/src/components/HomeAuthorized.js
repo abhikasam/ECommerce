@@ -1,16 +1,16 @@
 ﻿
 import { Fragment, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getCategories } from '../store/category-actions';
-import { getBrands } from '../store/brand-actions';
-import { getIndividualCategories } from '../store/individual-category-actions';
 import { useHistory } from "react-router-dom"
-import { getCategoryMappings } from '../store/category-mapping-actions';
 import ItemSelector from '../shared/item-selector';
 import ChildSelector from '../shared/child-selector';
 import { productActions } from '../store/product-slice';
 import ListSelect from '../shared/list-select';
 import UserProductFilters from '../shared/user-product-filters';
+import { fetchBrands } from '../store/brand-slice';
+import { fetchCategoriesAsync } from '../store/category-slice';
+import { fetchCategoryMappingsAsync } from '../store/category-mapping-slice';
+import { fetchIndividualCategoriesAsync } from '../store/individual-category-slice';
 
 export default function HomeAuthorized() {
 
@@ -18,10 +18,10 @@ export default function HomeAuthorized() {
     const history = useHistory()
 
     useEffect(() => {
-        dispatch(getBrands())
-        dispatch(getCategories())
-        dispatch(getCategoryMappings())
-        dispatch(getIndividualCategories())
+        dispatch(fetchBrands())
+        dispatch(fetchCategoriesAsync())
+        dispatch(fetchCategoryMappingsAsync())
+        dispatch(fetchIndividualCategoriesAsync())
     }, [dispatch])
 
     const { user } = useSelector(state => state.auth);

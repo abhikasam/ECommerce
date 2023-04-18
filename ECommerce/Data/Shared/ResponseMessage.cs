@@ -11,7 +11,7 @@ namespace ECommerce.Models
             }
         }
         public ResponseStatus StatusCode { get; set; } = ResponseStatus.UNKNOWN;
-        public string MessageClass
+        public string Type
         {
             get
             {
@@ -19,36 +19,17 @@ namespace ECommerce.Models
                 {
                     case ResponseStatus.UNKNOWN:
                     case ResponseStatus.SUCCESS:
-                        return "text-success";
+                        return "success";
+                    case ResponseStatus.WARNING:
+                        return "warning";
                     case ResponseStatus.ERROR:
                     case ResponseStatus.EXCEPTION:
-                    case ResponseStatus.WARNING:
-                        return "text-danger";
+                        return "danger";
                 }
 
                 return string.Empty;
             }
         }
-
-        public string AlertClass
-        {
-            get
-            {
-                switch (StatusCode)
-                {
-                    case ResponseStatus.UNKNOWN:
-                    case ResponseStatus.SUCCESS:
-                        return "alert-success";
-                    case ResponseStatus.ERROR:
-                    case ResponseStatus.EXCEPTION:
-                    case ResponseStatus.WARNING:
-                        return "alert-danger";
-                }
-
-                return string.Empty;
-            }
-        }
-
         public object Data { get; set; }
         public bool HasData { get; set; }
     }

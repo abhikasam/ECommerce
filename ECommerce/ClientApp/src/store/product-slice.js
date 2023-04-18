@@ -1,8 +1,9 @@
 ﻿
-import { createSlice,createAsyncThunk } from '@reduxjs/toolkit';
-import { sortBrands } from './brand-actions';
-import { sortCategories } from './category-actions';
-import { sortIndividualCategories } from './individual-category-actions';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { sortBrands } from './brand-slice';
+import { sortCategories } from './category-slice';
+import { sortIndividualCategories } from './individual-category-slice';
+import { status } from '../shared/status';
 
 const initialValue = {
     products: [],
@@ -18,12 +19,7 @@ const initialValue = {
         priceRanges:[],
         individualCategories: []
     },
-    status: {
-        isLoading: false,
-        message: '',
-        textClass: '',
-        alertClass:''
-    }
+    status: status
 }
 
 
@@ -158,23 +154,17 @@ const productSlice = createSlice({
     extraReducers:(builder) => {
         builder.addCase(getProductsAsync.pending, (state, action) => {
             state.status.message = 'Loading products...';
-            state.status.textClass = 'text-warning';
-            state.status.alertClass = 'alert-warning';
-            state.status.isLoading = true;
+            state.status.type = 'warning';
         })
 
         builder.addCase(getProductsAsync.fulfilled, (state, action) => {
             state.status.message = '';
-            state.status.textClass = 'text-success';
-            state.status.alertClass = 'alert-success';
-            state.status.isLoading = false;
+            state.status.type = '';
         })
 
         builder.addCase(getProductsAsync.rejected, (state, action) => {
-            state.status.message = '';
-            state.status.textClass = 'text-danger';
-            state.status.alertClass = 'alert-danger';
-            state.status.isLoading = false;
+            state.status.message = 'Unable to fetch products';
+            state.status.type = 'danger';
         })
     }
 })

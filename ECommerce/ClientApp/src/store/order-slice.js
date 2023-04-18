@@ -1,16 +1,12 @@
 ﻿
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { cartActions } from './cart-slice';
+import { status } from '../shared/status';
 
 
 const initialValue = {
     orders: [],
-    status: {
-        message: '',
-        textClass: '',
-        alertClass: ''
-    }
-
+    status: status
 }
 
 export const fetchOrdersAsync = createAsyncThunk(
@@ -82,12 +78,12 @@ const orderSlice = createSlice({
 
         builder.addCase(placeOrderAsync.fulfilled, (state, action) => {
             state.status.message = action.payload.message;
-            state.status.textClass = action.payload.messageClass;
-            state.status.alertClass = action.payload.alertClass;
+            state.status.type = action.payload.type;
         })
 
         builder.addCase(placeOrderAsync.rejected, (state, action) => {
-            console.log(state, action)
+            state.status.message ='Unable to fetch orders';
+            state.status.type = 'danger';
         })
 
 

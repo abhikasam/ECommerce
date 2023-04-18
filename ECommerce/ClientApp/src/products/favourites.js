@@ -4,6 +4,7 @@ import { useEffect } from "react"
 import ProductCard from "./product-card"
 import Pagination from "../shared/pagination"
 import { favouriteActions, getFavouritesAsync } from "../store/favourite-slice"
+import Status from "../shared/status"
 
 
 export default function Favourites() {
@@ -26,15 +27,7 @@ export default function Favourites() {
                     totalPages={totalPages}
                     setPage={loadPage} ></Pagination>
             </div>
-            {status.isLoading &&
-                <div className={"row rowpad5px align-items-center "} >
-                    <div className="col-8">
-                        <div className={status.alertClass + " alert"} style={{ whiteSpace: "pre-wrap" }}>
-                            <div className={status.textClass}>{status.message}</div>
-                        </div>
-                    </div>
-                </div>
-            }
+            <Status status={status}></Status>
             <div className="row">
                 {
                     products.map(product =>
