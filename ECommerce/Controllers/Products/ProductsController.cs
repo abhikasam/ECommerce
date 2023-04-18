@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Microsoft.AspNet.Identity;
+using ECommerce.Data.Shared;
 
 namespace ECommerce.Controllers.Products
 {
@@ -69,9 +70,9 @@ namespace ECommerce.Controllers.Products
                     SortBy=sortBy,
                     SortOrder=sortOrder,
                     Search=search,
-                    Brands= Utilities.GetArray(brands,","),
-                    Categories=Utilities.GetArray(categories,","),
-                    IndividualCategories=Utilities.GetArray(individualCategories,","),
+                    Brands= brands.GetArray(","),
+                    Categories= categories.GetArray(","),
+                    IndividualCategories= individualCategories.GetArray(","),
                     PriceRanges=priceRangeFilters
                 };
 

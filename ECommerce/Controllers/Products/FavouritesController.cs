@@ -41,7 +41,7 @@ namespace ECommerce.Controllers.Products
 
             try
             {
-                var userId = this.User.Identity.GetUserId();
+                var userId = this.User.GetUserId();
                 var products = ecommerceContext.Favourites
                                     .Include(i=>i.Product).DefaultIfEmpty()
                                     .Include(i => i.Product).ThenInclude(i => i.Brand).DefaultIfEmpty()
@@ -82,7 +82,7 @@ namespace ECommerce.Controllers.Products
             try
             {
                 var productId = JsonConvert.DeserializeObject<int>(obj.ToString());
-                var userId = this.User.Identity.GetUserId();
+                var userId = this.User.GetUserId();
                 var product = ecommerceContext.Products
                                     .Include(i => i.Brand)
                                     .Include(i => i.Category)
@@ -138,7 +138,7 @@ namespace ECommerce.Controllers.Products
             {
                 var productId = JsonConvert.DeserializeObject<int>(obj.ToString());
 
-                var userId = this.User.Identity.GetUserId();
+                var userId = this.User.GetUserId();
                 var favourite = ecommerceContext.Favourites.Where(i => i.ProductId == productId && i.UserId == userId);
                 if (!favourite.Any())
                 {

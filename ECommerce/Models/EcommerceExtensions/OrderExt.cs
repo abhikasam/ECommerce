@@ -61,7 +61,7 @@ namespace ECommerce.Models.Ecommerce
                     var currentInstances = currentDateOrders.Where(i => i.OrderInstanceId == instance);
                     var currentInstanceFirstOrderItem = currentInstances.FirstOrDefault();
 
-                    var user = await userManager.FindByIdAsync(currentInstanceFirstOrderItem.UserId);
+                    var user = await userManager.FindByIdAsync(currentInstanceFirstOrderItem.UserId.ToString());
                     var claims = await userManager.GetClaimsAsync(user);
 
                     var orderInstance = new OrderInstanceItem()

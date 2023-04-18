@@ -47,7 +47,7 @@ namespace ECommerce.Controllers.Products
 
                 if (!this.User.Claims.Any(i => i.Type == "Admin"))
                 {
-                    orders = orders.Where(i => i.UserId == this.User.Identity.GetUserId());
+                    orders = orders.Where(i => i.UserId == this.User.GetUserId());
                 }
 
                 orders = orders.OrderByDescending(i => i.ProductId);
@@ -75,7 +75,7 @@ namespace ECommerce.Controllers.Products
             {
                 var orderItems = JsonConvert.DeserializeObject<Order[]>(obj.ToString());
 
-                var currentUserId = this.User.Identity.GetUserId();
+                var currentUserId = this.User.GetUserId();
 
                 var orderedProducts = orderItems.Select(i => i.ProductId).ToArray();
 

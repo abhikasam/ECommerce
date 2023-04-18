@@ -6,7 +6,7 @@ namespace ECommerce.Models.Ecommerce
     public partial class Cart
     {
         public int CartItemId { get; set; }
-        public string UserId { get; set; }
+        public int UserId { get; set; }
         public int ProductId { get; set; }
         public DateTime UpdatedOn { get; set; }
 

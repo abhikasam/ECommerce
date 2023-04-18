@@ -5,7 +5,7 @@ namespace ECommerce.Data.Products
     public class OrderDto
     {
         public int OrderId { get; set; }
-        public string UserId { get; set; }
+        public int UserId { get; set; }
         public string UserName { get; set; }
         public string ProductName { get; set; }
         public int ProductId { get; set; }
@@ -23,7 +23,7 @@ namespace ECommerce.Data.Products
     public class OrderInstanceItem
     {
         public int InstanceId { get; set; }
-        public string UserId { get; set; }
+        public int UserId { get; set; }
         public string UserName { get; set; }
         public List<ProductDto> Products { get; set; }
     }

@@ -8,6 +8,7 @@ using System.Web;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using ECommerce.Data;
 
 namespace ECommerce.Models.Ecommerce
 {
@@ -24,11 +25,11 @@ namespace ECommerce.Models.Ecommerce
     {
         public static Cart GetCart(this ICollection<Cart> carts,ClaimsPrincipal claimsPrincipal)
         {
-            return carts != null ? carts.FirstOrDefault(i=>i.UserId==claimsPrincipal.Identity.GetUserId()) : null;
+            return carts != null ? carts.FirstOrDefault(i=>i.UserId==claimsPrincipal.GetUserId()) : null;
         }
         public static bool IsFavorite(this ICollection<Favourite> favourites,ClaimsPrincipal claimsPrincipal)
         {
-            return favourites != null && favourites.Any(i => i.UserId == claimsPrincipal.Identity.GetUserId());
+            return favourites != null && favourites.Any(i => i.UserId == claimsPrincipal.GetUserId());
         }
 
         public static IQueryable<ProductDto> GetProductDtos(this IQueryable<Product> products, 

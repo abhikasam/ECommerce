@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using System.Security.Claims;
 using System.Text.Json.Serialization;
+using System.Data.Entity;
 
 namespace ECommerce.Controllers.Auth
 {
@@ -45,13 +46,15 @@ namespace ECommerce.Controllers.Auth
                 }
                 else
                 {
+                    var userId = userManager.Users.Any()?userManager.Users.Select(i => i.UserId).Max(i => i + 1):1;
                     var user = new User()
                     {
                         UserName = register.Email,
                         Email = register.Email,
                         EmailConfirmed = true,
                         FirstName = register.FirstName,
-                        LastName = register.LastName
+                        LastName = register.LastName,
+                        UserId=userId
                     };
 
                     var result = await userManager.CreateAsync(user, register.Password);
@@ -64,7 +67,8 @@ namespace ECommerce.Controllers.Auth
                             new Claim("LastName", register.LastName),
                             new Claim("FullName", register.FirstName + " " + register.LastName),
                             new Claim("Email",register.Email),
-                            new Claim("UserId",user.Id)
+                            new Claim("Id",user.Id.ToString()),
+                            new Claim("UserId",userId.ToString())
                         };
 
                         if (user.Email == configuration.GetValue<string>("AdminMail"))

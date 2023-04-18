@@ -6,7 +6,7 @@ namespace ECommerce.Models.Ecommerce
     public partial class UserProductFilter
     {
         public int UserProductFilterId { get; set; }
-        public string UserId { get; set; }
+        public int UserId { get; set; }
         public string Brands { get; set; }
         public string Categories { get; set; }
         public string IndividualCategories { get; set; }

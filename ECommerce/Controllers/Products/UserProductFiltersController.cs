@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNet.Identity;
 using Newtonsoft.Json;
+using ECommerce.Data;
 
 namespace ECommerce.Controllers.Products
 {
@@ -35,7 +36,7 @@ namespace ECommerce.Controllers.Products
             try
             {
                 var userProductFilter = await ecommerceContext.UserProductFilters
-                                    .Where(i=>i.UserId==this.User.Identity.GetUserId())
+                                    .Where(i=>i.UserId==this.User.GetUserId())
                                     .FirstOrDefaultAsync();
                 message.Data = userProductFilter;
             }
@@ -55,7 +56,7 @@ namespace ECommerce.Controllers.Products
             {
                 var userProductFilters = JsonConvert.DeserializeObject<UserProductFilter>(obj.ToString());
 
-                var currentUserId = this.User.Identity.GetUserId();
+                var currentUserId = this.User.GetUserId();
                 var dbUserProductFilters = await ecommerceContext
                                     .UserProductFilters.Where(i => i.UserId == currentUserId)
                                     .FirstOrDefaultAsync();

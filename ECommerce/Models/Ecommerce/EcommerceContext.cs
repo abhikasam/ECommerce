@@ -33,8 +33,7 @@ namespace ECommerce.Models.Ecommerce
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Data Source=hydws102855;Initial Catalog=Ecommerce;Integrated Security=True;TrustServerCertificate=True");
+                 optionsBuilder.UseSqlServer("Data Source=hydws102855;Initial Catalog=Ecommerce;Integrated Security=True;TrustServerCertificate=True");
             }
         }
 
@@ -57,10 +56,6 @@ namespace ECommerce.Models.Ecommerce
                 entity.ToTable("Cart");
 
                 entity.Property(e => e.UpdatedOn).HasColumnType("datetime");
-
-                entity.Property(e => e.UserId)
-                    .IsRequired()
-                    .HasMaxLength(450);
 
                 entity.HasOne(d => d.Product)
                     .WithMany(p => p.Carts)
@@ -102,11 +97,6 @@ namespace ECommerce.Models.Ecommerce
                 entity.Property(e => e.AddedOn)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.UserId)
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasDefaultValueSql("(newid())");
             });
 
             modelBuilder.Entity<IndividualCategory>(entity =>
@@ -140,10 +130,6 @@ namespace ECommerce.Models.Ecommerce
                 entity.ToTable("Order");
 
                 entity.Property(e => e.PlacedOn).HasColumnType("datetime");
-
-                entity.Property(e => e.UserId)
-                    .IsRequired()
-                    .HasMaxLength(50);
 
                 entity.HasOne(d => d.Product)
                     .WithMany(p => p.Orders)
@@ -229,8 +215,6 @@ namespace ECommerce.Models.Ecommerce
                     .HasMaxLength(50);
 
                 entity.Property(e => e.UpdatedOn).HasColumnType("datetime");
-
-                entity.Property(e => e.UserId).IsRequired();
             });
 
             OnModelCreatingPartial(modelBuilder);

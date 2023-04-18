@@ -1,4 +1,7 @@
-﻿using ECommerce.Data.Products;
+﻿using ECommerce.Data.Account;
+using ECommerce.Data.Products;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace ECommerce.Data
@@ -14,20 +17,21 @@ namespace ECommerce.Data
         {
             return claims.Where(i => i.Type == "FullName").FirstOrDefault().Value;
         }
-
-        public static int[] GetArray(string arrayString,string delimiter)
-        {
-            int[] values = new int[] { };
-            if(arrayString != null)
-            {
-                values=arrayString.Split(delimiter).Select(i=>Convert.ToInt32(i)).ToArray();
-            }
-            return values;
-        }
     }
 
     public static class CommonUtilites
     {
+        public static string GetFullName(this ClaimsPrincipal claimsPrincipal)
+        {
+            return claimsPrincipal.Claims.Where(i => i.Type == "FullName").FirstOrDefault().Value;
+        }
+
+        public static int GetUserId(this ClaimsPrincipal claimsPrincipal)
+        {
+            var userId=claimsPrincipal.Claims.FirstOrDefault(i => i.Type == "UserId").Value;
+            return Convert.ToInt32(userId);
+        }
+
         public static IQueryable<T> PaginateData<T>(this IQueryable<T> records, int pageNumber, int pageSize)
         {
 

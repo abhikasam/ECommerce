@@ -45,7 +45,7 @@ namespace ECommerce.Controllers.Products
 
             try
             {
-                var currentUserId = this.User.Identity.GetUserId();
+                var currentUserId = this.User.GetUserId();
                 var cartItem = JsonConvert.DeserializeObject<Cart>(obj.ToString());
                 var dbCartItem = ecommerceContext.Carts
                                 .Where(i => i.ProductId == cartItem.ProductId && i.UserId == currentUserId);
@@ -97,7 +97,7 @@ namespace ECommerce.Controllers.Products
             var message = new ResponseMessage();
             try
             {
-                var currentUserId = this.User.Identity.GetUserId();
+                var currentUserId = this.User.GetUserId();
                 var products=ecommerceContext.Carts
                                     .Include(i => i.Product).DefaultIfEmpty()
                                     .Include(i => i.Product).ThenInclude(i => i.Brand).DefaultIfEmpty()
@@ -136,7 +136,7 @@ namespace ECommerce.Controllers.Products
             var message = new ResponseMessage();
             try
             {
-                var currentUserId = this.User.Identity.GetUserId();
+                var currentUserId = this.User.GetUserId();
                 var cartItem = JsonConvert.DeserializeObject<Cart>(obj.ToString());
                 var dbCartItem = ecommerceContext.Carts
                                 .Where(i => i.ProductId == cartItem.ProductId && i.UserId == currentUserId);
@@ -178,7 +178,7 @@ namespace ECommerce.Controllers.Products
             var message=new ResponseMessage();
             try
             {
-                var currentUserId = this.User.Identity.GetUserId();
+                var currentUserId = this.User.GetUserId();
                 var cartItem = JsonConvert.DeserializeObject<Cart>(obj.ToString());
                 var dbCartItem = ecommerceContext.Carts
                                 .Where(i => i.ProductId == cartItem.ProductId && i.UserId == currentUserId);
