@@ -90,6 +90,17 @@ export const logoutUserAsync = createAsyncThunk(
                 }
             }
         )
+        .then(data => {
+            if (!data.ok) throw data;
+            return data.json();
+        })
+        .then(result => {
+            return result;
+        })
+        .catch(error =>
+            error
+        )
+
         return response;
     }
 )

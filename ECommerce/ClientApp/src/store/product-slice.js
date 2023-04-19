@@ -4,6 +4,7 @@ import { sortBrands } from './brand-slice';
 import { sortCategories } from './category-slice';
 import { sortIndividualCategories } from './individual-category-slice';
 import { status } from '../shared/status';
+import { statusActions } from './status-slice';
 
 const initialValue = {
     products: [],
@@ -89,6 +90,36 @@ export const getProductAsync = createAsyncThunk(
             .catch(error => {
                 return error;
             })
+        return response;
+    }
+)
+
+export const saveProductAsync = createAsyncThunk(
+    'product/saveProductAsync',
+    async (form, { dispatch, getState }) => {
+        const response =
+            await fetch('products'
+            , {
+                method: 'POST',
+                body: JSON.stringify(form),
+                headers: {
+                    'Content-Type': 'application/json;'
+                }
+            }
+        )
+        .then(data => {
+            if (!data.ok) throw data;
+            return data.json();
+        })
+        .then(result => {
+            dispatch(statusActions.add(result))
+            return result;
+        })
+        .catch(error => {
+            dispatch(statusActions.add(error))
+            return error;
+        })
+
         return response;
     }
 )

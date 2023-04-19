@@ -1,6 +1,5 @@
 ﻿
 import { createSlice,createAsyncThunk } from '@reduxjs/toolkit';
-import { updateFilters } from './product-actions';
 import { status } from '../shared/status';
 
 const initialValue = {
@@ -78,6 +77,7 @@ const userProductFilterSlice = createSlice({
         })
 
         builder.addCase(fetchUserProductFiltersAsync.fulfilled, (state, action) => {
+            console.log(action)
             state.filters.brandIds = action.payload.data.brandIds
             state.filters.categoryIds = action.payload.data.categoryIds
             state.filters.individualCategoryIds = action.payload.data.individualCategoryIds

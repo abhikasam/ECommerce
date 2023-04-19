@@ -3,14 +3,17 @@ import { useDispatch, useSelector } from "react-redux"
 
 import AddPhoto from '../images/add-image.png';
 import classes from './product-edit.module.css';
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useState } from "react";
 import ProductQuantitySelector from "../products/product-quantity-selector";
 import { statusActions } from "../store/status-slice";
 import { useHistory } from "react-router-dom";
-import { saveProduct } from "../store/product-actions";
 import { fetchCategoryMappingsAsync } from "../store/category-mapping-slice";
 import { fetchSizeMappingsAsync } from "../store/size-mapping-slice";
+import { saveProductAsync } from "../store/product-slice";
+import { fetchBrands } from "../store/brand-slice";
+import { fetchCategoriesAsync } from "../store/category-slice";
+import { fetchIndividualCategoriesAsync } from "../store/individual-category-slice";
 
 
 export default function EditProduct(props) {
@@ -39,16 +42,47 @@ export default function EditProduct(props) {
         finalPrice: product?.finalPrice
     })
 
-    const [formValid,setFormValid]=useState(false)
+    const isValid = (
+        description,
+        brandId,
+        categoryId,
+        individualCategoryId,
+        productQuantities,
+        originalPrice,
+        finalPrice
+    ) => {
+        var descriptionValidator = /^[a-zA-Z0-9 ]{20,}$/;
+        var priceValidator = /^[1-9][0-9][0-9]+$/
+        return descriptionValidator.test(description) && brandId
+            && categoryId && individualCategoryId && productQuantities.length
+            && priceValidator.test(originalPrice)
+            && priceValidator.test(finalPrice)
+    }
+
+    const [formValid, setFormValid] = useState(
+        isValid(form.description, form.brandId, form.categoryId, form.individualCategoryId, form.productQuantities, form.originalPrice, form.finalPrice)
+    );
 
     useEffect(() => {
+        dispatch(fetchBrands())
+        dispatch(fetchCategoriesAsync())
+        dispatch(fetchIndividualCategoriesAsync())
         dispatch(fetchCategoryMappingsAsync())
         dispatch(fetchSizeMappingsAsync())
     }, [dispatch])
+    
+    function validateform(
+        description,
+        brandId,
+        categoryId,
+        individualCategoryId,
+        productQuantities,
+        originalPrice,
+        finalPrice
+    ) {
+        setFormValid(prev => isValid(description, brandId, categoryId, individualCategoryId, productQuantities, originalPrice, finalPrice))
+    }
 
-    useEffect(() => {
-        validateForm()
-    }, [validateForm,form])
 
     function categoryChangeHandler(event) {
         setForm(prev => {
@@ -58,6 +92,7 @@ export default function EditProduct(props) {
                 individualCategoryId:''
             }
         })
+        validateform(form.description, form.brandId, event.target.value, form.individualCategoryId, form.productQuantities, form.originalPrice, form.finalPrice)
     }
 
     function individualCategoryChangeHandler(event) {
@@ -67,6 +102,7 @@ export default function EditProduct(props) {
                 individualCategoryId: parseInt(event.target.value)
             }
         })
+        validateform(form.description, form.brandId, form.categoryId, event.target.value, form.productQuantities, form.originalPrice, form.finalPrice)
     }
 
 
@@ -77,6 +113,7 @@ export default function EditProduct(props) {
                 productQuantities
             }
         })
+        validateform(form.description, form.brandId, form.categoryId, form.individualCategoryId, productQuantities, form.originalPrice, form.finalPrice)
     }
 
     function descriptionChangeHandler(event) {
@@ -86,6 +123,7 @@ export default function EditProduct(props) {
                 description: event.target.value
             }
         })
+        validateform(event.target.value, form.brandId, form.categoryId, form.individualCategoryId, form.productQuantities, form.originalPrice, form.finalPrice)
     }
 
     function brandChangeHandler(event) {
@@ -95,6 +133,7 @@ export default function EditProduct(props) {
                 brandId: parseInt(event.target.value)
             }
         })
+        validateform(event.target.value, form.brandId, form.categoryId, form.individualCategoryId, form.productQuantities, form.originalPrice, form.finalPrice)
     }
 
     function originalPriceHandler(event) {
@@ -104,6 +143,7 @@ export default function EditProduct(props) {
                 originalPrice: event.target.value
             }
         })
+        validateform(form.description, form.brandId, form.categoryId, form.individualCategoryId, form.productQuantities, event.target.value, form.finalPrice)
     }
 
     function finalPriceChangeHandler(event) {
@@ -113,28 +153,23 @@ export default function EditProduct(props) {
                 finalPrice: event.target.value
             }
         })
-    }
-
-
-    function validateForm() {
-        var descriptionValidator = /^[a-zA-Z0-9 ]{20,}$/;
-        var priceValidator = /^[1-9][0-9][0-9]+$/
-
-        setFormValid(prev => {
-            return descriptionValidator.test(form.description) && form.brandId
-                && form.categoryId && form.individualCategoryId && form.productQuantities.length
-                && priceValidator.test(form.originalPrice)
-                && priceValidator.test(form.finalPrice)
-        })
+        validateform(form.description, form.brandId, form.categoryId, form.individualCategoryId, form.productQuantities, form.originalPrice, event.target.value)
     }
 
     function formSubmitHandler(event) {
+        event.preventDefault();
         if (formValid) {
-            event.preventDefault();
             if (!product.productId) {
                 setFormValid(false)
             }
-            dispatch(saveProduct(form, history))
+            const response = dispatch(saveProductAsync(form, history))
+            response.then(result => {
+                if (result.payload.statusCode === 1) {
+                    setTimeout(() => {
+                        history.push('/products')
+                    }, 3000)
+                }
+            })
         }
     }
 
@@ -238,7 +273,11 @@ export default function EditProduct(props) {
                             </div>
                             <div className="col-4 ">
                                 <ProductQuantitySelector
-                                    selected={form.productQuantities}
+                                    selected={form.productQuantities.map(i => {
+                                        return {
+                                            sizeId: i.sizeId, quantity: i.quantity
+                                        }
+                                    })}
                                     sizeMappings={sizeMappings}
                                     individualCategory={form.individualCategoryId}
                                     setProductQuantites={productQuantitiesChangeHandler}

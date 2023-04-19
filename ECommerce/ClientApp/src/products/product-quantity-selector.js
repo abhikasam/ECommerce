@@ -2,149 +2,130 @@
 import { useEffect } from "react"
 import classes from './product-quantity-selector.module.css';
 
-export default function ProductQuantitySelector({ selected,sizeMappings, individualCategory, setProductQuantites }) {
+export default function ProductQuantitySelector({ selected, sizeMappings, individualCategory, setProductQuantites }) {
 
     useEffect(() => { }, [sizeMappings, individualCategory])
 
-    const [selectedOptions, setSelectedOptions] = useState(selected.map(i => {
-        return {
-            sizeId:i.sizeId,quantity:i.quantity
-        }
-    }))
+    const [selectedSizes, setSelectedSizes] = useState(selected)
 
     useEffect(() => {
-        setProductQuantites(selectedOptions)
-    }, [selectedOptions, setProductQuantites])
-
-    function addMapping(mapping) {
-        setSelectedOptions(prev => {
-            return [...prev, mapping]
-        })
+        setSelectedSizes(selected)
+    }, [selected, setSelectedSizes])
+    
+    function updateProductQuantities(pq) {
+        setProductQuantites([...selected,pq])
     }
 
-    function removeMapping(sizeId) {
-        setSelectedOptions(prev => {
-            return prev.filter(i => i.sizeId !== sizeId)
-        })
+    function removeProductQuantity(sizeId) {
+        setProductQuantites(selected.filter(i => i.sizeId !== sizeId))
     }
 
     return (
         <ul className="list-group">
             {sizeMappings.filter(sm => sm.parentId === individualCategory).map(sizeMapping =>
-                <ProductQuantityRow key={sizeMapping.key}
-                    id={sizeMapping.childId}
-                    name={sizeMapping.childName}
-                    addMapping={addMapping}
-                    selected={selectedOptions.map(i => i.sizeId).includes(sizeMapping.childId)}
-                    quantity={selectedOptions.find(i => i.sizeId === sizeMapping.childId)?.quantity}
-                    removeMapping={removeMapping}
-                ></ProductQuantityRow>
+                <ProductQuantity key={sizeMapping.childId}
+                    sizeMapping={sizeMapping}
+                    selected={selectedSizes.map(i => i.sizeId).includes(sizeMapping.childId)}
+                    quantity={selectedSizes.find(i => i.sizeId === sizeMapping.childId)?.quantity} updateProductQuantities={updateProductQuantities}
+                    removeProductQuantity={removeProductQuantity}
+                ></ProductQuantity>
             )}
         </ul>
     )
 }
 
 
-export const ProductQuantityRow = ({ selected,quantity, id, name, addMapping, removeMapping }) => {
+export const ProductQuantity = ({ sizeMapping, selected, quantity, updateProductQuantities, removeProductQuantity }) => {
 
-    const [form, setForm] = useState({
-        selected: selected,
-        quantity: quantity,
-        sizeId: id,
-        addDisable: true,
-        hideClear: !selected
+    const [checked, setChecked] = useState(selected)
+    const [edit,setEdit]=useState(false)
+    const [productQuantity, setProductQuantity] = useState({
+        sizeId: sizeMapping.childId,
+        quantity: quantity
     })
 
-    function mappingSelectedHandler(event) {
-        setForm(prev => {
-            return {
-                ...prev,
-                selected: event.target.checked,
-                hideClear: true,
-                addDisable: true,
-                quantity:''
-            }
-        })
-
-        if (!event.target.checked) {
-            removeMapping(form.sizeId)
-        }
-
-    }
-
-    function quantityChangeHandler(event) {
+    function isQuantityValid(value) {
         var numValidator = /^[1-9][0-9]*$/
-        setForm(prev => {
-            return {
-                ...prev,
-                quantity: event.target.value,
-                addDisable: !numValidator.test(event.target.value)
-            }
-        })
+        return numValidator.test(value)
     }
 
+    const [quantityValid, setQuantityValid] = useState(isQuantityValid(productQuantity.quantity))
 
-    function submitMapping(event) {
-        addMapping({ sizeId: form.sizeId, quantity: parseInt(form.quantity) })
-        setForm(prev => {
-            return {
-                ...prev,
-                addDisable: true,
-                hideClear: false
-            }
-        })
+    function handleProductQuantity(value) {
+        setChecked(prev=>!prev)
+        if (!value) {
+            removeProductQuantity(sizeMapping.childId)
+        }
     }
 
-    function removeMappingHandler(event) {
-        setForm(prev => {
+    function saveProductQuantity() {
+        updateProductQuantities({
+            sizeId: productQuantity.sizeId, quantity: parseInt(productQuantity.quantity)
+        })
+        setEdit(false)
+    }
+
+    function quantityChangeHandler(value) {
+        setProductQuantity(prev => {
             return {
-                ...prev,
-                quantity: '',
-                selected: false,
-                addDisable: true,
-                hideClear: true
+                ...prev, quantity: value
             }
         })
-        removeMapping(form.sizeId)
+        setQuantityValid(isQuantityValid(value))
     }
 
     return (
         <li className={"list-group-item " + classes.li}>
-            <div className="row align-items-center">
-                <div className="col-1">
-                    <input className="form-check-input me-1"
-                        type="checkbox"
-                        value={id}
-                        checked={form.selected}
-                        onChange={mappingSelectedHandler}
-                        htmlFor="sizeMapping"
+            <div className="row align-items-baseline">
+                <div className="col-1 p-2">
+                    <input type="checkbox"
+                        className="form-check-input"
+                        value={checked}
+                        checked={checked}
+                        onChange={(event) => handleProductQuantity(event.target.value)}
                     />
                 </div>
-                <div className="col-2">
-                    <label className={"form-check-label " + classes.label} htmlFor="sizeMapping">{name}</label>
+                <div className="col-1">
+                    {sizeMapping.childName}
                 </div>
-                {
-                    form.selected &&
+                {checked &&
                     <>
                         <div className="col-3">
-                            <input type="text"
-                                className="form-control"
-                                value={form.quantity}
-                                onChange={quantityChangeHandler}
-                                disabled={!form.hideClear}
-                                required />
+                        <input type="text"
+                            className="form-control"
+                            disabled={!edit}
+                            value={productQuantity.quantity}
+                            onChange={(event) => quantityChangeHandler(event.target.value)}
+                        />
+                        {edit && !quantityValid && 
+                            <span className="text-danger">
+                                invalid.
+                            </span>
+                        }
+                    </div>
+                    {!edit && 
+                        <div className="col-1">
+                            <i className="fa fa-pencil-square-o fs-5"
+                                style={{ cursor: 'pointer' }}
+                                aria-hidden="true"
+                                onClick={()=>setEdit(true) }
+                            ></i>
                         </div>
-                        <div className="col-2 m-2">
-                            <input type="button" value="Add" disabled={form.addDisable} className="btn btn-secondary" onClick={(event) => submitMapping(event)} />
+                    }
+                    {
+                        edit &&
+                        <div className="col-1 fs-4">
+                                <button className="fa fa-check border-0 btn-default"
+                                    style={{ cursor: 'pointer' }}
+                                    aria-hidden="true"
+                                    disabled={!quantityValid}
+                                    onClick={() => saveProductQuantity()}
+                                ></button>
                         </div>
-                        {!form.hideClear &&
-                            <div className="col-2 m-2">
-                                <input type="button" value="Clear" className="btn btn-secondary" onClick={(event) => removeMappingHandler(event)} />
-                            </div>}
+                    }
                     </>
                 }
             </div>
         </li>
     )
 }
-

@@ -3,9 +3,9 @@ import classes from './product-card.module.css'
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { useHistory } from "react-router-dom"
-import { addFavourite, removeFavourite, updateFourites } from '../store/favourite-actions';
 import { upadteProductCart } from '../store/cart-slice';
 import CartQuantity from './cart-quantity';
+import { addFavouriteAsync, removeFavouriteAsync } from '../store/favourite-slice';
 
 
 export default function ProductCard({ product }) {
@@ -90,13 +90,13 @@ export default function ProductCard({ product }) {
                         <div className="col-6 text-center">
                             {!favourites.map(i => i.productId).includes(product.productId) &&
                                 <i className={"fa fa-heart-o " + classes.icon}
-                                    onClick={(event) => dispatch(addFavourite(product.productId))}
+                                    onClick={(event) => dispatch(addFavouriteAsync(product.productId))}
                                     aria-hidden="true"></i>
                             }
                             {favourites.map(i => i.productId).includes(product.productId) &&
                                 <i className={"fa fa-heart " + classes.icon}
                                     style={{ color: 'red' }}
-                                    onClick={(event) => dispatch(removeFavourite(product.productId))}
+                                    onClick={(event) => dispatch(removeFavouriteAsync(product.productId))}
                                     aria-hidden="true"></i>
                             }
                         </div>

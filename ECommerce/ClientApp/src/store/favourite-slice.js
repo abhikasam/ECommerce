@@ -32,6 +32,67 @@ export const getFavouritesAsync = createAsyncThunk(
     }
 )
 
+
+export const addFavouriteAsync = createAsyncThunk(
+    'favourite/addFavouriteAsync',
+    async (productId, { dispatch, getState }) => {
+
+        const response =
+            await fetch('/favourites/add', {
+                method: 'POST',
+                body: JSON.stringify(productId),
+                headers: {
+                    'Content-Type': 'application/json;'
+                }
+            })
+            .then(data => {
+                if (!data.ok) throw data;
+                return data.json();
+            })
+            .then(result => {
+                dispatch(favouriteActions.addProduct(result.data))
+                return result;
+            })
+            .catch(error => {
+                console.log(error)
+                return error;
+            })
+
+        return response;
+    }
+)
+
+export const removeFavouriteAsync = createAsyncThunk(
+    'favourite/removeFavouriteAsync',
+    async (productId, { dispatch, getState }) => {
+
+        const response =
+            await fetch('/favourites/remove', {
+                method: 'POST',
+                body: JSON.stringify(productId),
+                headers: {
+                    'Content-Type': 'application/json;'
+                }
+            })
+            .then(data => {
+                if (!data.ok) throw data;
+                return data.json();
+            })
+            .then(result => {
+                dispatch(favouriteActions.removeProduct(result.data))
+                return result;
+            })
+            .catch(error => {
+                console.log(error)
+                return error;
+            })
+
+        return response;
+
+    }
+)
+
+
 const favouriteSlice = createSlice({
     name: 'favourite',
     initialState: initialValue,

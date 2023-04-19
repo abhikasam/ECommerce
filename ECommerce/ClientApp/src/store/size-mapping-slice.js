@@ -21,7 +21,7 @@ export const fetchSizeMappingsAsync = createAsyncThunk(
             await fetch('/sizemappings')
                 .then(data => {
                     if (!data.ok) throw data;
-                    return data.data();
+                    return data.json();
                 })
                 .then(result => {
                     dispatch(sizeMappingActions.update(result.data))

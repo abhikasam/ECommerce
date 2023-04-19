@@ -3,11 +3,10 @@ import { useDispatch, useSelector } from "react-redux"
 import ProductCard from "./product-card"
 import classes from './products.module.css';
 import Pagination from "../shared/pagination";
-import { getProductsAsync } from "../store/product-slice";
+import { getProductsAsync, updateFiltersAsync } from "../store/product-slice";
 import ProductFilters from "./product-filters";
 import { useState } from "react";
 import { statusActions } from "../store/status-slice";
-import { updateFilters } from "../store/product-actions";
 import { getFavouritesAsync } from "../store/favourite-slice";
 import { getCartAsync } from "../store/cart-slice";
 import Status from "../shared/status";
@@ -28,7 +27,7 @@ export default function Products() {
 
     useEffect(() => {
         const productsData = dispatch(getProductsAsync(filters))
-        dispatch(updateFilters(productsData))
+        dispatch(updateFiltersAsync(productsData))
     }, [dispatch, filters])
 
     function updatePageFilters(filters) {
