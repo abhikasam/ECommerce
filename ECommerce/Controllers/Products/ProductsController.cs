@@ -122,6 +122,63 @@ namespace ECommerce.Controllers.Products
         }
 
 
+        [HttpGet]
+        [Route("[action]")]
+        [ActionName("OutOfStack")]
+        public JsonResult GetOutOfStackProducts(int? productCount,int? pageNumber)
+        {
+            var message = new ResponseMessage();
+
+            try
+            {
+                productCount = productCount ?? this.filters.Value.ProductCount;
+                pageNumber=pageNumber?? this.filters.Value.PageNumber;  
+
+                var products = ecommerceContext.Products
+                                .Include(i => i.Brand).DefaultIfEmpty()
+                                .Include(i => i.Category).DefaultIfEmpty()
+                                .Include(i => i.IndividualCategory).DefaultIfEmpty()
+                                .Include(i => i.Favorites).DefaultIfEmpty()
+                                .Include(i => i.ProductQuantities).ThenInclude(i => i.Size).DefaultIfEmpty()
+                                .Include(i => i.Carts);
+
+                var productDtos = products.GetProductDtos(this.User);
+
+                var totalRecords = productDtos.Count();
+
+                var totalPages = (totalRecords + productCount) / productCount;
+                if (totalRecords % productCount == 0)
+                {
+                    totalPages--;
+                }
+
+                pageNumber = Math.Min(pageNumber.Value, totalPages.Value);
+
+                message.Data = new
+                {
+                    Result = productDtos.PaginateData(pageNumber.Value, productCount.Value),
+                    TotalPages = totalPages,
+                    Filters = filters
+                };
+
+            }
+            catch (Exception ex)
+            {
+                message.Data = new
+                {
+                    Result = Array.Empty<ProductDto>(),
+                    TotalPages = 1,
+                    Filters = new ProductFilters()
+                    {
+                        PageNumber = 1
+                    }
+                };
+                message.Message = ex.Message;
+                message.StatusCode = ResponseStatus.EXCEPTION;
+            }
+            return new JsonResult(message);
+        }
+
         [HttpGet("{id}")]
         public JsonResult Get(int id)
         {
