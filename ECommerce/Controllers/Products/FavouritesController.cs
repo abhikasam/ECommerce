@@ -67,6 +67,12 @@ namespace ECommerce.Controllers.Products
             }
             catch (Exception ex)
             {
+                message.Data = new 
+                {
+                    Result=Array.Empty<ProductDto>(),
+                    TotalPages=1,
+                    PageNumber=1
+                };
                 message.Message = ex.Message;
                 message.StatusCode = ResponseStatus.EXCEPTION;
             }
@@ -122,6 +128,7 @@ namespace ECommerce.Controllers.Products
             }
             catch (Exception ex)
             {
+                message.Data = new ProductDto();
                 message.Message = ex.Message;
                 message.StatusCode = ResponseStatus.EXCEPTION;
             }

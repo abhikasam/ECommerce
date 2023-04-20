@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNet.Identity;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 
 namespace ECommerce.Data.Account
@@ -14,19 +13,18 @@ namespace ECommerce.Data.Account
         public bool IsAdmin { get; set; }
         public string ExpiresAt { get; set; }
 
-        public static UserDetails GetDetails(IList<Claim> claims)
+        public static UserDetails GetDetails(IEnumerable<Claim> claims)
         {
             return new UserDetails()
             {
-                FirstName=claims.FirstOrDefault(i=>i.Type=="FirstName").Value,
-                LastName= claims.FirstOrDefault(i => i.Type == "LastName").Value,
-                FullName= claims.FirstOrDefault(i => i.Type == "FullName").Value,
-                Email= claims.FirstOrDefault(i => i.Type == "Email").Value,
-                UserId= claims.FirstOrDefault(i => i.Type == "UserId").Value,
+                FirstName=claims.FirstOrDefault(i=>i.Type=="FirstName")?.Value,
+                LastName= claims.FirstOrDefault(i => i.Type == "LastName")?.Value,
+                FullName= claims.FirstOrDefault(i => i.Type == "FullName")?.Value,
+                Email= claims.FirstOrDefault(i => i.Type == "Email")?.Value,
+                UserId= claims.FirstOrDefault(i => i.Type == "UserId")?.Value,
                 IsAdmin=claims.Any(i => i.Type == "Admin"),
-                ExpiresAt= claims.FirstOrDefault(i => i.Type == "expires_at").Value
+                ExpiresAt= claims.FirstOrDefault(i => i.Type == "expires_at")?.Value
             };
         }
-
     }
 }

@@ -83,9 +83,17 @@ export default function Products() {
                     <Status status={status}></Status>
                     <div className="row">
                         {
+                            products.length!==0 &&
                             products.map(product =>
                                 <ProductCard key={product.productId} product={product}></ProductCard>
                             )
+                        }
+                        {products.length === 0 &&
+                            <>
+                                <div className="col fs-4 text-warning fw-bold">
+                                    Products are empty.
+                                </div>
+                            </>
                         }
                     </div>
                 </div>

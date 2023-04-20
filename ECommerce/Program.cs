@@ -49,6 +49,11 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
 });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Admin", policy => policy.RequireClaim("Admin"));
+});
+
 builder.Services.Configure<ProductFilters>(builder.Configuration.GetSection("ProductFilters"));
 
 var app = builder.Build();

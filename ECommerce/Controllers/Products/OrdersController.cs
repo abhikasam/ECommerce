@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using ECommerce.Data;
 using Microsoft.IdentityModel.Tokens;
 using ECommerce.Data.Account;
+using ECommerce.Data.Products;
+using ECommerce.Data.Shared;
 
 namespace ECommerce.Controllers.Products
 {
@@ -32,7 +34,7 @@ namespace ECommerce.Controllers.Products
         }
 
         [HttpGet]
-        public async Task<JsonResult> Get(string dateFilter=null)
+        public async Task<JsonResult> Get(string dateFilter=null,string selectedUsers=null)
         {
             var message = new ResponseMessage();
 
@@ -52,13 +54,16 @@ namespace ECommerce.Controllers.Products
 
                 orders = orders.OrderByDescending(i => i.ProductId);
 
-                var orderDtos = await orders.GetOrderDtos(userManager,this.User,dateFilter);
+                var filterUsers = selectedUsers.GetArray(",");
+
+                var orderDtos = await orders.GetOrderDtos(userManager,this.User,dateFilter,filterUsers);
 
 
                 message.Data = orderDtos;
             }
             catch (Exception ex)
             {
+                message.Data = Array.Empty<OrderDto>();
                 message.Message = ex.Message;
                 message.StatusCode = ResponseStatus.EXCEPTION;
             }
@@ -83,7 +88,8 @@ namespace ECommerce.Controllers.Products
                             .Where(i => orderedProducts.Contains(i.ProductId))
                             .ToListAsync();
 
-                var orderInstanceId = ecommerceContext.Orders.Select(i => i.OrderInstanceId).Max();
+                var dbOrders = ecommerceContext.Orders;
+                var orderInstanceId = dbOrders.Any()? dbOrders.Select(i => i.OrderInstanceId).Max():0;
 
                 if (products.Count() != orderedProducts.Length)
                 {
@@ -126,6 +132,7 @@ namespace ECommerce.Controllers.Products
             }
             catch (Exception ex)
             {
+                message.Data = Array.Empty<OrderDto>();
                 message.Message = ex.Message;
                 message.StatusCode = ResponseStatus.EXCEPTION;
             }

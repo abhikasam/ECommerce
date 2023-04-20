@@ -46,6 +46,7 @@ namespace ECommerce.Controllers.Products
             }
             catch (Exception ex)
             {
+                message.Data = Array.Empty<IndividualCategorySizeMapping>();
                 message.Message = ex.Message;
                 message.StatusCode = ResponseStatus.EXCEPTION;
             }

@@ -48,10 +48,18 @@ export default function Cart() {
                     </div>
                     <Status status={status}></Status>
                     <div className="row">
-                        {
+                        {products.length!==0 &&
                             products.map(product =>
                                 <ProductCard key={product.productId} product={product}></ProductCard>
                             )
+                        }
+
+                        {products.length === 0 &&
+                            <>
+                                <div className="col fs-4 text-warning fw-bold">
+                                    Cart is empty.
+                                </div>
+                            </>
                         }
                     </div>
                 </div>

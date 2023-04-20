@@ -1,5 +1,6 @@
 ﻿using ECommerce.Data;
 using ECommerce.Data.Account;
+using ECommerce.Data.Products;
 using ECommerce.Models;
 using ECommerce.Models.Ecommerce;
 using ECommerce.Models.EcommerceExtensions;
@@ -84,6 +85,7 @@ namespace ECommerce.Controllers.Products
             }
             catch (Exception ex)
             {
+                message.Data = Array.Empty<ProductDto>();
                 message.Message = ex.Message;
                 message.StatusCode = ResponseStatus.ERROR;
             }
@@ -121,6 +123,7 @@ namespace ECommerce.Controllers.Products
             }
             catch (Exception ex)
             {
+                message.Data = Array.Empty<ProductDto>();
                 message.Message = ex.Message;
                 message.StatusCode = ResponseStatus.ERROR;
             }
@@ -210,6 +213,7 @@ namespace ECommerce.Controllers.Products
             }
             catch (Exception ex)
             {
+                message.Data = new ProductDto();
                 message.Message = ex.Message;
                 message.StatusCode = ResponseStatus.ERROR;
             }

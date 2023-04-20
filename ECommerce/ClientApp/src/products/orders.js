@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from "react-redux"
 import { fetchOrdersAsync } from "../store/order-slice"
 import { getProductAsync } from "../store/product-slice"
 import { useHistory } from "react-router-dom"
+import { fetchUsersAsync } from "../store/auth-slice"
+import ListSelect from "../shared/list-select"
 
 
 
@@ -10,29 +12,50 @@ export default function Orders() {
 
     const dispatch = useDispatch()
     const { orders } = useSelector(state => state.order)
-    
+    const { userId } = useSelector(state => state.auth)
+    const [selectedUsers, setSelectedUsers] = useState([userId])
+    const [users,setUsers]=useState([])
+
     useEffect(() => {
-        dispatch(fetchOrdersAsync())
+        dispatch(fetchOrdersAsync({ dateFilter: null, selectedUsers:[] }))        
     }, [dispatch])
 
-    function applyFilters(dateFilter) {
-        dispatch(fetchOrdersAsync(dateFilter))
+    useEffect(() => {
+        const response = dispatch(fetchUsersAsync())
+        response.then((result) => {
+            setUsers(result.payload.data)
+        })
+
+    }, [dispatch])
+
+
+    function applyFilters(dateFilter, selectedUsers) {
+        dispatch(fetchOrdersAsync({ dateFilter, selectedUsers }))
     }
 
     return (
         <>
             <div className="row">
                 <div className="col-2">
-                    <OrderListFilter applyFilters={applyFilters}></OrderListFilter>
+                    <OrderListFilter applyFilters={applyFilters} users={users}></OrderListFilter>
                 </div>
                 <div className="col-10">
                     <div className="row">
                     </div>
                     <div className="row">
                         <div className="col">
-                            {orders.map(order =>
+                            {orders.length!==0 &&
+                                orders.map(order =>
                                 <DateItem key={order.date} order={order}></DateItem>
                             )}
+
+                            {orders.length === 0 &&
+                                <>
+                                    <div className="col pt-5 mt-4 fs-4 text-warning fw-bold">
+                                        Orders are empty.
+                                    </div>
+                                </>
+                            }
                         </div>
                     </div>
                 </div>
@@ -42,9 +65,25 @@ export default function Orders() {
 }
 
 
-const OrderListFilter = ({ applyFilters }) => {
+const OrderListFilter = ({ applyFilters,users }) => {
+
+    const { user }=useSelector(state=>state.auth)
 
     const [dateFilter, setDateFilter]=useState('30')
+    const [selectedUsers,setSelectedUsers]=useState([])
+
+    useEffect(() => {
+        console.log(selectedUsers)
+    }, [selectedUsers])
+
+    function updateSelected(value) {
+        if (selectedUsers.includes(value)) {
+            setSelectedUsers(prev => prev.filter(i => i!== value))
+        }
+        else {
+            setSelectedUsers(prev=> [...prev,value])
+        }
+    }
 
     return (
         <div className="row">
@@ -53,7 +92,7 @@ const OrderListFilter = ({ applyFilters }) => {
                     <div className="col-6">
                         <button type="button"
                             className="btn btn-primary"
-                            onClick={() => applyFilters(dateFilter)}
+                            onClick={() => applyFilters(dateFilter, selectedUsers)}
                         >Update</button>
                     </div>
                 </div>
@@ -71,6 +110,20 @@ const OrderListFilter = ({ applyFilters }) => {
                         </select>
                     </div>
                 </div>
+                {user.isAdmin && 
+                    <div className="row">
+                        <div className="col">
+                            <label>Users :</label>
+                            <ListSelect
+                                showSearch={true}
+                                items={users}
+                                type="user"
+                                selected={[]}
+                                updateItems={updateSelected}
+                            />
+                        </div>
+                    </div>
+                }
             </div>
         </div>
     )

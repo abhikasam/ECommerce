@@ -19,6 +19,7 @@ const context =  [
     "/cart",
     "/userproductfilters",
     "/orders",
+    "/users",
 ];
 
 module.exports = function(app) {

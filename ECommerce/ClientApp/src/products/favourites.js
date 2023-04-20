@@ -29,13 +29,20 @@ export default function Favourites() {
             </div>
             <Status status={status}></Status>
             <div className="row">
-                {
+                {products.length!==0 &&
                     products.map(product =>
                         <ProductCard key={product.productId} product={product}></ProductCard>
                     )
                 }
-            </div>
 
+                {products.length===0 &&
+                    <>
+                    <div className="col fs-4 text-warning fw-bold">
+                        Favourites are empty.
+                    </div>
+                    </>
+                }
+            </div>
         </>
     )
 }

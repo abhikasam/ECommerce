@@ -106,6 +106,15 @@ namespace ECommerce.Controllers.Products
             }
             catch (Exception ex)
             {
+                message.Data = new
+                {
+                    Result = Array.Empty<ProductDto>(),
+                    TotalPages = 1,
+                    Filters = new ProductFilters()
+                    {
+                        PageNumber = 1
+                    }
+                };
                 message.Message = ex.Message;
                 message.StatusCode = ResponseStatus.EXCEPTION;
             }

@@ -32,6 +32,11 @@ namespace ECommerce.Data
             return Convert.ToInt32(userId);
         }
 
+        public static async Task<User> FindByUserIdAsync(this UserManager<User> manager, int userId)
+        {
+            return await manager.Users.Where(i => i.UserId == userId).FirstOrDefaultAsync();
+        }
+
         public static IQueryable<T> PaginateData<T>(this IQueryable<T> records, int pageNumber, int pageSize)
         {
 

@@ -12,8 +12,29 @@ const initialAuthentication = {
     isAuthenticated: false,
     user: {},
     expiresIn: 0,
+    userId:0,
     status: status    
 }
+
+export const fetchUsersAsync = createAsyncThunk(
+    'auth/fetchUsersAsync',
+    async (_, { dispatch, getState }) => {
+        const response =
+            await fetch('/users')
+            .then(data => {
+                if (!data.ok) throw data;
+                return data.json();
+            })
+            .then(result => {
+                return result;
+            })
+            .catch(error => {
+                return error;
+            })
+        return response;
+
+    }
+)
 
 export const fetchUserAsync = createAsyncThunk(
     'auth/fetchUserAsync',
@@ -128,11 +149,13 @@ const authSlice = createSlice({
             state.isAuthenticated = true;
             state.user = action.payload.user
             state.expiresIn = action.payload.expiresIn
+            state.userId = action.payload.user.userId
         },
         logout(state) {
             state.isAuthenticated = false;
             state.user = {};
             state.expiresIn = 0
+            state.userId=0
         },
         clearStatus(state) {
             state.status = { message:'',type:'' }

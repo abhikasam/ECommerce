@@ -19,8 +19,14 @@ namespace ECommerce.Models.Ecommerce
             this IQueryable<Order> orders,
             UserManager<User> userManager,
             ClaimsPrincipal principal,
-            string dateFilter)
+            string dateFilter,
+            int[] filterUsers)
         {
+
+            if (filterUsers.Count() > 0)
+            {
+                orders = orders.Where(i => filterUsers.Contains(i.UserId));
+            }
 
             switch (dateFilter)
             {
@@ -61,7 +67,7 @@ namespace ECommerce.Models.Ecommerce
                     var currentInstances = currentDateOrders.Where(i => i.OrderInstanceId == instance);
                     var currentInstanceFirstOrderItem = currentInstances.FirstOrDefault();
 
-                    var user = await userManager.FindByIdAsync(currentInstanceFirstOrderItem.UserId.ToString());
+                    var user = await userManager.FindByUserIdAsync(currentInstanceFirstOrderItem.UserId);
                     var claims = await userManager.GetClaimsAsync(user);
 
                     var orderInstance = new OrderInstanceItem()

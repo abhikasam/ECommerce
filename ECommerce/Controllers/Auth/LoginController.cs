@@ -53,7 +53,7 @@ namespace ECommerce.Controllers.Auth
                 return new JsonResult(new
                 {
                     isAuthenticated = true,
-                    User = UserDetails.GetDetails(claims),
+                    User = UserDetails.GetDetails(claims.AsEnumerable()),
                     expiresIn = expireTimeSpan.TotalSeconds
                 });
             }
@@ -118,7 +118,7 @@ namespace ECommerce.Controllers.Auth
                         claims = await userManager.GetClaimsAsync(user);
                         message.Data = new
                         {
-                            User = UserDetails.GetDetails(claims),
+                            User = UserDetails.GetDetails(claims.AsEnumerable()),
                             expiresIn = sessionExpiresIn * 60
                         };
                     }
