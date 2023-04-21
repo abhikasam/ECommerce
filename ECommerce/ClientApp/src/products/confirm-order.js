@@ -6,6 +6,7 @@ import { productActions } from "../store/product-slice"
 import { cartActions, getCartAsync } from "../store/cart-slice"
 import { orderActions, placeOrderAsync } from "../store/order-slice"
 import Status from "../shared/status"
+import { QuantityChanger } from "./outofstock"
 
 
 
@@ -128,13 +129,25 @@ const OrderItem = ({ product, updateSelected }) => {
     })
 
 
-    function getFinalPrice(){
-        return orderItem.sizeQuantities.reduce((acc,cum)=> acc+cum.quantity,0) * product.finalPrice
+    function getFinalPrice() {
+        return orderItem.sizeQuantities.reduce((acc, cum) => acc + cum.quantity, 0) * product.finalPrice
     }
-    
+
     useEffect(() => {
         updateSelected(orderItem)
     }, [orderItem])
+
+    function updateQuantity(sizeQuantity) {
+        setOrderItem(prev => {
+            let index = prev.sizeQuantities.findIndex(i => i.sizeId === sizeQuantity.sizeId)
+            let sizeQuantities = prev.sizeQuantities;
+            sizeQuantities[index].quantity = sizeQuantity.quantity
+            return {
+                ...prev,
+                sizeQuantities
+            }
+        })
+    }
 
     return (
         <div className="row m-2 p-2 border" style={{ background: (orderItem.selected ? 'gainsboro' : 'white') }}>
@@ -186,28 +199,19 @@ const OrderItem = ({ product, updateSelected }) => {
             {orderItem.selected &&
                 <>
                     <div className="col-2">
-                    <div className="row">
-                        {product.productQuantities.map(pq =>
-                            <ProductQuantityUpdater
-                                key={pq.productQuantityId}
-                                productQuantity={pq}
-                                updateQuantity={(quantity) => {
-                                    setOrderItem(prev => {
-                                        let index = prev.sizeQuantities.findIndex(i => i.sizeId === pq.sizeId)
-                                        let sizeQuantities = prev.sizeQuantities;
-                                        sizeQuantities[index].quantity = quantity
-                                        return {
-                                            ...prev,
-                                            sizeQuantities
-                                        }
-                                    })
-                                }}
-                            ></ProductQuantityUpdater>
-                            )}
+                        <div className="row">
+                            <div className="col">
+                                <QuantityChanger
+                                    product={product}
+                                    updateQuantities={updateQuantity}
+                                    isOutOfStock={false}
+                                >
+                                </QuantityChanger>
+                            </div>
                         </div>
                     </div>
-                <div className="col-2 fw-bold fs-5 pt-5 text-center">
-                    ₹{getFinalPrice()}
+                    <div className="col-2 fw-bold fs-5 pt-5 text-center">
+                        ₹{getFinalPrice()}
                     </div>
                 </>
             }

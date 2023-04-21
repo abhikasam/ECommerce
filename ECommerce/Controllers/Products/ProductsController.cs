@@ -160,7 +160,8 @@ namespace ECommerce.Controllers.Products
                     message.Data = new
                     {
                         Result = productDtos.PaginateData(pageNumber.Value, productCount.Value),
-                        TotalPages = totalPages
+                        TotalPages = totalPages,
+                        PageNumber=pageNumber.Value
                     };
                 }
                 else
@@ -169,10 +170,7 @@ namespace ECommerce.Controllers.Products
                     {
                         Result = Array.Empty<ProductDto>(),
                         TotalPages = 1,
-                        Filters = new ProductFilters()
-                        {
-                            PageNumber = 1
-                        }
+                        PageNumber=1
                     };
                 }
             }
@@ -182,10 +180,7 @@ namespace ECommerce.Controllers.Products
                 {
                     Result = Array.Empty<ProductDto>(),
                     TotalPages = 1,
-                    Filters = new ProductFilters()
-                    {
-                        PageNumber = 1
-                    }
+                    PageNumber = 1
                 };
                 message.Message = ex.Message;
                 message.StatusCode = ResponseStatus.EXCEPTION;
@@ -221,6 +216,7 @@ namespace ECommerce.Controllers.Products
             }
             catch (Exception ex)
             {
+                message.Data = new ProductDto();
                 message.Message=ex.Message;
                 message.StatusCode=ResponseStatus.EXCEPTION;
             }
@@ -350,5 +346,6 @@ namespace ECommerce.Controllers.Products
             }
             return new JsonResult(message);
         }
+
     }
 }

@@ -31,6 +31,12 @@ export default function ProductCard({ product, qantityUpdateHandler,showQuantity
         })
     }
 
+    const openProductFavouriteDetails = () => {
+        history.push('/product-favourites', {
+            productId: product.productId
+        })
+    }
+
     return (
         <div className={"col " + classes.card}>
             <div
@@ -120,6 +126,7 @@ export default function ProductCard({ product, qantityUpdateHandler,showQuantity
                         </div>
                         <div className="col-4 text-center">
                             <i className={"fa fa-gratipay " + classes.icon}
+                                onClick={openProductFavouriteDetails}
                                 aria-hidden="true"></i>
                         </div>
                     </>
@@ -133,6 +140,7 @@ export default function ProductCard({ product, qantityUpdateHandler,showQuantity
                         </div>
                         <div className="col-6 text-center">
                             <i className={"fa fa-gratipay " + classes.icon}
+                                onClick={openProductFavouriteDetails}
                                 aria-hidden="true"></i>
                         </div>
                     </>

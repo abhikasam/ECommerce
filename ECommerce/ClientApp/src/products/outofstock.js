@@ -18,7 +18,7 @@ export default function OutOfStock() {
 
     const [quantityChanger, setQuantityChanger] = useState({
         show: false,
-        product:{}
+        product: {}
     })
 
     useEffect(() => {
@@ -76,17 +76,17 @@ export default function OutOfStock() {
 }
 
 
-const ProductQuantityIncreaser =({ product })=>{
+const ProductQuantityIncreaser = ({ product }) => {
 
-    const dispatch=useDispatch()
+    const dispatch = useDispatch()
     const [sizeQuantities, setSizeQuantities] = useState(
         (product && product.productQuantities) ? product.productQuantities.map(i => {
             return {
                 productId: product.productId,
                 sizeId: i.sizeId,
-                quantity:0
+                quantity: 0
             }
-        }):[]
+        }) : []
     )
 
     function updateSizeQuantities(sizeQuantity) {
@@ -129,12 +129,14 @@ const ProductQuantityIncreaser =({ product })=>{
                                     </img>}
                             </div>
 
-                            <QuantityChanger
-                                product={product}
-                                updateQuantities={updateSizeQuantities}
-                            >
-                            </QuantityChanger>
-
+                            <div className="col-7 text-center">
+                                <QuantityChanger
+                                    product={product}
+                                    updateQuantities={updateSizeQuantities}
+                                    isOutOfStock={true}
+                                >
+                                </QuantityChanger>
+                            </div>
                         </div>
                     </div>
                     <div className="modal-footer">
@@ -156,10 +158,10 @@ const ProductQuantityIncreaser =({ product })=>{
     );
 }
 
-const QuantityChanger = ({ product,updateQuantities }) => {
+export const QuantityChanger = ({ product, updateQuantities, isOutOfStock }) => {
 
     return (
-        <div className="col-7 text-center">
+        <>
             {product && product.productQuantities && product.productQuantities.map(productQuantity =>
                 <div key={productQuantity.productQuantityId} className="row align-items-center">
                     <div className="col-3">
@@ -167,7 +169,7 @@ const QuantityChanger = ({ product,updateQuantities }) => {
                     </div>
                     <div className="col-9">
                         <QuantityHandler initialQuantity={0}
-                            maxQuantity={5}
+                            maxQuantity={isOutOfStock ? 5 : productQuantity.quantity}
                             updateQuantity={(value) => updateQuantities({
                                 productId: product.productId,
                                 sizeId: productQuantity.sizeId,
@@ -176,7 +178,6 @@ const QuantityChanger = ({ product,updateQuantities }) => {
                         ></QuantityHandler>
                     </div>
                 </div>
-            )}
-        </div>
+            )}</>
     )
 }

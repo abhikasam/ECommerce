@@ -21,13 +21,13 @@ export const fetchOrdersAsync = createAsyncThunk(
         console.log(queryString)
         const response =
             await fetch('/orders' + queryString)
-                .then(result => {
-                    if (!result.ok) throw result;
-                    return result.json();
+                .then(data => {
+                    if (!data.ok) throw data;
+                    return data.json();
                 })
-                .then(response => {
-                    dispatch(orderActions.update(response.data))
-                    return response;
+                .then(result => {
+                    dispatch(orderActions.update(result.data))
+                    return result;
                 })
                 .catch(error => {
                     return error;
@@ -49,13 +49,13 @@ export const placeOrderAsync = createAsyncThunk(
                     'Content-Type': 'application/json;'
                 }
             })
-            .then(result => {
-                if (!result.ok) throw result;
-                return result.json();
+            .then(data => {
+                if (!data.ok) throw data;
+                return data.json();
             })
-            .then(response => {
-                dispatch(cartActions.removeProducts(response.data))
-                return response;
+                .then(result => {
+                    dispatch(cartActions.removeProducts(result.data))
+                    return result;
             })
             .catch(error => {
                 return error;

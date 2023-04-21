@@ -11,6 +11,7 @@ using Microsoft.Extensions.Options;
 using ECommerce.Data.Products;
 using ECommerce.Data;
 using Microsoft.AspNetCore.Authorization;
+using ECommerce.Data.Account;
 
 namespace ECommerce.Controllers.Products
 {
@@ -24,13 +25,15 @@ namespace ECommerce.Controllers.Products
         private readonly ILogger<FavouritesController> _logger;
         private readonly IConfiguration configuration;
         private readonly IOptions<ProductFilters> filters;
+        private readonly Microsoft.AspNetCore.Identity.UserManager<User> userManager;
 
-        public FavouritesController(EcommerceContext ecommerceContext, ILogger<FavouritesController> logger, IConfiguration configuration, IOptions<ProductFilters> filters)
+        public FavouritesController(EcommerceContext ecommerceContext, ILogger<FavouritesController> logger, IConfiguration configuration, IOptions<ProductFilters> filters, Microsoft.AspNetCore.Identity.UserManager<User> userManager)
         {
             this.ecommerceContext = ecommerceContext;
             _logger = logger;
             this.configuration = configuration;
             this.filters = filters;
+            this.userManager = userManager;
         }
 
         [HttpGet]
@@ -74,6 +77,54 @@ namespace ECommerce.Controllers.Products
                     PageNumber=1
                 };
                 message.Message = ex.Message;
+                message.StatusCode = ResponseStatus.EXCEPTION;
+            }
+            return new JsonResult(message);
+        }
+
+        [HttpGet("{id}")]
+        [Route("[action]")]
+        [ActionName("ProductFavourites")]
+        public async Task<JsonResult> ProductFavourites(int productId)
+        {
+            var message = new ResponseMessage();
+
+            try
+            {
+                var product = await ecommerceContext.Products
+                                .Include(i => i.Brand).DefaultIfEmpty()
+                                .Include(i => i.Category).DefaultIfEmpty()
+                                .Include(i => i.IndividualCategory).DefaultIfEmpty()
+                                .Include(i => i.Favorites).DefaultIfEmpty()
+                                .Include(i => i.ProductQuantities).ThenInclude(i => i.Size).DefaultIfEmpty()
+                                .Include(i => i.Carts)
+                                .Where(i => i.ProductId == productId)
+                                .FirstOrDefaultAsync();
+
+                var userIds=await ecommerceContext.Favourites
+                                    .Where(i => i.ProductId == productId)
+                                    .Select(i=> i.UserId)
+                                    .ToListAsync();
+
+                var userDetails=new List<UserDetails>();
+
+                foreach(var id in userIds)
+                {
+                    var usr = await userManager.FindByUserIdAsync(id);
+                    var claims = await userManager.GetClaimsAsync(usr);
+                    userDetails.Add(await userManager.GetUser(id,ecommerceContext));
+                }
+
+                message.Data = new
+                {
+                    UserDetails= userDetails,
+                    Product=product.GetProductDto(this.User)
+                };
+                message.StatusCode=ResponseStatus.SUCCESS;
+            }
+            catch(Exception ex)
+            {
+                message.Message= ex.Message;
                 message.StatusCode = ResponseStatus.EXCEPTION;
             }
             return new JsonResult(message);

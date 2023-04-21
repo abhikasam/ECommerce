@@ -56,7 +56,7 @@ namespace ECommerce.Controllers.Products
 
                 var filterUsers = selectedUsers.GetArray(",");
 
-                var orderDtos = await orders.GetOrderDtos(userManager,this.User,dateFilter,filterUsers);
+                var orderDtos = await orders.GetOrderDtos(userManager,dateFilter,filterUsers);
 
 
                 message.Data = orderDtos;

@@ -23,17 +23,17 @@ namespace ECommerce.Models.Ecommerce
 
     public static class ProductExt
     {
-        public static Cart GetCart(this ICollection<Cart> carts,ClaimsPrincipal claimsPrincipal)
+        public static Cart GetCart(this ICollection<Cart> carts,ClaimsPrincipal claimsPrincipal=null)
         {
-            return carts != null ? carts.FirstOrDefault(i=>i.UserId==claimsPrincipal.GetUserId()) : null;
+            return carts != null && claimsPrincipal!=null ? carts.FirstOrDefault(i=>i.UserId==claimsPrincipal.GetUserId()) : null;
         }
-        public static bool IsFavorite(this ICollection<Favourite> favourites,ClaimsPrincipal claimsPrincipal)
+        public static bool IsFavorite(this ICollection<Favourite> favourites,ClaimsPrincipal claimsPrincipal=null)
         {
-            return favourites != null && favourites.Any(i => i.UserId == claimsPrincipal.GetUserId());
+            return favourites != null && claimsPrincipal!=null && favourites.Any(i => i.UserId == claimsPrincipal.GetUserId());
         }
 
         public static IQueryable<ProductDto> GetProductDtos(this IQueryable<Product> products, 
-            ClaimsPrincipal claimsPrincipal, ProductFilters filters=null)
+            ClaimsPrincipal claimsPrincipal=null, ProductFilters filters=null)
         {
             var noImage = Directory.GetCurrentDirectory();
             noImage+=@"\ClientApp\src\images\no-image.png";
@@ -202,7 +202,7 @@ namespace ECommerce.Models.Ecommerce
             return productDtos;
         }
 
-        public static ProductDto GetProductDto(this Product product,ClaimsPrincipal claimsPrincipal)
+        public static ProductDto GetProductDto(this Product product,ClaimsPrincipal claimsPrincipal=null)
         {
             var noImage = Directory.GetCurrentDirectory();
             noImage += @"\ClientApp\src\images\no-image.png";

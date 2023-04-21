@@ -4,7 +4,7 @@ export default function Pagination(props) {
 
     function epd(event) {
         event.preventDefault()
-        props.setPage(parseInt(event.target.attributes.page?.value))
+        props.setPage(parseInt(event.target.attributes.page.value))
     }
 
     return (

@@ -17,21 +17,44 @@ export const getFavouritesAsync = createAsyncThunk(
         queryString += '&pageNumber=' + pageNumber
         queryString = '?' + queryString.slice(1)
 
+        const response=
         await fetch('/favourites' + queryString)
-            .then(result => {
-                if (!result.ok) throw result;
-                return result.json();
+            .then(data => {
+                if (!data.ok) throw data;
+                return data.json();
             })
-            .then(response => {
-                dispatch(favouriteActions.updateProducts(response.data))
+            .then(result => {
+                dispatch(favouriteActions.updateProducts(result.data))
+                return result;
             })
             .catch(error => {
                 dispatch(favouriteActions.updateProducts([{ result: [], pageNumber: 1, totalPages: 1 }]))
                 console.log(error)
+                return error;
             })
+        return response;
     }
 )
 
+export const getUsersAddedFavourites = createAsyncThunk(
+    'favourite/getUsersAddedFavourites',
+    async (productId, { dispatch, getState }) => {
+        const response =
+            await fetch('/favourites/productfavourites?productId=' + productId)
+            .then(data => {
+                if (!data.ok) throw data;
+                return data.json();
+            })
+            .then(result => {
+                return result;
+            })
+            .catch(error => {
+                console.log(error)
+                return error;
+            })
+        return response;
+    }
+)
 
 export const addFavouriteAsync = createAsyncThunk(
     'favourite/addFavouriteAsync',

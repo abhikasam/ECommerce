@@ -1,4 +1,5 @@
-﻿using ECommerce.Models.Ecommerce;
+﻿using ECommerce.Data.Account;
+using ECommerce.Models.Ecommerce;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 
