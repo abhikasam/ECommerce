@@ -39,6 +39,8 @@ namespace ECommerce.Data.Products
                 return CartItem != null;
             }
         }
+        public int SizeId { get; set; }
+        public string SizeName { get; set; }
         public IEnumerable<ProductQuantityDto> ProductQuantities { get; set; }
     }
 }

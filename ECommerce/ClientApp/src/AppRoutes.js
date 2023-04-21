@@ -16,6 +16,7 @@ import HomeAuthorized from "./components/HomeAuthorized";
 import ConfirmOrder from "./products/confirm-order";
 import Orders from "./products/orders";
 import OrderDetails from "./products/order-details";
+import OutOfStock from "./products/outofstock";
 
 function AppRoutes() {
 
@@ -39,6 +40,7 @@ function AppRoutes() {
                     {isAuthenticated && user.isAdmin && <Route path='/product-edit' component={EditProduct} />}
                     {isAuthenticated && !user.isAdmin && <Route path="/cart" component={Cart} />}
                     {isAuthenticated && !user.isAdmin && <Route path="/confirm-order" component={ConfirmOrder} />}
+                    {isAuthenticated && user.isAdmin && <Route path='/outofstock' component={OutOfStock} />}
                     <Route component={NotFound} />
                 </Switch>
             )} />

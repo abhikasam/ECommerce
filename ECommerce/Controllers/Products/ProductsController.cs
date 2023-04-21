@@ -124,7 +124,7 @@ namespace ECommerce.Controllers.Products
 
         [HttpGet]
         [Route("[action]")]
-        [ActionName("OutOfStack")]
+        [ActionName("OutOfStock")]
         public JsonResult GetOutOfStackProducts(int? productCount,int? pageNumber)
         {
             var message = new ResponseMessage();
@@ -140,7 +140,8 @@ namespace ECommerce.Controllers.Products
                                 .Include(i => i.IndividualCategory).DefaultIfEmpty()
                                 .Include(i => i.Favorites).DefaultIfEmpty()
                                 .Include(i => i.ProductQuantities).ThenInclude(i => i.Size).DefaultIfEmpty()
-                                .Include(i => i.Carts);
+                                .Include(i => i.Carts)
+                                .Where(i=>i.Quantity==0);
 
                 var productDtos = products.GetProductDtos(this.User);
 
@@ -154,13 +155,26 @@ namespace ECommerce.Controllers.Products
 
                 pageNumber = Math.Min(pageNumber.Value, totalPages.Value);
 
-                message.Data = new
+                if (totalRecords != 0)
                 {
-                    Result = productDtos.PaginateData(pageNumber.Value, productCount.Value),
-                    TotalPages = totalPages,
-                    Filters = filters
-                };
-
+                    message.Data = new
+                    {
+                        Result = productDtos.PaginateData(pageNumber.Value, productCount.Value),
+                        TotalPages = totalPages
+                    };
+                }
+                else
+                {
+                    message.Data = new
+                    {
+                        Result = Array.Empty<ProductDto>(),
+                        TotalPages = 1,
+                        Filters = new ProductFilters()
+                        {
+                            PageNumber = 1
+                        }
+                    };
+                }
             }
             catch (Exception ex)
             {
@@ -295,6 +309,39 @@ namespace ECommerce.Controllers.Products
                         message.StatusCode = ResponseStatus.SUCCESS;
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                message.Message = ex.Message;
+                message.StatusCode = ResponseStatus.EXCEPTION;
+            }
+            return new JsonResult(message);
+        }
+
+
+        [HttpPost]
+        [Route("[action]")]
+        [ActionName("UpdateQuantities")]
+        public async Task<JsonResult> UpdateQuantities([FromBody]object obj)
+        {
+            var message = new ResponseMessage();
+            try
+            {
+                var productQuantities = JsonConvert.DeserializeObject<ProductQuantity[]>(obj.ToString());  
+
+                foreach(var productQuantity in productQuantities)
+                {
+                    var dbProductQuantity=await ecommerceContext.ProductQuantities
+                                .FirstOrDefaultAsync(i=>i.ProductId== productQuantity.ProductId && i.SizeId==productQuantity.SizeId);                    
+                    dbProductQuantity.Quantity = productQuantity.Quantity;
+                }
+
+                var product = await ecommerceContext.Products.FindAsync(productQuantities.First().ProductId);
+                product.Quantity = productQuantities.Sum(i=>i.Quantity);
+
+                await ecommerceContext.SaveChangesAsync();
+                message.Data = productQuantities.First().ProductId;
+                message.StatusCode= ResponseStatus.SUCCESS;
             }
             catch (Exception ex)
             {

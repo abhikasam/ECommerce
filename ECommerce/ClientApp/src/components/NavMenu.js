@@ -73,6 +73,11 @@ export default function NavMenu() {
                         }
 
                         {
+                            isAuthenticated && user.isAdmin &&
+                            <NavLink tag={Link} className="text-dark" to="/outofstock">OOS</NavLink>
+                        }
+
+                        {
                             isAuthenticated && !user.isAdmin &&
                             <NavLink tag={Link} className="text-dark" to="/favourites">Favourites</NavLink>
                         }

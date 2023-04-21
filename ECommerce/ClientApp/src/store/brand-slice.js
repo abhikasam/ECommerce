@@ -43,16 +43,6 @@ export const sortBrands = () => {
     }
 }
 
-export const getBrands = () => {
-    return async (dispatch) => {
-        async function getData() {
-        }
-
-        getData();
-    }
-}
-
-
 const brandSlice = createSlice({
     name: 'brand',
     initialState: initialValue,

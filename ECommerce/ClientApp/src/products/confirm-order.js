@@ -36,14 +36,18 @@ export default function ConfirmOrder(props) {
     }
 
     function updateSelected(orderItem) {
+        let sizeQuantities = orderItem.sizeQuantities.map(i => {
+            return {
+                sizeId: i.sizeId,
+                quantity: i.quantity,
+                productId: orderItem.productId,
+                finalPrice: orderItem.finalPrice
+            }
+        })
         if (orderItem.selected) {
             setSelectedProducts(prev => {
                 let remainingProducts = prev.filter(i => i.productId !== orderItem.productId)
-                return [...remainingProducts, {
-                    productId: orderItem.productId,
-                    quantity: orderItem.quantity,
-                    finalPrice: orderItem.finalPrice
-                }]
+                return [...remainingProducts, ...sizeQuantities]
             })
         }
         else {
@@ -52,7 +56,7 @@ export default function ConfirmOrder(props) {
     }
 
     function placeOrder() {
-        let orderItems = selectedProducts.filter(i => i.quantity>0)
+        let orderItems = selectedProducts.filter(i => i.quantity > 0)
         const response = dispatch(placeOrderAsync(orderItems))
         response.then(result => {
             setSelectedProducts([])
@@ -66,7 +70,7 @@ export default function ConfirmOrder(props) {
                 <div className="col" style={{ maxHeight: '40em', overflowY: 'auto' }}>
                     {products.map(product =>
                         <Fragment key={product.productId}>
-                            <OrderItem product={product}
+                            <OrderItem product={product} key={product.productId}
                                 updateSelected={updateSelected}
                             />
                         </Fragment>
@@ -113,12 +117,21 @@ const OrderItem = ({ product, updateSelected }) => {
     }
 
     const [orderItem, setOrderItem] = useState({
-        selected:false,
+        selected: false,
         productId: product.productId,
-        quantity: 0,
+        sizeQuantities: product.productQuantities.map(i => {
+            return {
+                sizeId: i.sizeId, quantity: 0
+            }
+        }),
         finalPrice: product.finalPrice
     })
 
+
+    function getFinalPrice(){
+        return orderItem.sizeQuantities.reduce((acc,cum)=> acc+cum.quantity,0) * product.finalPrice
+    }
+    
     useEffect(() => {
         updateSelected(orderItem)
     }, [orderItem])
@@ -173,17 +186,28 @@ const OrderItem = ({ product, updateSelected }) => {
             {orderItem.selected &&
                 <>
                     <div className="col-2">
-                    <QuantityHandler initialQuantity={0}
-                        maxQuantity={product.quantity}
-                        updateQuantity={(quantity) => {
-                            setOrderItem(prev => {
-                                return { ...prev, quantity:quantity }
-                            })
-                        }}
-                        ></QuantityHandler>
+                    <div className="row">
+                        {product.productQuantities.map(pq =>
+                            <ProductQuantityUpdater
+                                key={pq.productQuantityId}
+                                productQuantity={pq}
+                                updateQuantity={(quantity) => {
+                                    setOrderItem(prev => {
+                                        let index = prev.sizeQuantities.findIndex(i => i.sizeId === pq.sizeId)
+                                        let sizeQuantities = prev.sizeQuantities;
+                                        sizeQuantities[index].quantity = quantity
+                                        return {
+                                            ...prev,
+                                            sizeQuantities
+                                        }
+                                    })
+                                }}
+                            ></ProductQuantityUpdater>
+                            )}
+                        </div>
                     </div>
                 <div className="col-2 fw-bold fs-5 pt-5 text-center">
-                    ₹{orderItem.quantity * product.finalPrice}
+                    ₹{getFinalPrice()}
                     </div>
                 </>
             }
@@ -198,5 +222,23 @@ const OrderItem = ({ product, updateSelected }) => {
     )
 }
 
+
+export const ProductQuantityUpdater = ({ productQuantity, updateQuantity }) => {
+
+
+    return (
+        <div className="row align-items-center">
+            <div className="col-3">
+                <span>{productQuantity.sizeName}</span>
+            </div>
+            <div className="col-9">
+                <QuantityHandler initialQuantity={0}
+                    maxQuantity={productQuantity.quantity}
+                    updateQuantity={updateQuantity}
+                ></QuantityHandler>
+            </div>
+        </div>
+    )
+}
 
 

@@ -11,6 +11,7 @@ import sizeMappingReducer from './size-mapping-slice'
 import cartReducer from './cart-slice';
 import userProductFilterReducer from './user-product-filter-slice';
 import orderReducer from './order-slice';
+import outofstockReducer from './outofstock-slice'
 
 const store = configureStore({
     reducer: {
@@ -25,7 +26,8 @@ const store = configureStore({
         sizeMapping: sizeMappingReducer,
         cart: cartReducer,
         userProductFilter: userProductFilterReducer,
-        order: orderReducer
+        order: orderReducer,
+        outofstock: outofstockReducer
     }
 })
 

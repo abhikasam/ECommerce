@@ -8,10 +8,12 @@ namespace ECommerce.Models.Ecommerce
         public int OrderId { get; set; }
         public int UserId { get; set; }
         public int ProductId { get; set; }
+        public int SizeId { get; set; }
         public int Quantity { get; set; }
         public DateTime PlacedOn { get; set; }
         public int OrderInstanceId { get; set; }
 
         public virtual Product Product { get; set; }
+        public virtual Size Size { get; set; }
     }
 }

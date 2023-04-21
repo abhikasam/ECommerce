@@ -8,7 +8,7 @@ import CartQuantity from './cart-quantity';
 import { addFavouriteAsync, removeFavouriteAsync } from '../store/favourite-slice';
 
 
-export default function ProductCard({ product }) {
+export default function ProductCard({ product, qantityUpdateHandler,showQuantityUpdater }) {
 
     const dispatch = useDispatch()
     const history = useHistory()
@@ -33,7 +33,8 @@ export default function ProductCard({ product }) {
 
     return (
         <div className={"col " + classes.card}>
-            <div onClick={openProductDetails} style={{ cursor: 'pointer' }}>
+            <div
+                onClick={openProductDetails} style={{ cursor: 'pointer' }}>
                 {product.photo &&
                     <img src={"data:image/*;base64," + product.photo} alt={product.description} className={classes.photo}>
                     </img>}
@@ -105,7 +106,27 @@ export default function ProductCard({ product }) {
                 }
 
                 {
-                    user.isAdmin &&
+                    user.isAdmin && showQuantityUpdater &&
+                    <>
+                        <div className="col-4 text-center">
+                            <i className={"fa fa-bar-chart " + classes.icon} aria-hidden="true"></i>
+                        </div>
+                        <div className="col-4 text-center">
+                            <i className={"fa fa-plus-square-o " + classes.icon}
+                                onClick={qantityUpdateHandler}
+                                style={{ cursor: 'pointer' }}
+                                data-bs-toggle="modal" data-bs-target="#quantityChanger"
+                                aria-hidden="true"></i>
+                        </div>
+                        <div className="col-4 text-center">
+                            <i className={"fa fa-gratipay " + classes.icon}
+                                aria-hidden="true"></i>
+                        </div>
+                    </>
+                }
+
+                {
+                    user.isAdmin && !showQuantityUpdater &&
                     <>
                         <div className="col-6 text-center">
                             <i className={"fa fa-bar-chart " + classes.icon} aria-hidden="true"></i>
@@ -116,6 +137,8 @@ export default function ProductCard({ product }) {
                         </div>
                     </>
                 }
+
+
             </div>
         </div>
     )

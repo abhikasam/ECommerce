@@ -33,7 +33,7 @@ namespace ECommerce.Models.Ecommerce
         {
             if (!optionsBuilder.IsConfigured)
             {
-                 optionsBuilder.UseSqlServer("Data Source=hydws102855;Initial Catalog=Ecommerce;Integrated Security=True;TrustServerCertificate=True");
+                optionsBuilder.UseSqlServer("Data Source=hydws102855;Initial Catalog=Ecommerce;Integrated Security=True;TrustServerCertificate=True");
             }
         }
 
@@ -136,6 +136,12 @@ namespace ECommerce.Models.Ecommerce
                     .HasForeignKey(d => d.ProductId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Order_Product");
+
+                entity.HasOne(d => d.Size)
+                    .WithMany(p => p.Orders)
+                    .HasForeignKey(d => d.SizeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Order_Size");
             });
 
             modelBuilder.Entity<Product>(entity =>

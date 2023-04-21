@@ -82,6 +82,8 @@ namespace ECommerce.Models.Ecommerce
                     {
                         var productDto = order.Product.GetProductDto(principal);
                         productDto.Quantity=order.Quantity;
+                        productDto.SizeId=order.SizeId;
+                        productDto.SizeName = order.Size.SizeName;
                         orderInstance.Products.Add(productDto);
                     }
 
@@ -94,19 +96,6 @@ namespace ECommerce.Models.Ecommerce
 
             return orderItems;
         }
-
-        public static OrderDto GetOrderDto(this Order order)
-        {
-            return new OrderDto
-            { 
-                OrderId= order.OrderId,
-                PlacedOn= order.PlacedOn,
-                ProductId= order.ProductId,
-                Quantity= order.Quantity,
-                UserId= order.UserId
-            };
-        }
-
     }
 
 }

@@ -178,7 +178,7 @@ export const OrderInstanceItem = ({ orderInstance }) => {
                 }
                 {
                     orderInstance.products.map(instanceProduct =>
-                        <ProductItem key={instanceProduct.productId} product={instanceProduct}></ProductItem>
+                        <ProductItem key={orderInstance.instanceId + instanceProduct.productId + instanceProduct.sizeName} product={instanceProduct}></ProductItem>
                     )
                 }
             </div>
@@ -191,16 +191,9 @@ export const ProductItem = ({ product }) => {
 
     const dispatch = useDispatch()
     const history=useHistory()
-
-    function getProduct() {
-        history.push('/product-details', {
-            product: product
-        })
-    }
     
     return (
         <div className="row m-2 p-2 border"
-            onClick={getProduct}
         >
             <div className="col">
                 <div className="row">
@@ -233,7 +226,7 @@ export const ProductItem = ({ product }) => {
                     <div className="col-2 text-center m-4">
                         <span className="fw-bold" style={{ color: 'green' }}>
                             ₹{product.finalPrice}
-                        </span> <span style={{ color: 'red' }}>({product.quantity})</span>
+                        </span> <span style={{ color: 'red' }}>( {product.sizeName} - {product.quantity})</span>
                     </div>
                 </div>
             </div>

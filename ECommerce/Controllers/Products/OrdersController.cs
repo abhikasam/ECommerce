@@ -118,9 +118,15 @@ namespace ECommerce.Controllers.Products
                     var cartItems = await ecommerceContext.Carts.Where(i => i.UserId == currentUserId && orderedProducts.Contains(i.ProductId)).ToListAsync();
                     ecommerceContext.Carts.RemoveRange(cartItems);
 
-                    foreach (var product in products)
+                    foreach (var orderItem in orderItems)
                     {
-                        product.Quantity = product.Quantity - orderItems.Where(i => i.ProductId == product.ProductId).First().Quantity;
+                        var productQuantity=ecommerceContext.ProductQuantities
+                                                .Where(i=>i.ProductId== orderItem.ProductId && i.SizeId==orderItem.SizeId)
+                                                .FirstOrDefault();
+                        productQuantity.Quantity-=orderItem.Quantity;
+
+                        var product=products.FirstOrDefault(i=>i.ProductId== orderItem.ProductId);
+                        product.Quantity-=orderItem.Quantity;
                     }
 
                     await ecommerceContext.SaveChangesAsync();

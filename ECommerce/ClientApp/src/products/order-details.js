@@ -38,7 +38,7 @@ export default function OrderDetails(props) {
             <div className="row product-details">
                 <div className="col" style={{ maxHeight: '40em', overflowY: 'auto' }}>
                     {products.map(product =>
-                        <Fragment key={product.productId}>
+                        <Fragment key={product.productId+"_" + product.sizeName}>
                             <OrderItem product={product}
                             />
                         </Fragment>
@@ -113,11 +113,11 @@ const OrderItem = ({ product }) => {
             </div>
             <div className="col-2">
                 <div className="mt-5 fw-bold fs-5 text-center">
-                    {product.quantity}
+                    {product.quantity} ( {product.sizeName} ) 
                 </div>
             </div>
             <div className="col-2 fw-bold fs-5 pt-5 text-center">
-                ₹{product.quantity}
+                ₹{product.quantity * product.finalPrice}
             </div>
         </div>
     )

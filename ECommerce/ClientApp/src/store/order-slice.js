@@ -12,7 +12,6 @@ const initialValue = {
 export const fetchOrdersAsync = createAsyncThunk(
     'order/fetchOrdersAsync',
     async ({ dateFilter, selectedUsers }, { dispatch, getState }) => {
-        console.log(dateFilter, selectedUsers)
         let queryString = ''
         queryString+=dateFilter ? ('&dateFilter=' + dateFilter) : ''
         queryString += selectedUsers.length ? ('&selectedUsers=' + selectedUsers.join(',')) : ''
