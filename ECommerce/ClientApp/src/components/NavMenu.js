@@ -68,6 +68,10 @@ export default function NavMenu() {
                     }
                     <ul className="navbar-nav flex-grow">
                         {
+                            isAuthenticated && user.isAdmin &&
+                            <NavLink tag={Link} className="text-dark" to="/users">Users</NavLink>
+                        }
+                        {
                             isAuthenticated &&
                             <NavLink tag={Link} className="text-dark" to="/products">Products</NavLink>
                         }

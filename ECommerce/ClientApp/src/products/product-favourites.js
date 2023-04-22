@@ -1,4 +1,4 @@
-﻿import { useEffect } from "react"
+﻿import { Fragment, useEffect } from "react"
 import { useState } from "react"
 import { useDispatch } from "react-redux"
 import { getProductAsync } from "../store/product-slice"
@@ -34,7 +34,9 @@ export default function ProductFavourites(props) {
                 <div className="col-9">
                     <div className="row">
                         {users && product && users.map(user =>
-                            <UserCard key={user.userId} user={user}></UserCard>
+                            <div key={user.userId} className="col-2 border border-primary m-2">
+                                <UserCard key={user.userId} user={user}></UserCard>
+                            </div>
                         )}
                     </div>
             </div>

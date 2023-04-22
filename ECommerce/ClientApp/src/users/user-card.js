@@ -13,8 +13,7 @@ export const UserCard = ({ user }) => {
     }
 
     return (
-        <div className="col border border-primary m-2"
-            onClick={openUserDetails}
+        <div onClick={openUserDetails}
         >
             <div className="row">
                 <div className="col text-center">

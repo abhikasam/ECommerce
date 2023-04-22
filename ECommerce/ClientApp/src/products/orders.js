@@ -12,8 +12,6 @@ export default function Orders() {
 
     const dispatch = useDispatch()
     const { orders } = useSelector(state => state.order)
-    const { userId } = useSelector(state => state.auth)
-    const [selectedUsers, setSelectedUsers] = useState([userId])
     const [users,setUsers]=useState([])
 
     useEffect(() => {
@@ -23,7 +21,12 @@ export default function Orders() {
     useEffect(() => {
         const response = dispatch(fetchUsersAsync())
         response.then((result) => {
-            setUsers(result.payload.data)
+            let userResults = result.payload.data
+            setUsers(userResults.map(user => {
+                return {
+                    key:user.userId,value : user.fullName +"   " +user.email +" "
+                }
+            }))
         })
 
     }, [dispatch])

@@ -37,7 +37,7 @@ namespace ECommerce.Controllers.Auth
             try
             {
                 var isAdmin= this.User.Claims.Any(i=>i.Type=="Admin");
-                var userDetails = new List<KeyValuePair<int,string>>();
+                var userDetails = new List<UserDetails>();
                 if (isAdmin)
                 {
                     var users = userManager.Users;
@@ -45,13 +45,14 @@ namespace ECommerce.Controllers.Auth
                     {
                         var userClaims = await userManager.GetClaimsAsync(user);
                         if(!userClaims.Any(i=>i.Type=="Admin"))
-                            userDetails.Add(new KeyValuePair<int, string>(user.UserId,user.Email+" ( "+Utilities.GetFullName(userClaims)+" )"));
+                            userDetails.Add(UserDetails.GetDetails(userClaims));
                     }
                 }
                 else
                 {
-                    var name = this.User.Claims.FirstOrDefault(i => i.Type == "Email").Value+this.User.GetFullName();
-                    userDetails.Add(new KeyValuePair<int, string>(this.User.GetUserId(),name));
+                    var user = await userManager.FindByUserIdAsync(this.User.GetUserId());
+                    var claims=await userManager.GetClaimsAsync(user);
+                    userDetails.Add(UserDetails.GetDetails(claims));
                 }
                 message.Data = userDetails;
                 message.StatusCode = ResponseStatus.SUCCESS;

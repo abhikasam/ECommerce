@@ -29,9 +29,11 @@ export default function UserDetails(props) {
 
     return (
         <div className="row">
-            <div className="col text-center">
+            <div className="col-2">
                 <div className="row">
-                    <UserCard user={user}></UserCard>
+                    <div className="col text-center border border-primary m-2">
+                        <UserCard user={user}></UserCard>
+                    </div>
                 </div>
             </div>
             <div className="col-10">

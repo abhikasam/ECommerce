@@ -19,6 +19,7 @@ import OrderDetails from "./products/order-details";
 import OutOfStock from "./products/outofstock";
 import ProductFavourites from "./products/product-favourites";
 import UserDetails from "./users/user-details";
+import Users from "./users/users";
 
 function AppRoutes() {
 
@@ -44,7 +45,8 @@ function AppRoutes() {
                     {isAuthenticated && !user.isAdmin && <Route path="/confirm-order" component={ConfirmOrder} />}
                     {isAuthenticated && user.isAdmin && <Route path='/outofstock' component={OutOfStock} />}
                     {isAuthenticated && user.isAdmin && <Route path='/product-favourites' component={ProductFavourites} />}
-                    {isAuthenticated && user.isAdmin && <Route path='/user-details' component={UserDetails} />}
+                    {isAuthenticated && user.isAdmin && <Route path='/users' component={Users} />}
+                   {isAuthenticated && user.isAdmin && <Route path='/user-details' component={UserDetails} />}
                     <Route component={NotFound} />
                 </Switch>
             )} />
