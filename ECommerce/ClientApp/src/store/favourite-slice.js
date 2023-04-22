@@ -1,18 +1,16 @@
 ﻿
 import { createSlice,createAsyncThunk } from '@reduxjs/toolkit';
 import { status } from '../data/status';
+import { paginatedList } from '../data/paginatedList';
 
 const initialValue = {
-    products: [],
-    pageNumber: 1,
-    totalPages: '',
+    products: paginatedList,
     status: status
 }
 
 export const getFavouritesAsync = createAsyncThunk(
     'favourite/getFavouritesAsync',
-    async (_, { dispatch, getState }) => {
-        var pageNumber = getState().favourite.pageNumber;
+    async (pageNumber=1, { dispatch, getState }) => {
         var queryString = ''
         queryString += '&pageNumber=' + pageNumber
         queryString = '?' + queryString.slice(1)
@@ -29,7 +27,6 @@ export const getFavouritesAsync = createAsyncThunk(
             })
             .catch(error => {
                 dispatch(favouriteActions.updateProducts([{ result: [], pageNumber: 1, totalPages: 1 }]))
-                console.log(error)
                 return error;
             })
         return response;
@@ -49,7 +46,6 @@ export const getUsersAddedFavourites = createAsyncThunk(
                 return result;
             })
             .catch(error => {
-                console.log(error)
                 return error;
             })
         return response;
@@ -77,7 +73,6 @@ export const addFavouriteAsync = createAsyncThunk(
                 return result;
             })
             .catch(error => {
-                console.log(error)
                 return error;
             })
 
@@ -106,7 +101,6 @@ export const removeFavouriteAsync = createAsyncThunk(
                 return result;
             })
             .catch(error => {
-                console.log(error)
                 return error;
             })
 
@@ -121,25 +115,23 @@ const favouriteSlice = createSlice({
     initialState: initialValue,
     reducers: {
         updateProducts(state, action) {
-            state.products = action.payload.result
-            state.pageNumber = action.payload.pageNumber
-            state.totalPages = action.payload.totalPages
+            state.products = action.payload
         },
         updatePageNumber(state, action) {
-            state.pageNumber = action.payload
+            state.products.pageNumber = action.payload
         },
         updateProduct(state, action) {
-            let productIds = state.products.map(i => i.productId)
+            let productIds = state.products.result.map(i => i.productId)
             if (productIds.includes(action.payload.productId)) {
-                let index = state.products.findIndex(x => x.productId == action.payload.productId)
-                state.products[index] = action.payload
+                let index = state.products.result.findIndex(x => x.productId == action.payload.productId)
+                state.products.result[index] = action.payload
             }
         },
         addProduct(state, action) {
-            state.products = [...state.products, action.payload]
+            state.products.result = [...state.products.result, action.payload]
         },
         removeProduct(state, action) {
-            state.products = state.products.filter(i => i.productId != action.payload)
+            state.products.result = state.products.result.filter(i => i.productId != action.payload)
         }
     },
     extraReducers: (builder) => {

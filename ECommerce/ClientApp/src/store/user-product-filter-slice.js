@@ -11,7 +11,6 @@ const initialValue = {
         productCount: 50,
         sortBy: 'Search',
         sortOrder: 'asc',
-        pageNumber:''
     },
     status: status
 }
@@ -77,15 +76,15 @@ const userProductFilterSlice = createSlice({
         })
 
         builder.addCase(fetchUserProductFiltersAsync.fulfilled, (state, action) => {
-            console.log(action)
-            state.filters.brandIds = action.payload.data.brandIds
-            state.filters.categoryIds = action.payload.data.categoryIds
-            state.filters.individualCategoryIds = action.payload.data.individualCategoryIds
-            state.filters.priceRangeIds = action.payload.data.priceRangeIds
-            state.filters.sortBy = action.payload.data.sortBy
-            state.filters.sortOrder = action.payload.data.sortOrder
-            state.filters.productCount = action.payload.data.productCount
-            state.filters.pageNumber = action.payload.data.pageNumber
+            let data = action.payload.data
+            let hasData = !!data
+            state.filters.brandIds = hasData ? data.brandIds : []
+            state.filters.categoryIds = hasData ? data.categoryIds : []
+            state.filters.individualCategoryIds = hasData ? data.individualCategoryIds : []
+            state.filters.priceRangeIds = hasData ? data.priceRangeIds : []
+            state.filters.sortBy = hasData ? data.sortBy : ''
+            state.filters.sortOrder = hasData ? data.sortOrder : ''
+            state.filters.productCount = hasData ? data.productCount : 50
         })
 
         builder.addCase(fetchUserProductFiltersAsync.rejected, (state, action) => {
@@ -100,10 +99,7 @@ const userProductFilterSlice = createSlice({
             state.filters.sortBy = action.payload.data.sortBy
             state.filters.sortOrder = action.payload.data.sortOrder
             state.filters.productCount = action.payload.data.productCount
-            state.filters.pageNumber = action.payload.data.pageNumber
         })
-
-
     }
 })
 

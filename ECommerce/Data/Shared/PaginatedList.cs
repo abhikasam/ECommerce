@@ -5,8 +5,8 @@
         public PaginatedList() { }
         public PaginatedList(int pageSize) 
         { 
-            this.TotalPages = 0;
-            this.PageNumber= 0;
+            this.TotalPages = 1;
+            this.PageNumber= 1;
             this.PageSize = pageSize;
             this.Result=Array.Empty<T>().AsQueryable();
         }

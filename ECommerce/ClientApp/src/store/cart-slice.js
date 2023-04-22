@@ -3,18 +3,16 @@ import { createSlice,createAsyncThunk } from '@reduxjs/toolkit';
 import { favouriteActions } from "./favourite-slice";
 import { productActions } from "./product-slice";
 import { status } from '../data/status';
+import { paginatedList } from '../data/paginatedList';
 
 const initialValue = {
-    products: [],
-    pageNumber: 1,
-    totalPages: '',
+    products: paginatedList,
     status: status
 }
 
 export const getCartAsync = createAsyncThunk(
     'cart/getCartAsync',
-    async (_, { dispatch, getState }) => {
-        var pageNumber = getState().cart.pageNumber;
+    async (pageNumber=1, { dispatch, getState }) => {
         var queryString = ''
         queryString += '&pageNumber=' + pageNumber
         queryString = '?' + queryString.slice(1)
@@ -74,27 +72,25 @@ const cartSlice = createSlice({
     initialState: initialValue,
     reducers: {
         updateProducts(state, action) {
-            state.products = action.payload.result
-            state.pageNumber = action.payload.pageNumber
-            state.totalPages = action.payload.totalPages
+            state.products = action.payload
         },
         updatePageNumber(state, action) {
-            state.pageNumber = action.payload
+            state.products.pageNumber = action.payload
         },
         updateProduct(state, action) {
-            let productIds = state.products.map(i => i.productId)
+            let productIds = state.products.result.map(i => i.productId)
             if (productIds.includes(action.payload.productId)) {
-                state.products = state.products.filter(i => i.productId !== action.payload.productId)
+                state.products.result = state.products.result.filter(i => i.productId !== action.payload.productId)
             }
             else {
-                state.products.push(action.payload)
+                state.products.result.push(action.payload)
             }
         },
         removeProduct(state, action) {
-            state.products = state.products.filter(i => i.productId !== action.payload)
+            state.products.result = state.products.result.filter(i => i.productId !== action.payload)
         },
         removeProducts(state, action) {
-            state.products = state.products.filter(i => !action.payload.includes(i.productId))
+            state.products.result = state.products.result.filter(i => !action.payload.includes(i.productId))
         }
     },
     extraReducers: (builder) => {

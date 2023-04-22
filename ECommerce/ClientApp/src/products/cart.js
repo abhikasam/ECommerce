@@ -11,15 +11,11 @@ export default function Cart() {
 
     const dispatch = useDispatch()
     const history=useHistory()
-    const { products, pageNumber, totalPages, status } = useSelector(state => state.cart)
+    const { products,status } = useSelector(state => state.cart)
 
     useEffect(() => {
         dispatch(getCartAsync())
-    }, [dispatch, pageNumber])
-
-    function loadPage(page) {
-        dispatch(cartActions.updatePageNumber(page))
-    }
+    }, [dispatch])
 
     function navigateOrderPage() {
         history.push('/confirm-order')        
@@ -30,7 +26,7 @@ export default function Cart() {
             <div className="row">
                 <div className="col">
                     <div className="row">
-                        {products.length!==0 && 
+                        {products.result.length!==0 && 
                             <div className="col-2">
                                 <button
                                     type="button"
@@ -41,20 +37,20 @@ export default function Cart() {
                             </div>
                         }
                         <div className="col text-end">
-                            <Pagination pageNumber={pageNumber}
-                                totalPages={totalPages}
-                                setPage={loadPage} ></Pagination>
+                            <Pagination pageNumber={products.pageNumber}
+                                totalPages={products.totalPages}
+                                setPage={(page) => dispatch(getCartAsync(page))} ></Pagination>
                         </div>
                     </div>
                     <Status status={status}></Status>
                     <div className="row">
-                        {products.length!==0 &&
-                            products.map(product =>
+                        {products.result.length !== 0 &&
+                            products.result.map(product =>
                                 <ProductCard key={product.productId} product={product}></ProductCard>
                             )
                         }
 
-                        {products.length === 0 &&
+                        {products.result.length === 0 &&
                             <>
                                 <div className="col fs-4 text-warning fw-bold">
                                     Cart is empty.

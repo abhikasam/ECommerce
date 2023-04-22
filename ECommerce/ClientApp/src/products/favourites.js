@@ -10,32 +10,30 @@ import Status from "../data/status"
 export default function Favourites() {
 
     const dispatch = useDispatch()
-    const { products, pageNumber, totalPages, status } = useSelector(state => state.favourite)
+    const { products, status } = useSelector(state => state.favourite)
+    const { pageNumber } = products;
 
     useEffect(() => {
         dispatch(getFavouritesAsync())
-    }, [dispatch, pageNumber])
-
-    function loadPage(page) {
-        dispatch(favouriteActions.updatePageNumber(page))
-    }
+    }, [dispatch])
 
     return (
         <>
             <div className="row">
                 <Pagination pageNumber={pageNumber}
-                    totalPages={totalPages}
-                    setPage={loadPage} ></Pagination>
+                    totalPages={products.totalPages}
+                    setPage={(page) => dispatch(getFavouritesAsync(page))}
+                ></Pagination>
             </div>
             <Status status={status}></Status>
             <div className="row">
-                {products.length!==0 &&
-                    products.map(product =>
+                {products.result.length !== 0 &&
+                    products.result.map(product =>
                         <ProductCard key={product.productId} product={product}></ProductCard>
                     )
                 }
 
-                {products.length===0 &&
+                {products.result.length === 0 &&
                     <>
                     <div className="col fs-4 text-warning fw-bold">
                         Favourites are empty.

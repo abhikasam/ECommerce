@@ -52,7 +52,7 @@ namespace ECommerce.Controllers.Products
             try
             {
                 productCount = productCount ?? this.filters.Value.ProductCount;
-                pageNumber= pageNumber ?? this.filters.Value.PageNumber;
+                pageNumber= pageNumber ?? 1;
                 sortBy = sortBy ?? this.filters.Value.SortBy;
                 sortOrder = sortOrder ?? this.filters.Value.SortOrder;
                 search=search??string.Empty;
@@ -66,7 +66,6 @@ namespace ECommerce.Controllers.Products
                 var filters = new ProductFilters()
                 {
                     ProductCount=productCount.Value,
-                    PageNumber=pageNumber.Value,
                     SortBy=sortBy,
                     SortOrder=sortOrder,
                     Search=search,
@@ -89,7 +88,7 @@ namespace ECommerce.Controllers.Products
 
                 message.Data = new
                 {
-                    Products= productDtos.PaginateData(filters.PageNumber, filters.ProductCount),
+                    Products= productDtos.PaginateData(pageNumber.Value, filters.ProductCount),
                     Filters=filters
                 };
             }
@@ -116,7 +115,7 @@ namespace ECommerce.Controllers.Products
             try
             {
                 productCount = productCount ?? this.filters.Value.ProductCount;
-                pageNumber=pageNumber?? this.filters.Value.PageNumber;  
+                pageNumber=pageNumber?? 1;  
 
                 var products = ecommerceContext.Products
                                 .Include(i => i.Brand).DefaultIfEmpty()

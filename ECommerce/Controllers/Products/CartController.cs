@@ -112,15 +112,8 @@ namespace ECommerce.Controllers.Products
                                     .Select(i => i.Product).GetProductDtos(this.User);
 
                 var productCount = this.filters.Value.ProductCount;
-                var totalRecords = products.Count();
-                var totalPages = (totalRecords + productCount) / productCount;
-
-                message.Data = new
-                {
-                    Result = products.PaginateData(pageNumber, productCount),
-                    TotalPages = totalPages,
-                    PageNumber = pageNumber
-                };
+                
+                message.Data = products.PaginateData(pageNumber, productCount);
             }
             catch (Exception ex)
             {

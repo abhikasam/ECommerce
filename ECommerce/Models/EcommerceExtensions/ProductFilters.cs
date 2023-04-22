@@ -3,7 +3,6 @@
     public class ProductFilters
     {
         public int ProductCount { get; set; }
-        public int PageNumber { get; set; }
         public int[] Brands { get; set; }
         public int[] Categories { get; set; }
         public int[] IndividualCategories { get; set; }

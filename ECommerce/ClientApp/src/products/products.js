@@ -16,13 +16,11 @@ export default function Products() {
 
     const dispatch = useDispatch()
     const { products, filters: productFilters, status } = useSelector(state => state.product)
-    const { pageNumber } = productFilters
     const [filters, setFilters] = useState(productFilters)
     const [search, setSearch] = useState(filters.search)
 
     useEffect(() => {
-        const productsData = dispatch(getProductsAsync(filters))
-        dispatch(updateFiltersAsync(productsData))
+       dispatch(getProductsAsync({ filters, pageNumber:0 }))
     }, [dispatch, filters])
 
     useEffect(() => {
@@ -32,15 +30,6 @@ export default function Products() {
 
     function updatePageFilters(filters) {
         setFilters(filters)
-    }
-
-    function loadPage(page) {
-        setFilters(prev => {
-            return {
-                ...prev,
-                pageNumber: page
-            }
-        })
     }
 
     function searchProducts() {
@@ -78,7 +67,10 @@ export default function Products() {
                                 <i className="fa fa-search" aria-hidden="true"></i>
                             </button>
                         </div>
-                        <Pagination pageNumber={pageNumber} totalPages={products.totalPages} setPage={loadPage} ></Pagination>
+                        <Pagination pageNumber={products.pageNumber}
+                            totalPages={products.totalPages}
+                            setPage={(page) => dispatch(getProductsAsync({ filters, pageNumber: page }))} >
+                        </Pagination>
                     </div>
                     <Status status={status}></Status>
                     <div className="row">

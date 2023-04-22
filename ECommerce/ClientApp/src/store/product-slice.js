@@ -12,7 +12,6 @@ const initialValue = {
     filters: {
         search: '',
         productCount: '',
-        pageNumber: 1,
         sortBy: '',
         sortOrder: '',
         brands: [],
@@ -26,12 +25,12 @@ const initialValue = {
 
 export const getProductsAsync = createAsyncThunk(
     'product/getProductsAsync',
-    async (filters, { dispatch, getState }) => {
+    async ({ filters, pageNumber }, { dispatch, getState }) => {
         var queryString = ''
         if (filters.productCount)
             queryString += '&productCount=' + filters.productCount
-        if (filters.pageNumber)
-            queryString += '&pageNumber=' + filters.pageNumber
+        if (pageNumber)
+            queryString += '&pageNumber=' + pageNumber
         if (filters.search)
             queryString += '&search=' + filters.search
         if (filters.sortBy)
@@ -53,25 +52,25 @@ export const getProductsAsync = createAsyncThunk(
                 if (!result.ok) throw result;
                 return result.json();
             })
+            .then(result => {
+                dispatch(productActions.update(result.data))
+                dispatch(sortBrands())
+                dispatch(sortCategories())
+                dispatch(sortIndividualCategories())
+                return result;
+            })
+            .catch(error=>error)
         return response;
     }
 )
 
 export const updateFiltersAsync = createAsyncThunk(
     'product/updateFiltersAsync',
-    async (response, { dispatch, getState }) => {
-        response
-            .then(result => {
-                console.log(result)
-                dispatch(productActions.update(result.payload.data))
-                dispatch(productActions.updateFilters(result.payload.data.filters))
-                dispatch(sortBrands())
-                dispatch(sortCategories())
-                dispatch(sortIndividualCategories())
-            })
-            .catch(error => {
-                dispatch(productActions.clear())
-            })
+    async ({ filters, pageNumber }, { dispatch, getState }) => {
+        dispatch(productActions.updateFilters(filters))
+        dispatch(sortBrands())
+        dispatch(sortCategories())
+        dispatch(sortIndividualCategories())
     }
 )
 
@@ -130,13 +129,8 @@ const productSlice = createSlice({
     initialState: initialValue,
     reducers: {
         update(state, action) {
-            console.log(action)
             state.products = action.payload.products
             state.filters = action.payload.filters
-        },
-        updatePageNumber(state, action) {
-            //state.products.pageNumber = action.payload
-            state.filters.pageNumber = action.payload
         },
         updateSearch(state, action) {
             state.filters.search = action.payload
@@ -171,13 +165,13 @@ const productSlice = createSlice({
             state.status = initialValue.status
         },
         updateProduct(state, action) {
-            let productIds = state.products.list.map(i => i.productId)
+            let productIds = state.products.result.map(i => i.productId)
             if (productIds.includes(action.payload.productId)) {
-                let index = state.products.list.findIndex(x => x.productId == action.payload.productId)
-                state.products.list[index] = action.payload
+                let index = state.products.result.findIndex(x => x.productId == action.payload.productId)
+                state.products.result[index] = action.payload
             }
             else {
-                state.products.list.push(action.payload)
+                state.products.result.push(action.payload)
             }
         }
     },

@@ -2,8 +2,8 @@
 export const paginatedList =
 {
     result: [],
-    pageNumber: 0,
-    totalPages: 0,
+    pageNumber: 1,
+    totalPages: 1,
     pageSize:50
 }
 

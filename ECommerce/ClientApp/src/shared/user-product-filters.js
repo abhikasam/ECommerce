@@ -20,7 +20,8 @@ export default function UserProductFilters() {
     const { filters: userProductFilters } = useSelector(state => state.userProductFilter)
 
     const [filters, setFilters] = useState(userProductFilters)
-    const [showPageNumberError, setShowPageNumberError]=useState(false)
+    const [pageNumber,setPageNumber]=useState(1)
+    const [showPageNumberError, setShowPageNumberError] = useState(false)
 
     useEffect(() => {
         setFilters(userProductFilters)
@@ -38,11 +39,7 @@ export default function UserProductFilters() {
 
     const updatePageNumberHandler = (event) => {
         setShowPageNumberError(!isValidPageNumber(event.target.value))
-        setFilters(prev => {
-            return {
-                ...prev, pageNumber: event.target.value
-            }
-        })
+        setPageNumber(event.target.value)
     }
 
     function categoryUpdateHandler(category) {
@@ -111,14 +108,16 @@ export default function UserProductFilters() {
 
     function getProducts() {
         dispatch(updateFiltersAsync({
-            brands: filters.brandIds,
-            categories: filters.categoryIds,
-            individualCategories: filters.individualCategoryIds,
-            priceRanges: filters.priceRangeIds,
-            productCount: filters.productCount,
-            sortBy: filters.sortBy,
-            sortOrder: filters.sortOrder,
-            pageNumber: filters.pageNumber
+            filters: {
+                brands: filters.brandIds,
+                categories: filters.categoryIds,
+                individualCategories: filters.individualCategoryIds,
+                priceRanges: filters.priceRangeIds,
+                productCount: filters.productCount,
+                sortBy: filters.sortBy,
+                sortOrder: filters.sortOrder
+            },
+            pageNumber
         }))
         history.push('/products')
     }
@@ -183,7 +182,7 @@ export default function UserProductFilters() {
                         <button
                             type="button"
                             className="btn btn-success m-2 p-2"
-                            disabled={!isValidPageNumber(filters.pageNumber)}
+                            disabled={!isValidPageNumber(pageNumber)}
                             onClick={savePreferences}
                         >Save Preferences
                         </button>
@@ -192,7 +191,7 @@ export default function UserProductFilters() {
                         <button
                             type="button"
                             className="btn btn-primary m-2 p-2"
-                            disabled={!isValidPageNumber(filters.pageNumber)}
+                            disabled={!isValidPageNumber(pageNumber)}
                             onClick={getProducts}
                         > Get Products
                         </button>
@@ -269,7 +268,7 @@ export default function UserProductFilters() {
                         <input type="text"
                             name="pageNumber"
                             className="form-control"
-                            value={filters.pageNumber}
+                            value={pageNumber}
                             onChange={updatePageNumberHandler}
                         />
                         {showPageNumberError &&

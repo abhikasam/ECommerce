@@ -40,7 +40,7 @@ namespace ECommerce.Controllers.Products
         [HttpGet]
         public JsonResult Get(int? pageNumber = null)
         {
-            pageNumber = pageNumber ?? this.filters.Value.PageNumber;
+            pageNumber = pageNumber ?? 1;
             var message = new ResponseMessage();
 
             try
@@ -59,15 +59,8 @@ namespace ECommerce.Controllers.Products
 
                 
                 var productCount = this.filters.Value.ProductCount;
-                var totalRecords = products.Count();
-                var totalPages = (totalRecords + productCount) / productCount;
 
-                message.Data = new
-                {
-                    Result= products.PaginateData(pageNumber.Value,productCount),
-                    TotalPages = totalPages,
-                    PageNumber = pageNumber.Value
-                };
+                message.Data = products.PaginateData(pageNumber.Value, productCount);
             }
             catch (Exception ex)
             {
