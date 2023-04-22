@@ -12,6 +12,7 @@ import cartReducer from './cart-slice';
 import userProductFilterReducer from './user-product-filter-slice';
 import orderReducer from './order-slice';
 import outofstockReducer from './outofstock-slice'
+import userReducer from './user-slice';
 
 const store = configureStore({
     reducer: {
@@ -27,7 +28,8 @@ const store = configureStore({
         cart: cartReducer,
         userProductFilter: userProductFilterReducer,
         order: orderReducer,
-        outofstock: outofstockReducer
+        outofstock: outofstockReducer,
+        user:userReducer
     }
 })
 

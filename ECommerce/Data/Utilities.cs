@@ -36,14 +36,5 @@ namespace ECommerce.Data
         {
             return await manager.Users.Where(i => i.UserId == userId).FirstOrDefaultAsync();
         }
-
-        public static IQueryable<T> PaginateData<T>(this IQueryable<T> records, int pageNumber, int pageSize)
-        {
-
-            var skip = (pageNumber - 1) * pageSize;
-            var take = pageSize;
-
-            return records.Skip(skip).Take(take);
-        }
     }
 }

@@ -2,7 +2,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from 'react-router-dom';
 import { statusActions } from "../../store/status-slice";
-import Status, { status } from "../../shared/status";
+import Status, { status } from "../../data/status";
 
 export default function Register() {
 

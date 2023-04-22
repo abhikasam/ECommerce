@@ -2,7 +2,7 @@
 import { createSlice,createAsyncThunk } from '@reduxjs/toolkit';
 import { favouriteActions } from "./favourite-slice";
 import { productActions } from "./product-slice";
-import { status } from '../shared/status';
+import { status } from '../data/status';
 
 const initialValue = {
     products: [],
@@ -35,39 +35,39 @@ export const getCartAsync = createAsyncThunk(
     }
 )
 
-export const upadteProductCart = (productId) => {
-    return async (dispatch) => {
-        async function update() {
-
-            let cartItem = {
-                productId
-            }
-
-            await fetch('/cart/update',
-                {
-                    method: 'POST',
-                    body: JSON.stringify(cartItem),
-                    headers: {
-                        'Content-Type': 'application/json;'
-                    }
-                })
-                .then(result => {
-                    if (!result.ok) throw result;
-                    return result.json();
-                })
-                .then(response => {
-                    dispatch(cartActions.updateProduct(response.data))
-                    dispatch(favouriteActions.updateProduct(response.data))
-                    dispatch(productActions.updateProduct(response.data))
-                })
-                .catch(error => {
-                    console.log(error)
-                })
+export const updateProductCartAsync = createAsyncThunk(
+    'cart/updateProductCartAsync',
+    async (productId, { dispatch, getState }) => {
+        let cartItem = {
+            productId
         }
 
-        update();
+        const response=
+        await fetch('/cart/update',
+            {
+                method: 'POST',
+                body: JSON.stringify(cartItem),
+                headers: {
+                    'Content-Type': 'application/json;'
+                }
+            })
+                .then(data => {
+                if (!data.ok) throw data;
+                    return data.json();
+            })
+            .then(result => {
+                dispatch(cartActions.updateProduct(result.data))
+                dispatch(favouriteActions.updateProduct(result.data))
+                dispatch(productActions.updateProduct(result.data))
+                return result;
+            })
+            .catch(error => {
+                console.log(error)
+                return error;
+            })
+        return response;
     }
-}
+)
 
 const cartSlice = createSlice({
     name: 'cart',

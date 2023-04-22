@@ -94,17 +94,19 @@ export default function UserDetails(props) {
                         role="tabpanel"
                         aria-labelledby="cart-tab"
                         tabIndex="0">
-                        {user && user.carts && user.carts.map(product =>
-                            <ProductCard key={product.productId} product={product}>
-                            </ProductCard>
-                        )}
-                        {(!user || !user.carts || user.carts.length===0) &&
-                            <>
-                                <div className="col p-4 fw-bold fs-4" style={{ color: 'orange' }}>
-                                    No product added to cart.
-                                </div>
-                            </>
-                        }
+                        <div className="row">
+                            {user && user.carts && user.carts.map(product =>
+                                <ProductCard key={product.productId} product={product}>
+                                </ProductCard>
+                            )}
+                            {(!user || !user.carts || user.carts.length === 0) &&
+                                <>
+                                    <div className="col p-4 fw-bold fs-4" style={{ color: 'orange' }}>
+                                        No product added to cart.
+                                    </div>
+                                </>
+                            }
+                        </div>
                     </div>
                     <div className="tab-pane fade"
                         id="order-tab-pane"

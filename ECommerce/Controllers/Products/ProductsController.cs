@@ -87,33 +87,17 @@ namespace ECommerce.Controllers.Products
 
                 var productDtos = products.GetProductDtos(this.User, filters);
 
-                var totalRecords=productDtos.Count();
-                
-                var totalPages=(totalRecords+filters.ProductCount)/filters.ProductCount;
-                if (totalRecords % filters.ProductCount == 0)
-                {
-                    totalPages--;
-                }
-
-                filters.PageNumber= Math.Min(filters.PageNumber,totalPages);
-
                 message.Data = new
                 {
-                    Result=productDtos.PaginateData(filters.PageNumber,filters.ProductCount),
-                    TotalPages=totalPages,
+                    Products= productDtos.PaginateData(filters.PageNumber, filters.ProductCount),
                     Filters=filters
                 };
             }
             catch (Exception ex)
             {
-                message.Data = new
-                {
-                    Result = Array.Empty<ProductDto>(),
-                    TotalPages = 1,
-                    Filters = new ProductFilters()
-                    {
-                        PageNumber = 1
-                    }
+                message.Data = new {
+                    Products= new PaginatedList<ProductDto>(productCount.GetValueOrDefault(0)),
+                    Filters= new ProductFilters()
                 };
                 message.Message = ex.Message;
                 message.StatusCode = ResponseStatus.EXCEPTION;
@@ -145,43 +129,11 @@ namespace ECommerce.Controllers.Products
 
                 var productDtos = products.GetProductDtos(this.User);
 
-                var totalRecords = productDtos.Count();
-
-                var totalPages = (totalRecords + productCount) / productCount;
-                if (totalRecords % productCount == 0)
-                {
-                    totalPages--;
-                }
-
-                pageNumber = Math.Min(pageNumber.Value, totalPages.Value);
-
-                if (totalRecords != 0)
-                {
-                    message.Data = new
-                    {
-                        Result = productDtos.PaginateData(pageNumber.Value, productCount.Value),
-                        TotalPages = totalPages,
-                        PageNumber=pageNumber.Value
-                    };
-                }
-                else
-                {
-                    message.Data = new
-                    {
-                        Result = Array.Empty<ProductDto>(),
-                        TotalPages = 1,
-                        PageNumber=1
-                    };
-                }
+                message.Data=productDtos.PaginateData(pageNumber.Value, productCount.Value);
             }
             catch (Exception ex)
             {
-                message.Data = new
-                {
-                    Result = Array.Empty<ProductDto>(),
-                    TotalPages = 1,
-                    PageNumber = 1
-                };
+                message.Data = new PaginatedList<ProductDto>(productCount.Value);
                 message.Message = ex.Message;
                 message.StatusCode = ResponseStatus.EXCEPTION;
             }

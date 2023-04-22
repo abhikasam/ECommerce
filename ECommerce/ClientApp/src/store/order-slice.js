@@ -1,7 +1,7 @@
 ﻿
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { cartActions } from './cart-slice';
-import { status } from '../shared/status';
+import { status } from '../data/status';
 
 
 const initialValue = {

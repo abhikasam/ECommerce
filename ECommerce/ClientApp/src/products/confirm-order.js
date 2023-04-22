@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { productActions } from "../store/product-slice"
 import { cartActions, getCartAsync } from "../store/cart-slice"
 import { orderActions, placeOrderAsync } from "../store/order-slice"
-import Status from "../shared/status"
+import Status from "../data/status"
 import { QuantityChanger } from "./outofstock"
 
 

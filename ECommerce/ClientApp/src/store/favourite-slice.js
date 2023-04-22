@@ -1,6 +1,6 @@
 ﻿
 import { createSlice,createAsyncThunk } from '@reduxjs/toolkit';
-import { status } from '../shared/status';
+import { status } from '../data/status';
 
 const initialValue = {
     products: [],

@@ -1,6 +1,6 @@
 ﻿
 import { createSlice,createAsyncThunk } from '@reduxjs/toolkit';
-import { status } from '../shared/status';
+import { status } from '../data/status';
 import { statusActions } from './status-slice';
 import { brandActions } from './brand-slice';
 import { categoryActions } from './category-slice';

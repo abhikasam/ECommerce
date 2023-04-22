@@ -3,21 +3,21 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { sortBrands } from './brand-slice';
 import { sortCategories } from './category-slice';
 import { sortIndividualCategories } from './individual-category-slice';
-import { status } from '../shared/status';
+import { status } from '../data/status';
 import { statusActions } from './status-slice';
+import { paginatedList } from '../data/paginatedList';
 
 const initialValue = {
-    products: [],
-    totalPages: '',
+    products: paginatedList,
     filters: {
-        search:'',
+        search: '',
         productCount: '',
-        pageNumber:1,
+        pageNumber: 1,
         sortBy: '',
         sortOrder: '',
         brands: [],
         categories: [],
-        priceRanges:[],
+        priceRanges: [],
         individualCategories: []
     },
     status: status
@@ -61,17 +61,17 @@ export const updateFiltersAsync = createAsyncThunk(
     'product/updateFiltersAsync',
     async (response, { dispatch, getState }) => {
         response
-            .then(response => {
-            dispatch(productActions.update(response.payload.data))
-            dispatch(productActions.updateFilters(response.payload.data.filters))
-            dispatch(productActions.updateTotalPages(response.payload.data.totalPages))
-            dispatch(sortBrands())
-            dispatch(sortCategories())
-            dispatch(sortIndividualCategories())
-        })
-        .catch(error => {
-            dispatch(productActions.clear())
-        })
+            .then(result => {
+                console.log(result)
+                dispatch(productActions.update(result.payload.data))
+                dispatch(productActions.updateFilters(result.payload.data.filters))
+                dispatch(sortBrands())
+                dispatch(sortCategories())
+                dispatch(sortIndividualCategories())
+            })
+            .catch(error => {
+                dispatch(productActions.clear())
+            })
     }
 )
 
@@ -80,16 +80,16 @@ export const getProductAsync = createAsyncThunk(
     async (productId, { dispatch, getState }) => {
         const response =
             await fetch('/products/' + productId)
-            .then(result => {
-                if (!result.ok) throw result;
-                return result.json();
-            })
-            .then(response => {
-                return response;
-            })
-            .catch(error => {
-                return error;
-            })
+                .then(result => {
+                    if (!result.ok) throw result;
+                    return result.json();
+                })
+                .then(response => {
+                    return response;
+                })
+                .catch(error => {
+                    return error;
+                })
         return response;
     }
 )
@@ -99,26 +99,26 @@ export const saveProductAsync = createAsyncThunk(
     async (form, { dispatch, getState }) => {
         const response =
             await fetch('products'
-            , {
-                method: 'POST',
-                body: JSON.stringify(form),
-                headers: {
-                    'Content-Type': 'application/json;'
+                , {
+                    method: 'POST',
+                    body: JSON.stringify(form),
+                    headers: {
+                        'Content-Type': 'application/json;'
+                    }
                 }
-            }
-        )
-        .then(data => {
-            if (!data.ok) throw data;
-            return data.json();
-        })
-        .then(result => {
-            dispatch(statusActions.add(result))
-            return result;
-        })
-        .catch(error => {
-            dispatch(statusActions.add(error))
-            return error;
-        })
+            )
+                .then(data => {
+                    if (!data.ok) throw data;
+                    return data.json();
+                })
+                .then(result => {
+                    dispatch(statusActions.add(result))
+                    return result;
+                })
+                .catch(error => {
+                    dispatch(statusActions.add(error))
+                    return error;
+                })
 
         return response;
     }
@@ -130,12 +130,12 @@ const productSlice = createSlice({
     initialState: initialValue,
     reducers: {
         update(state, action) {
-            state.products = action.payload.result
-        },
-        updateTotalPages(state, action) {
-            state.totalPages = action.payload
+            console.log(action)
+            state.products = action.payload.products
+            state.filters = action.payload.filters
         },
         updatePageNumber(state, action) {
+            //state.products.pageNumber = action.payload
             state.filters.pageNumber = action.payload
         },
         updateSearch(state, action) {
@@ -168,21 +168,20 @@ const productSlice = createSlice({
         clear(state) {
             state.products = initialValue.products
             state.filters = initialValue.filters
-            state.totalPages = initialValue.totalPages
             state.status = initialValue.status
         },
         updateProduct(state, action) {
-            let productIds = state.products.map(i => i.productId)
+            let productIds = state.products.list.map(i => i.productId)
             if (productIds.includes(action.payload.productId)) {
-                let index = state.products.findIndex(x => x.productId == action.payload.productId)
-                state.products[index] = action.payload
+                let index = state.products.list.findIndex(x => x.productId == action.payload.productId)
+                state.products.list[index] = action.payload
             }
             else {
-                state.products.push(action.payload)
+                state.products.list.push(action.payload)
             }
         }
     },
-    extraReducers:(builder) => {
+    extraReducers: (builder) => {
         builder.addCase(getProductsAsync.pending, (state, action) => {
             state.status.message = 'Loading products...';
             state.status.type = 'warning';

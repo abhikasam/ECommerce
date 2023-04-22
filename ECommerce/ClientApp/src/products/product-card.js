@@ -3,7 +3,7 @@ import classes from './product-card.module.css'
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { useHistory } from "react-router-dom"
-import { upadteProductCart } from '../store/cart-slice';
+import { updateProductCartAsync } from '../store/cart-slice';
 import CartQuantity from './cart-quantity';
 import { addFavouriteAsync, removeFavouriteAsync } from '../store/favourite-slice';
 
@@ -15,7 +15,8 @@ export default function ProductCard({ product, qantityUpdateHandler,showQuantity
     const { user } = useSelector(state => state.auth)
     const { products: favourites } = useSelector(state => state.favourite)
     const { products: cartProducts } = useSelector(state => state.cart)
-
+    const [isFavourite, setIsFavourite] = useState(product.isFavourite)
+    const [isInCart, setIsInCart] = useState(product.isInCart)
 
     function getDiscountColor() {
         if (product.discount >= 50)
@@ -34,6 +35,44 @@ export default function ProductCard({ product, qantityUpdateHandler,showQuantity
     const openProductFavouriteDetails = () => {
         history.push('/product-favourites', {
             productId: product.productId
+        })
+    }
+
+    function addProductToCart() {
+        const response = dispatch(updateProductCartAsync(product.productId))
+        response.then(result => {
+            console.log(result)
+            if (result.payload.statusCode === 1) {
+                setIsInCart(true)
+            }
+        })
+    }
+
+    function removeProductFromCart() {
+        const response = dispatch(updateProductCartAsync(product.productId))
+        response.then(result => {
+            if (result.payload.statusCode === 1) {
+                setIsInCart(false)
+            }
+        })
+    }
+
+
+    function addProductToFavourites() {
+        const response = dispatch(addFavouriteAsync(product.productId))
+        response.then(result => {
+            if (result.payload.statusCode === 1) {
+                setIsFavourite(true)
+            }
+        })
+    }
+
+    function removeProductFromFavourites() {
+        const response = dispatch(removeFavouriteAsync(product.productId))
+        response.then(result => {
+            if (result.payload.statusCode === 1) {
+                setIsFavourite(false)
+            }
         })
     }
 
@@ -84,33 +123,33 @@ export default function ProductCard({ product, qantityUpdateHandler,showQuantity
                     !user.isAdmin &&
                     <>
                         <div className="col-6 text-center">
-                            {cartProducts.map(i => i.productId).includes(product.productId) &&
+                            {isInCart &&
                                     <span className="p1 fa-stack fa-1x">
                                         <i className="p2 fa fa-circle fa-stack-2x"></i>
                                     <i className="p3 fa fa-shopping-cart fa-stack-1x fa-inverse" style={{ cursor: 'pointer' }}
-                                        onClick={() => dispatch(upadteProductCart(product.productId))}
+                                        onClick={removeProductFromCart}
                                     ></i>
                                     </span>
                             }
 
-                            {!cartProducts.map(i => i.productId).includes(product.productId) &&
+                            {!isInCart &&
                                 <i className={"fa fa-shopping-cart " + classes.icon}
                                     style={{ color: 'gray' }}
-                                    onClick={() => dispatch(upadteProductCart(product.productId))}
+                                    onClick={addProductToCart}
                                     aria-hidden="true"></i>
                             }
                         </div>
 
                         <div className="col-6 text-center">
-                            {!favourites.map(i => i.productId).includes(product.productId) &&
+                            {!isFavourite &&
                                 <i className={"fa fa-heart-o " + classes.icon}
-                                    onClick={(event) => dispatch(addFavouriteAsync(product.productId))}
+                                    onClick={addProductToFavourites}
                                     aria-hidden="true"></i>
                             }
-                            {favourites.map(i => i.productId).includes(product.productId) &&
+                            {isFavourite &&
                                 <i className={"fa fa-heart " + classes.icon}
                                     style={{ color: 'red' }}
-                                    onClick={(event) => dispatch(removeFavouriteAsync(product.productId))}
+                                    onClick={removeProductFromFavourites}
                                     aria-hidden="true"></i>
                             }
                         </div>

@@ -4,7 +4,7 @@ import ProductCard from "./product-card"
 import Pagination from "../shared/pagination"
 import { cartActions, getCartAsync } from "../store/cart-slice";
 import { useHistory } from "react-router-dom";
-import Status from "../shared/status";
+import Status from "../data/status";
 
 
 export default function Cart() {

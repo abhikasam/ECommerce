@@ -4,7 +4,7 @@ import { useEffect } from "react"
 import ProductCard from "./product-card"
 import Pagination from "../shared/pagination"
 import { favouriteActions, getFavouritesAsync } from "../store/favourite-slice"
-import Status from "../shared/status"
+import Status from "../data/status"
 
 
 export default function Favourites() {

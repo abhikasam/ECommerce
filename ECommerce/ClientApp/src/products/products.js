@@ -9,26 +9,26 @@ import { useState } from "react";
 import { statusActions } from "../store/status-slice";
 import { getFavouritesAsync } from "../store/favourite-slice";
 import { getCartAsync } from "../store/cart-slice";
-import Status from "../shared/status";
+import Status from "../data/status";
 
 
 export default function Products() {
 
     const dispatch = useDispatch()
-    const { products, totalPages, filters: productFilters, status } = useSelector(state => state.product)
+    const { products, filters: productFilters, status } = useSelector(state => state.product)
     const { pageNumber } = productFilters
     const [filters, setFilters] = useState(productFilters)
     const [search, setSearch] = useState(filters.search)
 
     useEffect(() => {
-        dispatch(getFavouritesAsync())
-        dispatch(getCartAsync())
-    }, [dispatch])
-
-    useEffect(() => {
         const productsData = dispatch(getProductsAsync(filters))
         dispatch(updateFiltersAsync(productsData))
     }, [dispatch, filters])
+
+    useEffect(() => {
+        dispatch(getFavouritesAsync())
+        dispatch(getCartAsync())
+    }, [dispatch])
 
     function updatePageFilters(filters) {
         setFilters(filters)
@@ -78,17 +78,17 @@ export default function Products() {
                                 <i className="fa fa-search" aria-hidden="true"></i>
                             </button>
                         </div>
-                        <Pagination pageNumber={pageNumber} totalPages={totalPages} setPage={loadPage} ></Pagination>
+                        <Pagination pageNumber={pageNumber} totalPages={products.totalPages} setPage={loadPage} ></Pagination>
                     </div>
                     <Status status={status}></Status>
                     <div className="row">
                         {
-                            products.length!==0 &&
-                            products.map(product =>
+                            products.result.length !== 0 &&
+                            products.result.map(product =>
                                 <ProductCard key={product.productId} product={product}></ProductCard>
                             )
                         }
-                        {products.length === 0 &&
+                        {products.result.length === 0 &&
                             <>
                                 <div className="col fs-4 text-warning fw-bold">
                                     Products are empty.

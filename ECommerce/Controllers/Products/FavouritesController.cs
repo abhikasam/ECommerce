@@ -12,6 +12,7 @@ using ECommerce.Data.Products;
 using ECommerce.Data;
 using Microsoft.AspNetCore.Authorization;
 using ECommerce.Data.Account;
+using ECommerce.Data.Shared;
 
 namespace ECommerce.Controllers.Products
 {

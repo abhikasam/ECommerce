@@ -3,7 +3,7 @@ import { Container } from 'reactstrap';
 import NavMenu from './NavMenu';
 import { useSelector } from 'react-redux';
 import classes from './Layout.module.css';
-import Status from '../shared/status';
+import Status from '../data/status';
 
 export default function Layout(props){
 
