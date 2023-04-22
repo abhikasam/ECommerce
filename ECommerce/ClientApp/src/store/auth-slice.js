@@ -17,37 +17,19 @@ const initialAuthentication = {
     status: status    
 }
 
-export const fetchUsersAsync = createAsyncThunk(
-    'auth/fetchUsersAsync',
+export const fetchUserAsync = createAsyncThunk(
+    'auth/fetchUserAsync',
     async (_, { dispatch, getState }) => {
         const response =
-            await fetch('/users')
-            .then(data => {
-                if (!data.ok) throw data;
-                return data.json();
-            })
-            .then(result => {
-                return result;
-            })
-            .catch(error => {
-                return error;
-            })
-        return response;
-
-    }
-)
-
-export const fetchUserDetailsAsync = createAsyncThunk(
-    'auth/fetchUserDetailsAsync',
-    async (userId, { dispatch, getState }) => {
-        console.log(userId)
-        const response =
-            await fetch('/users/' + userId)
+            await fetch('/login')
                 .then(data => {
                     if (!data.ok) throw data;
                     return data.json();
                 })
                 .then(result => {
+                    if (result.isAuthenticated) {
+                        dispatch(setUser(result))
+                    }
                     return result;
                 })
                 .catch(error => {
@@ -57,28 +39,6 @@ export const fetchUserDetailsAsync = createAsyncThunk(
     }
 )
 
-
-export const fetchUserAsync = createAsyncThunk(
-    'auth/fetchUserAsync',
-    async (_, { dispatch,getState }) => {
-        const response =
-            await fetch('/login')
-            .then(data => {
-                if (!data.ok) throw data;
-                return data.json();
-            })
-            .then(result => {
-                if (result.isAuthenticated) {
-                    dispatch(setUser(result))
-                }
-                return result;
-            })
-            .catch(error => {
-                return error;
-            })
-        return response;
-    }
-)
 
 export const loginUserAsync = createAsyncThunk(
     'auth/loginUserAsync',

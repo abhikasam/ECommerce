@@ -3,7 +3,6 @@
 
 export const UserCard = ({ user }) => {
 
-    console.log(user)
     const history=useHistory()
 
     function openUserDetails() {

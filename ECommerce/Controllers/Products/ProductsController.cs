@@ -108,13 +108,12 @@ namespace ECommerce.Controllers.Products
         [HttpGet]
         [Route("[action]")]
         [ActionName("OutOfStock")]
-        public JsonResult GetOutOfStackProducts(int? productCount,int? pageNumber)
+        public JsonResult GetOutOfStackProducts(int? pageNumber)
         {
             var message = new ResponseMessage();
-
+            var productCount = this.filters.Value.ProductCount;
             try
             {
-                productCount = productCount ?? this.filters.Value.ProductCount;
                 pageNumber=pageNumber?? 1;  
 
                 var products = ecommerceContext.Products
@@ -128,11 +127,11 @@ namespace ECommerce.Controllers.Products
 
                 var productDtos = products.GetProductDtos(this.User);
 
-                message.Data=productDtos.PaginateData(pageNumber.Value, productCount.Value);
+                message.Data=productDtos.PaginateData(pageNumber.Value, productCount);
             }
             catch (Exception ex)
             {
-                message.Data = new PaginatedList<ProductDto>(productCount.Value);
+                message.Data = new PaginatedList<ProductDto>(productCount);
                 message.Message = ex.Message;
                 message.StatusCode = ResponseStatus.EXCEPTION;
             }

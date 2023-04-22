@@ -1,11 +1,12 @@
 ﻿import { useEffect } from "react"
 import { useState } from "react"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { useHistory } from "react-router-dom"
-import { fetchUserDetailsAsync } from "../store/auth-slice"
+import { fetchUserCartDetailsAsync, fetchUserDetailsAsync, fetchUserFavouritesDetailsAsync, fetchUserOrderDetailsAsync } from "../store/user-slice"
 import { UserCard } from "./user-card"
 import ProductCard from "../products/product-card"
 import { DateItem } from "../products/orders"
+import Pagination from "../shared/pagination"
 
 
 
@@ -16,14 +17,15 @@ export default function UserDetails(props) {
 
     const state = props.location.state
     const [userId] = useState(state?.userId)
-    const [user, setUser] = useState({})
+
+    const { selectedUser }=useSelector(state=>state.user)
+    const [dateRange,setDateRange]=useState('')
 
     useEffect(() => {
-        console.log(userId)
-        const response = dispatch(fetchUserDetailsAsync(userId))
-        response.then(result => {
-            setUser(result.payload.data)
-        })
+        dispatch(fetchUserDetailsAsync(userId))
+        dispatch(fetchUserFavouritesDetailsAsync({ userId }))
+        dispatch(fetchUserCartDetailsAsync({ userId }))
+        dispatch(fetchUserOrderDetailsAsync({ userId }))
     }, [userId, dispatch])
 
 
@@ -32,7 +34,7 @@ export default function UserDetails(props) {
             <div className="col-2">
                 <div className="row">
                     <div className="col text-center border border-primary m-2">
-                        <UserCard user={user}></UserCard>
+                        <UserCard user={selectedUser.user}></UserCard>
                     </div>
                 </div>
             </div>
@@ -75,12 +77,18 @@ export default function UserDetails(props) {
                         role="tabpanel"
                         aria-labelledby="fav-tab"
                         tabIndex="0">
+                        <div className="row pt-4">
+                            <Pagination pageNumber={selectedUser.favourites.pageNumber}
+                                totalPages={selectedUser.favourites.totalPages}
+                                setPage={(page) => dispatch(fetchUserFavouritesDetailsAsync({ userId, pageNumber: page }))} >
+                            </Pagination>
+                        </div>
                         <div className="row">
-                            {user && user.favourites && user.favourites.map(product =>
+                            {selectedUser && selectedUser.favourites && selectedUser.favourites.result.map(product =>
                                 <ProductCard key={product.productId} product={product}>
                                 </ProductCard>
                             )}
-                            {(!user || !user.favourites || user.favourites.length===0) &&
+                            {(!selectedUser || !selectedUser.favourites || selectedUser.favourites.result.length === 0) &&
                                 <>
                                     <div className="col p-4 fw-bold fs-4" style={{ color: 'orange' }}>
                                         No product added to favourites.
@@ -94,12 +102,18 @@ export default function UserDetails(props) {
                         role="tabpanel"
                         aria-labelledby="cart-tab"
                         tabIndex="0">
+                        <div className="row pt-4">
+                            <Pagination pageNumber={selectedUser.cart.pageNumber}
+                                totalPages={selectedUser.cart.totalPages}
+                                setPage={(page) => dispatch(fetchUserCartDetailsAsync({ userId, pageNumber: page }))} >
+                            </Pagination>
+                        </div>
                         <div className="row">
-                            {user && user.carts && user.carts.map(product =>
+                            {selectedUser && selectedUser.cart && selectedUser.cart.result.map(product =>
                                 <ProductCard key={product.productId} product={product}>
                                 </ProductCard>
                             )}
-                            {(!user || !user.carts || user.carts.length === 0) &&
+                            {(!selectedUser || !selectedUser.cart || selectedUser.cart.result.length === 0) &&
                                 <>
                                     <div className="col p-4 fw-bold fs-4" style={{ color: 'orange' }}>
                                         No product added to cart.
@@ -113,16 +127,43 @@ export default function UserDetails(props) {
                         role="tabpanel"
                         aria-labelledby="order-tab"
                         tabIndex="0">
-                        {user && user.orders && user.orders.map(order =>
-                            <DateItem key={order.date} order={order}></DateItem>
-                        )}
-                        {(!user || !user.orders || user.orders.length === 0) &&
-                            <>
-                                <div className="col p-4 fw-bold fs-4" style={{ color: 'orange' }}>
-                                    No product added to cart.
-                                </div>
-                            </>
-                        }
+                        <div className="row mt-4 align-items-center">
+                            <div className="col-2 text-end">
+                                <label className="fw-bold">Range :</label>
+                            </div>
+                            <div className="col-3">
+                                <select className="form-control"
+                                    value={dateRange}
+                                    onChange={(event) => setDateRange(event.target.value)}
+                                >
+                                    <option value="30">Last 30 days</option>
+                                    <option value="90">Last 90 days</option>
+                                    <option value="180">Last 180 days</option>
+                                    <option value="365">Last 365 days</option>
+                                </select>
+                            </div>
+                            <div className="col-2">
+                                <button type="button"
+                                    className="btn btn-primary"
+                                    onClick={() => dispatch(fetchUserOrderDetailsAsync({ userId, dateFilter: dateRange }))}
+                                >
+                                    Update
+                                </button>
+                            </div>
+                        </div>
+                        <div className="row">
+                            {selectedUser && selectedUser.orders && selectedUser.orders.map(order =>
+                                <DateItem key={order.date} order={order}></DateItem>
+                            )}
+                            {(!selectedUser || !selectedUser.orders || selectedUser.orders.length === 0) &&
+                                <>
+                                    <div className="col p-4 fw-bold fs-4" style={{ color: 'orange' }}>
+                                        No product added to cart.
+                                    </div>
+                                </>
+                            }
+
+                        </div>
                     </div>
                 </div>
             </div>

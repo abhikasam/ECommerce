@@ -14,7 +14,7 @@ export default function OutOfStock() {
 
     const dispatch = useDispatch()
     const history = useHistory()
-    const { products, pageNumber, totalPages, status } = useSelector(state => state.outofstock)
+    const { products, status } = useSelector(state => state.outofstock)
 
     const [quantityChanger, setQuantityChanger] = useState({
         show: false,
@@ -23,11 +23,7 @@ export default function OutOfStock() {
 
     useEffect(() => {
         dispatch(fetchOutOfStockProductsAsync())
-    }, [dispatch, pageNumber])
-
-    function loadPage(page) {
-        dispatch(outofstockActions.updatePageNumber(page))
-    }
+    }, [dispatch])
 
 
 
@@ -37,15 +33,15 @@ export default function OutOfStock() {
                 <div className="col">
                     <div className="row">
                         <div className="col text-end">
-                            <Pagination pageNumber={pageNumber}
-                                totalPages={totalPages}
-                                setPage={loadPage} ></Pagination>
+                            <Pagination pageNumber={products.pageNumber}
+                                totalPages={products.totalPages}
+                                setPage={(page) => dispatch(fetchOutOfStockProductsAsync(page))} ></Pagination>
                         </div>
                     </div>
                     <Status status={status}></Status>
                     <div className="row">
-                        {products.length !== 0 &&
-                            products.map(product =>
+                        {products.result.length !== 0 &&
+                            products.result.map(product =>
                                 <ProductCard
                                     key={product.productId}
                                     product={product}
@@ -60,7 +56,7 @@ export default function OutOfStock() {
                             )
                         }
 
-                        {products.length === 0 &&
+                        {products.result.length === 0 &&
                             <>
                                 <div className="col fs-4 text-warning fw-bold">
                                     No product is out of stock.

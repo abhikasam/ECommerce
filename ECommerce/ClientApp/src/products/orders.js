@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { fetchOrdersAsync } from "../store/order-slice"
 import { getProductAsync } from "../store/product-slice"
 import { useHistory } from "react-router-dom"
-import { fetchUsersAsync } from "../store/auth-slice"
+import { fetchUsersAsync } from "../store/user-slice"
 import ListSelect from "../shared/list-select"
 
 

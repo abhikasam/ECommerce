@@ -1,39 +1,41 @@
 ﻿
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { status } from '../data/status';
+import { paginatedList } from '../data/paginatedList';
 
 const initialValue = {
-    products: [],
-    pageNumber: 1,
-    totalPages: '',
+    products:paginatedList,
     status: status
 }
 
 
 export const fetchOutOfStockProductsAsync = createAsyncThunk(
     'outofstock/fetchOutOfStockProductsAsync',
-    async (_, { dispatch, getState }) => {
+    async (pageNumber, { dispatch, getState }) => {
 
-        let products = getState().outofstock.products
+        var queryString = ''
+        queryString += '&pageNumber=' + pageNumber
+        queryString = '?' + queryString.slice(1)
+
+        let products = getState().outofstock.products.result
 
         if (products.length) {
             return;
         }
 
         const response =
-            await fetch('/products/outofstock')
+            await fetch('/products/outofstock' + queryString)
                 .then(data => {
                     console.log(data)
                     if (!data.ok) throw data;
                     return data.json();
                 })
                 .then(result => {
-                    console.log(result)
                     dispatch(outofstockActions.update(result.data))
                     return result;
                 })
                 .catch(error => {
-                    dispatch(outofstockActions.update({ result: [], pageNumber: 1, totalPages: 1 }))
+                    dispatch(outofstockActions.update(initialValue.products))
                     console.log(error)
                     return error;
                 })
@@ -76,12 +78,7 @@ const outofstockSlice = createSlice({
     initialState: initialValue,
     reducers: {
         update(state, action) {
-            state.products = action.payload.result
-            state.pageNumber = action.payload.pageNumber
-            state.totalPages = action.payload.totalPages
-        },
-        updatePageNumber(state, action) {
-            state.pageNumber = action.payload
+            state.products = action.payload
         },
         removeProduct(state, action) {
             state.products = state.products.filter(i => i.productId !== action.payload)
