@@ -112,7 +112,6 @@ export const fetchUserOrderDetailsAsync = createAsyncThunk(
         queryString += '&userId=' + userId
         queryString += '&dateFilter=' + dateFilter
         queryString = '?' + queryString.slice(1)
-
         const response =
             await fetch('/users/orders' + queryString)
                 .then(data => {
@@ -146,7 +145,6 @@ const userSlice = createSlice(
                 state.selectedUser.favourites = action.payload
             },
             updateSelectedUserCart(state, action) {
-                console.log(action)
                 state.selectedUser.cart = action.payload
             },
             updateSelectedUserOrders(state, action) {

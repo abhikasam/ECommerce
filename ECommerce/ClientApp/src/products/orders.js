@@ -21,7 +21,7 @@ export default function Orders() {
     useEffect(() => {
         const response = dispatch(fetchUsersAsync())
         response.then((result) => {
-            let userResults = result.payload.data
+            let userResults = result.payload.data.result
             setUsers(userResults.map(user => {
                 return {
                     key:user.userId,value : user.fullName +"   " +user.email +" "

@@ -38,6 +38,12 @@ export default function ProductCard({ product, qantityUpdateHandler,showQuantity
         })
     }
 
+    const openProductStats = () => {
+        history.push('/product-stats', {
+            productId: product.productId
+        })
+    }
+
     function addProductToCart() {
         const response = dispatch(updateProductCartAsync(product.productId))
         response.then(result => {
@@ -161,7 +167,9 @@ export default function ProductCard({ product, qantityUpdateHandler,showQuantity
                     user.isAdmin && showQuantityUpdater &&
                     <>
                         <div className="col-4 text-center">
-                            <i className={"fa fa-bar-chart " + classes.icon} aria-hidden="true"></i>
+                            <i className={"fa fa-bar-chart " + classes.icon}
+                                onClick={openProductStats}
+                                aria-hidden="true"></i>
                         </div>
                         <div className="col-4 text-center">
                             <i className={"fa fa-plus-square-o " + classes.icon}
@@ -182,7 +190,9 @@ export default function ProductCard({ product, qantityUpdateHandler,showQuantity
                     user.isAdmin && !showQuantityUpdater &&
                     <>
                         <div className="col-6 text-center">
-                            <i className={"fa fa-bar-chart " + classes.icon} aria-hidden="true"></i>
+                            <i className={"fa fa-bar-chart " + classes.icon}
+                                onClick={openProductStats}
+                                aria-hidden="true"></i>
                         </div>
                         <div className="col-6 text-center">
                             <i className={"fa fa-gratipay " + classes.icon}

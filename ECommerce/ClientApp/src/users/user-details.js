@@ -25,7 +25,7 @@ export default function UserDetails(props) {
         dispatch(fetchUserDetailsAsync(userId))
         dispatch(fetchUserFavouritesDetailsAsync({ userId }))
         dispatch(fetchUserCartDetailsAsync({ userId }))
-        dispatch(fetchUserOrderDetailsAsync({ userId }))
+        dispatch(fetchUserOrderDetailsAsync({ userId, dateFilter: dateRange }))
     }, [userId, dispatch])
 
 

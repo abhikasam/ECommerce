@@ -11,7 +11,7 @@ const initialValue = {
 
 export const fetchOutOfStockProductsAsync = createAsyncThunk(
     'outofstock/fetchOutOfStockProductsAsync',
-    async (pageNumber, { dispatch, getState }) => {
+    async (pageNumber=1, { dispatch, getState }) => {
 
         var queryString = ''
         queryString += '&pageNumber=' + pageNumber
