@@ -44,6 +44,13 @@ export default function ProductCard({ product, qantityUpdateHandler,showQuantity
                 {product.photo &&
                     <img src={"data:image/*;base64," + product.photo} alt={product.description} className={classes.photo}>
                     </img>}
+                {!product.photo &&
+                    <>
+                    <div className="text-center" style={{ padding: '3em' }}>
+                        <i className="fa fa-picture-o" style={{ color: 'silver', fontSize:'7em' }} aria-hidden="true"></i>
+                    </div>
+                    </>
+                }
                 <div className={classes.details}>
                     <div className={"row " + classes.price} >
                         <div className={"col-4 " + classes.originalPrice}>

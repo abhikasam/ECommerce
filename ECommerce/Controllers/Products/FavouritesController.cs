@@ -112,7 +112,7 @@ namespace ECommerce.Controllers.Products
                 {
                     var usr = await userManager.FindByUserIdAsync(id);
                     var claims = await userManager.GetClaimsAsync(usr);
-                    userDetails.Add(await userManager.GetUser(id,ecommerceContext));
+                    userDetails.Add(UserDetails.GetDetails(claims));
                 }
 
                 message.Data = new

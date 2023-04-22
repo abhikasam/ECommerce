@@ -15,9 +15,9 @@ namespace ECommerce.Data.Account
         public string UserId { get; set; }
         public bool IsAdmin { get; set; }
         public string ExpiresAt { get; set; }
-        public List<ProductDto> Favourites { get; set; }
-        public List<ProductDto> Carts { get; set; }
-        public List<OrderItem> Orders { get; set; }
+        public List<ProductDto> Favourites { get; set; } = new List<ProductDto>();
+        public List<ProductDto> Carts { get; set; }=new List<ProductDto>();
+        public List<OrderItem> Orders { get; set; }=new List<OrderItem>();
 
         public static UserDetails GetDetails(IEnumerable<Claim> claims)
         {

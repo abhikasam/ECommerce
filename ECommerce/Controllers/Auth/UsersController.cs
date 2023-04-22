@@ -1,6 +1,7 @@
 ﻿using ECommerce.Data;
 using ECommerce.Data.Account;
 using ECommerce.Models;
+using ECommerce.Models.Ecommerce;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -17,13 +18,15 @@ namespace ECommerce.Controllers.Auth
     {
         private readonly SignInManager<User> signInManager;
         private readonly Microsoft.AspNetCore.Identity.UserManager<User> userManager;
+        private readonly EcommerceContext ecommerceContext;
         private readonly IConfiguration configuration;
 
-        public UsersController(SignInManager<User> signInManager, UserManager<User> userManager, IConfiguration configuration)
+        public UsersController(SignInManager<User> signInManager, UserManager<User> userManager, IConfiguration configuration, EcommerceContext ecommerceContextcontext)
         {
             this.signInManager = signInManager;
             this.userManager = userManager;
             this.configuration = configuration;
+            this.ecommerceContext = ecommerceContextcontext;
         }
 
         [HttpGet]
@@ -60,6 +63,25 @@ namespace ECommerce.Controllers.Auth
                 message.StatusCode = ResponseStatus.EXCEPTION;
             }
 
+            return new JsonResult(message);
+        }
+
+
+        [HttpGet("{userid}")]
+        public async Task<IActionResult> Get(int userId)
+        {
+            var message = new ResponseMessage();
+            try
+            {
+                var userDetails = await userManager.GetUser(userId,ecommerceContext);
+                message.Data=userDetails;
+                message.StatusCode = ResponseStatus.SUCCESS;
+            }
+            catch(Exception ex)
+            {
+                message.Message= ex.Message;
+                message.StatusCode = ResponseStatus.EXCEPTION;
+            }
             return new JsonResult(message);
         }
 

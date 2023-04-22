@@ -34,11 +34,7 @@ namespace ECommerce.Models.Ecommerce
 
         public static IQueryable<ProductDto> GetProductDtos(this IQueryable<Product> products, 
             ClaimsPrincipal claimsPrincipal=null, ProductFilters filters=null)
-        {
-            var noImage = Directory.GetCurrentDirectory();
-            noImage+=@"\ClientApp\src\images\no-image.png";
-            byte[] bytes = System.IO.File.ReadAllBytes(noImage);
-
+        {            
             var hasPriceRangesFilers = filters != null && filters.PriceRanges.Count() > 0;
             var filteredProducts = products.Where(i => !hasPriceRangesFilers );
             if (hasPriceRangesFilers)
@@ -130,7 +126,7 @@ namespace ECommerce.Models.Ecommerce
                 IndividualCategoryName = i.IndividualCategory.IndividualCategoryName,
                 IsFavourite= i.Favorites.IsFavorite(claimsPrincipal),
                 CartItem=i.Carts.GetCart(claimsPrincipal).GetCartDto(),
-                Photo= i.Photo??bytes,
+                Photo= i.Photo,
                 ProductQuantities =i.ProductQuantities.GetSizeMappingDtos()
             });
 
@@ -204,10 +200,6 @@ namespace ECommerce.Models.Ecommerce
 
         public static ProductDto GetProductDto(this Product product,ClaimsPrincipal claimsPrincipal=null)
         {
-            var noImage = Directory.GetCurrentDirectory();
-            noImage += @"\ClientApp\src\images\no-image.png";
-
-            byte[] bytes = System.IO.File.ReadAllBytes(noImage);
             var productDto = new ProductDto()
             {
                 ProductId = product.ProductId,
@@ -220,7 +212,7 @@ namespace ECommerce.Models.Ecommerce
                 Quantity= product.Quantity,
                 Rating = product.Rating,
                 Reviews = product.Reviews,
-                Photo= product.Photo??bytes,
+                Photo= product.Photo,
                 Url = product.Url,
                 BrandName = product.Brand.BrandName,
                 CategoryName = product.Category.CategoryName,

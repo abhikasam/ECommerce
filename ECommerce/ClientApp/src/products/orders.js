@@ -197,13 +197,22 @@ export const ProductItem = ({ product }) => {
         >
             <div className="col">
                 <div className="row">
-                    <div className="col-1">
-                        <img
-                            style={{ height: '4em', width:'5em' }}
-                            src={"data:image/*;base64," + product.photo}
-                            alt={product.description}
-                        >
-                        </img>
+                    <div className="col-1" style={{ alignSelf:'center' }}>
+                        {product.photo && 
+                            <img
+                                style={{ height: '4em', width: '5em' }}
+                                src={"data:image/*;base64," + product.photo}
+                                alt={product.description}
+                            >
+                            </img>
+                        }
+                        {
+                            !product.photo && 
+                            <div className="text-center">
+                                <i className="fa fa-picture-o" style={{ color: 'silver', fontSize: '3em' }} aria-hidden="true"></i>
+                            </div>
+                        }
+
                     </div>
                     <div className="col-5">
                         <div className="row">

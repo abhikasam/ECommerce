@@ -4,11 +4,12 @@ import { useDispatch } from "react-redux"
 import { getProductAsync } from "../store/product-slice"
 import { getUsersAddedFavourites } from "../store/favourite-slice"
 import ProductCard from "./product-card"
+import { UserCard } from "../users/user-card"
 
 
 export default function ProductFavourites(props) {
 
-    const dispatch=useDispatch()
+    const dispatch = useDispatch()
 
     const state = props.location.state
     const [productId] = useState(state?.productId)
@@ -31,25 +32,13 @@ export default function ProductFavourites(props) {
                     {product && <ProductCard product={product}></ProductCard>}
                 </div>
                 <div className="col-9">
-                    {users && product && users.map(user =>
-                        <UserDetails key={user.userId} user={user}></UserDetails>
-                    )}
-                </div>
+                    <div className="row">
+                        {users && product && users.map(user =>
+                            <UserCard key={user.userId} user={user}></UserCard>
+                        )}
+                    </div>
             </div>
+        </div>
         </>
     )
 }
-
-const UserDetails = ({ user }) => {
-    return (
-        <div className="row">
-            <div className="col-2 text-center border p-2">
-                {user.fullName}
-            </div>
-            <div className="col-2 text-center border p-2">
-                {user.email}
-            </div>
-        </div>
-    )
-}
-

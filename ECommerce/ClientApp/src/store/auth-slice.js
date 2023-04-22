@@ -37,6 +37,27 @@ export const fetchUsersAsync = createAsyncThunk(
     }
 )
 
+export const fetchUserDetailsAsync = createAsyncThunk(
+    'auth/fetchUserDetailsAsync',
+    async (userId, { dispatch, getState }) => {
+        console.log(userId)
+        const response =
+            await fetch('/users/' + userId)
+                .then(data => {
+                    if (!data.ok) throw data;
+                    return data.json();
+                })
+                .then(result => {
+                    return result;
+                })
+                .catch(error => {
+                    return error;
+                })
+        return response;
+    }
+)
+
+
 export const fetchUserAsync = createAsyncThunk(
     'auth/fetchUserAsync',
     async (_, { dispatch,getState }) => {

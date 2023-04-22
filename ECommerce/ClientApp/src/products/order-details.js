@@ -48,7 +48,7 @@ export default function OrderDetails(props) {
             <div className="row">
                 <div className="col">
                     <div className="row total-details p-2 border">
-                        <div className="col-6 text-center fw-bold fs-6">Total</div>
+                        <div className="col-5 text-center fw-bold fs-6">Total</div>
                         <div className="col-2 text-center fw-bold fs-4">
                             {totalQuantity()}
                         </div>
@@ -74,15 +74,21 @@ const OrderItem = ({ product }) => {
 
     return (
         <div className={"row m-2 p-2 border "}>
-            <div className="col-1 p-5">
-            </div>
-            <div className="col-2">
-                <img
-                    src={"data:image/*;base64," + product.photo}
-                    alt={product.description}
-                    style={{ height: '8em', width: '10em' }}
-                >
-                </img>
+            <div className="col-2" style={{ alignSelf: 'center' }}>
+                {product.photo && 
+                    <img
+                        src={"data:image/*;base64," + product.photo}
+                        alt={product.description}
+                        style={{ height: '8em', width: '10em' }}
+                    >
+                    </img>
+                }
+                {
+                    !product.photo &&
+                    <div className="text-center">
+                        <i className="fa fa-picture-o" style={{ color: 'silver', fontSize: '3em' }} aria-hidden="true"></i>
+                    </div>
+                }
             </div>
             <div className="col-3">
                 <div className="row fw-bold fs-6 fst-italic">
