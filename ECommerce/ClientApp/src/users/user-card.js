@@ -7,7 +7,7 @@ export const UserCard = ({ user }) => {
 
     function openUserDetails() {
         history.push('/user-details', {
-            userId: user.userId
+            user: user
         })
     }
 

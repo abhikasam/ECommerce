@@ -7,14 +7,16 @@ import { paginatedList } from '../data/paginatedList';
 
 const initialValue = {
     products: paginatedList,
+    allProducts:[],
     status: status
 }
 
 export const getCartAsync = createAsyncThunk(
     'cart/getCartAsync',
-    async (pageNumber=1, { dispatch, getState }) => {
+    async ({ pageNumber = 1,getAll=false }, { dispatch, getState }) => {
         var queryString = ''
         queryString += '&pageNumber=' + pageNumber
+        queryString += '&getAll=' + getAll
         queryString = '?' + queryString.slice(1)
 
         const response=await fetch('/cart' + queryString)
@@ -23,10 +25,20 @@ export const getCartAsync = createAsyncThunk(
                 return data.json();
             })
             .then(result => {
-                dispatch(cartActions.updateProducts(result.data))
+                if (getAll) {
+                    dispatch(cartActions.updateAllProducts(result.data))
+                }
+                else{
+                    dispatch(cartActions.updateProducts(result.data))
+                }
             })
             .catch(error => {
-                dispatch(cartActions.updateProducts([{ result: [], pageNumber: 1, totalPages: 1 }]))
+                if (getAll) {
+                    dispatch(cartActions.updateAllProducts([]))
+                }
+                else {
+                    dispatch(cartActions.updateProducts([{ result: [], pageNumber: 1, totalPages: 1 }]))
+                }
                 console.log(error)
             })
         return response;
@@ -102,6 +114,9 @@ const cartSlice = createSlice({
         },
         updatePageNumber(state, action) {
             state.products.pageNumber = action.payload
+        },
+        updateAllProducts(state, action) {
+            state.allProducts = action.payload
         },
         updateProduct(state, action) {
             let productIds = state.products.result.map(i => i.productId)

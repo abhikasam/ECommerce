@@ -36,9 +36,17 @@ export default function ProductDetails(props) {
 
     return (
         <>
-            <div className="row">
+            <div className="row align-items-center">
                 <div className="col-3">
-                    <img src={"data:image/png;base64," + product.photo} alt={product.description} className={classes.photo}></img>
+                    {product.photo &&
+                        <img src={"data:image/png;base64," + product.photo} alt={product.description} className={classes.photo}></img>
+                    }
+                    {
+                        !product.photo &&
+                        <div className="text-center">
+                            <i className="fa fa-picture-o" style={{ color: 'silver', fontSize: '10em' }} aria-hidden="true"></i>
+                        </div>
+                    }
                 </div>
                 <div className="col-9">
 

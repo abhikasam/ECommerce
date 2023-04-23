@@ -23,11 +23,6 @@ export default function Products() {
        dispatch(getProductsAsync({ filters, pageNumber:0 }))
     }, [dispatch, filters])
 
-    useEffect(() => {
-        dispatch(getFavouritesAsync())
-        dispatch(getCartAsync())
-    }, [dispatch])
-
     function updatePageFilters(filters) {
         setFilters(filters)
     }

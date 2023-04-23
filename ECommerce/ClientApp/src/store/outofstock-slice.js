@@ -26,7 +26,6 @@ export const fetchOutOfStockProductsAsync = createAsyncThunk(
         const response =
             await fetch('/products/outofstock' + queryString)
                 .then(data => {
-                    console.log(data)
                     if (!data.ok) throw data;
                     return data.json();
                 })

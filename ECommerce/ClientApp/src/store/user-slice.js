@@ -4,7 +4,6 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 const initialValue = {
     users: paginatedList,
     selectedUser: {
-        user: {},
         favourites: paginatedList,
         cart: paginatedList,
         orders: datedOrderList
@@ -138,9 +137,6 @@ const userSlice = createSlice(
             updateUsers(state, action) {
                 state.users=action.payload
             },
-            updateSelectedUser(state, action) {
-                state.selectedUser.user = action.payload
-            },
             updateSelectedUserFavourites(state, action) {
                 state.selectedUser.favourites = action.payload
             },
@@ -148,7 +144,7 @@ const userSlice = createSlice(
                 state.selectedUser.cart = action.payload
             },
             updateSelectedUserOrders(state, action) {
-                state.selectedUser.orders = action.payload
+                state.selectedUser.orders.datedOrderItems = action.payload
             }
         }
     }

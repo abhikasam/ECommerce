@@ -19,7 +19,6 @@ export const fetchOrdersAsync = createAsyncThunk(
         if (queryString.length) {
             queryString = '?' + queryString.slice(1)
         }
-        console.log(queryString)
         const response =
             await fetch('/orders' + queryString)
                 .then(data => {
@@ -47,7 +46,6 @@ export const fetchProductOrdersAsync = createAsyncThunk(
         if (queryString.length) {
             queryString = '?' + queryString.slice(1)
         }
-        console.log(queryString)
         const response =
             await fetch('/orders' + queryString)
                 .then(data => {

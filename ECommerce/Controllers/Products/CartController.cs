@@ -99,7 +99,7 @@ namespace ECommerce.Controllers.Products
         }
 
         [HttpGet]
-        public JsonResult Get(int pageNumber=1)
+        public JsonResult Get(int pageNumber=1,bool getAll=false)
         {
             var message = new ResponseMessage();
             try
@@ -116,12 +116,26 @@ namespace ECommerce.Controllers.Products
                                     .Select(i => i.Product).GetProductDtos(this.User);
 
                 var productCount = this.filters.Value.ProductCount;
-                
-                message.Data = products.PaginateData(pageNumber, productCount);
+
+                if (getAll)
+                {
+                    message.Data = products;
+                }
+                else
+                {
+                    message.Data = products.PaginateData(pageNumber, productCount);
+                }
             }
             catch (Exception ex)
             {
-                message.Data = Array.Empty<ProductDto>();
+                if (getAll)
+                {
+                    message.Data = Array.Empty<ProductDto>();
+                }
+                else
+                {
+                    message.Data=new PaginatedList<ProductDto>();
+                }
                 message.Message = ex.Message;
                 message.StatusCode = ResponseStatus.ERROR;
             }

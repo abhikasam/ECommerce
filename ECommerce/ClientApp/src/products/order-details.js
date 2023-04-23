@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { productActions } from "../store/product-slice"
 import { cartActions, getCartAsync } from "../store/cart-slice"
 import { orderActions, placeOrderAsync } from "../store/order-slice"
+import ProductCard from "./product-card"
 
 
 
@@ -19,7 +20,7 @@ export default function OrderDetails(props) {
     if (!products) {
         history.push('/notfound')
     }
-    
+
     useEffect(() => {
         dispatch(orderActions.clearStatus())
     })
@@ -34,96 +35,27 @@ export default function OrderDetails(props) {
 
 
     return (
-        <div>
+        <div className="">
+            <div className="row fs-3 fw-bold text-success">
+                <div className="col-3">
+                    Total Quantity : {totalQuantity()}
+                </div>
+                <div className="col-4 text-end">
+                    Total Price :
+                </div>
+                <div className="col-2">
+                    <i className="fa fa-inr fs-4" aria-hidden="true"></i>
+                    {totalPrice()}
+                </div>
+            </div>
             <div className="row product-details">
-                <div className="col" style={{ maxHeight: '40em', overflowY: 'auto' }}>
-                    {products.map(product =>
-                        <Fragment key={product.productId+"_" + product.sizeName}>
-                            <OrderItem product={product}
-                            />
-                        </Fragment>
-                    )}
-                </div>
-            </div>
-            <div className="row">
-                <div className="col">
-                    <div className="row total-details p-2 border">
-                        <div className="col-5 text-center fw-bold fs-6">Total</div>
-                        <div className="col-2 text-center fw-bold fs-4">
-                            {totalQuantity()}
-                        </div>
-                        <div className="col-1 text-end fw-bold fs-4">
-                            ₹{totalPrice()}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    )
-}
-
-const OrderItem = ({ product }) => {
-
-    function getDiscountColor() {
-        if (product.discount >= 50)
-            return 'green';
-        else if (product.discount >= 15 && product.discount < 50)
-            return 'blue';
-        else return 'red';
-    }
-
-    return (
-        <div className={"row m-2 p-2 border "}>
-            <div className="col-2" style={{ alignSelf: 'center' }}>
-                {product.photo && 
-                    <img
-                        src={"data:image/*;base64," + product.photo}
-                        alt={product.description}
-                        style={{ height: '8em', width: '10em' }}
+                {products.map(product =>
+                    <ProductCard key={product.productId + "_" + product.sizeName}
+                        product={product}
+                        showOrderedQuantity={true}
                     >
-                    </img>
-                }
-                {
-                    !product.photo &&
-                    <div className="text-center">
-                        <i className="fa fa-picture-o" style={{ color: 'silver', fontSize: '3em' }} aria-hidden="true"></i>
-                    </div>
-                }
-            </div>
-            <div className="col-3">
-                <div className="row fw-bold fs-6 fst-italic">
-                    {product.description}
-                </div>
-                <div className="row mt-2 font-monospace" style={{ color: '#fd7e14' }}>
-                    {product.brandName}
-                </div>
-                <div className="row mt-2" style={{ fontSize: 'smaller' }} >
-                    <div className="col-6">
-                        {product.categoryName}
-                    </div>
-                    <div className="col-6">
-                        {product.individualCategoryName}
-                    </div>
-                </div>
-                <div className="row mt-2">
-                    <div className="col-4">
-                        ₹{product.originalPrice}
-                    </div>
-                    <div className="col-2 text-center" style={{ color: getDiscountColor() }} >
-                        {product.discount}%
-                    </div>
-                    <div className="col-2 fw-bold text-center">
-                        ₹{product.finalPrice}
-                    </div>
-                </div>
-            </div>
-            <div className="col-2">
-                <div className="mt-5 fw-bold fs-5 text-center">
-                    {product.quantity} ( {product.sizeName} ) 
-                </div>
-            </div>
-            <div className="col-2 fw-bold fs-5 pt-5 text-center">
-                ₹{product.quantity * product.finalPrice}
+                    </ProductCard>
+                )}
             </div>
         </div>
     )

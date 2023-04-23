@@ -75,10 +75,6 @@ const OrderListFilter = ({ applyFilters,users }) => {
     const [dateFilter, setDateFilter]=useState('30')
     const [selectedUsers,setSelectedUsers]=useState([])
 
-    useEffect(() => {
-        console.log(selectedUsers)
-    }, [selectedUsers])
-
     function updateSelected(value) {
         if (selectedUsers.includes(value)) {
             setSelectedUsers(prev => prev.filter(i => i!== value))

@@ -8,18 +8,21 @@ import { orderActions, placeOrderAsync } from "../store/order-slice"
 import Status from "../data/status"
 import { QuantityChanger } from "./outofstock"
 
-
-
 export default function ConfirmOrder(props) {
 
     const dispatch = useDispatch()
     const history = useHistory()
 
-    const { products: cartProducts } = useSelector(state => state.cart)
-    const { result: products } = cartProducts
+    const { userId }=useSelector(state=>state.auth.user)
+    const { allProducts: products } = useSelector(state => state.cart)
+    
     const { status } = useSelector(state => state.order)
 
     const [selectedProducts, setSelectedProducts] = useState([])
+
+    useEffect(() => {
+        dispatch(getCartAsync({ getAll:true }))
+    }, [dispatch])
 
     useEffect(() => {
         dispatch(orderActions.clearStatus())
@@ -162,13 +165,21 @@ const OrderItem = ({ product, updateSelected }) => {
                     }}
                 />
             </div>
-            <div className="col-2">
-                <img
-                    src={"data:image/*;base64," + product.photo}
-                    alt={product.description}
-                    style={{ height: '8em', width: '10em' }}
-                >
-                </img>
+            <div className="col-2 align-self-center">
+                {product.photo && 
+                    <img
+                        src={"data:image/*;base64," + product.photo}
+                        alt={product.description}
+                        style={{ height: '8em', width: '10em' }}
+                    >
+                    </img>
+                }
+                {
+                    !product.photo &&
+                    <div className="text-center">
+                        <i className="fa fa-picture-o" style={{ color: 'silver', fontSize: '3em' }} aria-hidden="true"></i>
+                    </div>
+                }
             </div>
             <div className="col-3">
                 <div className="row fw-bold fs-6 fst-italic">

@@ -16,17 +16,16 @@ export default function UserDetails(props) {
     const dispatch = useDispatch()
 
     const state = props.location.state
-    const [userId] = useState(state?.userId)
+    const [user] = useState(state?.user)
 
-    const { selectedUser }=useSelector(state=>state.user)
+    const { favourites, cart,orders } = useSelector(state => state.user.selectedUser)
     const [dateRange,setDateRange]=useState('')
 
     useEffect(() => {
-        dispatch(fetchUserDetailsAsync(userId))
-        dispatch(fetchUserFavouritesDetailsAsync({ userId }))
-        dispatch(fetchUserCartDetailsAsync({ userId }))
-        dispatch(fetchUserOrderDetailsAsync({ userId, dateFilter: dateRange }))
-    }, [userId, dispatch])
+        dispatch(fetchUserFavouritesDetailsAsync({ userId: user.userId }))
+        dispatch(fetchUserCartDetailsAsync({ userId: user.userId }))
+        dispatch(fetchUserOrderDetailsAsync({ userId: user.userId, dateFilter: dateRange }))
+    }, [user.userId, dispatch])
 
 
     return (
@@ -34,7 +33,7 @@ export default function UserDetails(props) {
             <div className="col-2">
                 <div className="row">
                     <div className="col text-center border border-primary m-2">
-                        <UserCard user={selectedUser.user}></UserCard>
+                        <UserCard user={user}></UserCard>
                     </div>
                 </div>
             </div>
@@ -78,17 +77,17 @@ export default function UserDetails(props) {
                         aria-labelledby="fav-tab"
                         tabIndex="0">
                         <div className="row pt-4">
-                            <Pagination pageNumber={selectedUser.favourites.pageNumber}
-                                totalPages={selectedUser.favourites.totalPages}
-                                setPage={(page) => dispatch(fetchUserFavouritesDetailsAsync({ userId, pageNumber: page }))} >
+                            <Pagination pageNumber={favourites.pageNumber}
+                                totalPages={favourites.totalPages}
+                                setPage={(page) => dispatch(fetchUserFavouritesDetailsAsync({ userId: user.userId, pageNumber: page }))} >
                             </Pagination>
                         </div>
                         <div className="row">
-                            {selectedUser && selectedUser.favourites && selectedUser.favourites.result.map(product =>
+                            {user && favourites && favourites.result.map(product =>
                                 <ProductCard key={product.productId} product={product}>
                                 </ProductCard>
                             )}
-                            {(!selectedUser || !selectedUser.favourites || selectedUser.favourites.result.length === 0) &&
+                            {(!user || !favourites || favourites.result.length === 0) &&
                                 <>
                                     <div className="col p-4 fw-bold fs-4" style={{ color: 'orange' }}>
                                         No product added to favourites.
@@ -103,17 +102,17 @@ export default function UserDetails(props) {
                         aria-labelledby="cart-tab"
                         tabIndex="0">
                         <div className="row pt-4">
-                            <Pagination pageNumber={selectedUser.cart.pageNumber}
-                                totalPages={selectedUser.cart.totalPages}
-                                setPage={(page) => dispatch(fetchUserCartDetailsAsync({ userId, pageNumber: page }))} >
+                            <Pagination pageNumber={cart.pageNumber}
+                                totalPages={cart.totalPages}
+                                setPage={(page) => dispatch(fetchUserCartDetailsAsync({ userId: user.userId, pageNumber: page }))} >
                             </Pagination>
                         </div>
                         <div className="row">
-                            {selectedUser && selectedUser.cart && selectedUser.cart.result.map(product =>
+                            {user && cart && cart.result.map(product =>
                                 <ProductCard key={product.productId} product={product}>
                                 </ProductCard>
                             )}
-                            {(!selectedUser || !selectedUser.cart || selectedUser.cart.result.length === 0) &&
+                            {(!user || !cart || cart.result.length === 0) &&
                                 <>
                                     <div className="col p-4 fw-bold fs-4" style={{ color: 'orange' }}>
                                         No product added to cart.
@@ -145,17 +144,17 @@ export default function UserDetails(props) {
                             <div className="col-2">
                                 <button type="button"
                                     className="btn btn-primary"
-                                    onClick={() => dispatch(fetchUserOrderDetailsAsync({ userId, dateFilter: dateRange }))}
+                                    onClick={() => dispatch(fetchUserOrderDetailsAsync({ userId: user.userId, dateFilter: dateRange }))}
                                 >
                                     Update
                                 </button>
                             </div>
                         </div>
                         <div className="row">
-                            {selectedUser && selectedUser.orders && selectedUser.orders.map(order =>
+                            {user && orders && orders.datedOrderItems.map(order =>
                                 <DateItem key={order.date} order={order}></DateItem>
                             )}
-                            {(!selectedUser || !selectedUser.orders || selectedUser.orders.length === 0) &&
+                            {(!user || !orders || orders.datedOrderItems.length === 0) &&
                                 <>
                                     <div className="col p-4 fw-bold fs-4" style={{ color: 'orange' }}>
                                         No product added to cart.

@@ -14,11 +14,11 @@ export default function Cart() {
     const { products,status } = useSelector(state => state.cart)
 
     useEffect(() => {
-        dispatch(getCartAsync())
+        dispatch(getCartAsync({ }))
     }, [dispatch])
 
     function navigateOrderPage() {
-        history.push('/confirm-order')        
+        history.push('/confirm-order')      
     }
 
     return (

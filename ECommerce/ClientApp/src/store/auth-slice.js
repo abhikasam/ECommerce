@@ -58,7 +58,6 @@ export const loginUserAsync = createAsyncThunk(
                     return data.json();
                 })
                 .then(result => {
-                    console.log(result)
                     dispatch(statusActions.add(result))
 
                     if (result.statusCode === 1) {
