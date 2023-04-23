@@ -2,6 +2,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { cartActions } from './cart-slice';
 import { status } from '../data/status';
+import { productActions } from './product-slice';
 
 
 const initialValue = {
@@ -34,6 +35,34 @@ export const fetchOrdersAsync = createAsyncThunk(
                 })
 
         return response;        
+    }
+)
+
+export const fetchProductOrdersAsync = createAsyncThunk(
+    'order/fetchProductOrdersAsync',
+    async ({ dateFilter, productId }, { dispatch, getState }) => {
+        let queryString = ''
+        queryString += dateFilter ? ('&dateFilter=' + dateFilter) : ''
+        queryString += productId ? ('&productId=' + productId):''
+        if (queryString.length) {
+            queryString = '?' + queryString.slice(1)
+        }
+        console.log(queryString)
+        const response =
+            await fetch('/orders' + queryString)
+                .then(data => {
+                    if (!data.ok) throw data;
+                    return data.json();
+                })
+                .then(result => {
+                    dispatch(productActions.updateSelectedProductOrders(result.data))
+                    return result;
+                })
+                .catch(error => {
+                    return error;
+                })
+
+        return response;
     }
 )
 

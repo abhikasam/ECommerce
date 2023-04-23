@@ -19,6 +19,11 @@ const initialValue = {
         priceRanges: [],
         individualCategories: []
     },
+    selectedProduct: {
+        favourites: paginatedList,
+        carts: paginatedList,
+        orders:[]
+    },
     status: status
 }
 
@@ -131,6 +136,15 @@ const productSlice = createSlice({
         update(state, action) {
             state.products = action.payload.products
             state.filters = action.payload.filters
+        },
+        updateSelectedProductFavourites(state, action) {
+            state.selectedProduct.favourites = action.payload;
+        },
+        updateSelectedProductCarts(state, action) {
+            state.selectedProduct.carts = action.payload;
+        },
+        updateSelectedProductOrders(state, action) {
+            state.selectedProduct.orders = action.payload;
         },
         updateSearch(state, action) {
             state.filters.search = action.payload

@@ -15,7 +15,8 @@ export default function ConfirmOrder(props) {
     const dispatch = useDispatch()
     const history = useHistory()
 
-    const { products } = useSelector(state => state.cart)
+    const { products: cartProducts } = useSelector(state => state.cart)
+    const { result: products } = cartProducts
     const { status } = useSelector(state => state.order)
 
     const [selectedProducts, setSelectedProducts] = useState([])

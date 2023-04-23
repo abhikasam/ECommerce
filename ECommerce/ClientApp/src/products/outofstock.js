@@ -45,7 +45,6 @@ export default function OutOfStock() {
                                 <ProductCard
                                     key={product.productId}
                                     product={product}
-                                    showQuantityUpdater={true}
                                     qantityUpdateHandler={() => {
                                         setQuantityChanger({
                                             show: true,

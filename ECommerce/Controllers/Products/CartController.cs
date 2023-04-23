@@ -8,6 +8,7 @@ using ECommerce.Models.EcommerceExtensions;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
@@ -25,16 +26,19 @@ namespace ECommerce.Controllers.Products
         private readonly ILogger<CartController> _logger;
         private readonly IConfiguration configuration;
         private readonly IOptions<ProductFilters> filters;
+        private readonly Microsoft.AspNetCore.Identity.UserManager<User> userManager;
 
         public CartController(EcommerceContext ecommerceContext,
             ILogger<CartController> logger,
             IConfiguration configuration,
-            IOptions<ProductFilters> filters)
+            IOptions<ProductFilters> filters,
+            Microsoft.AspNetCore.Identity.UserManager<User> userManager)
         {
             this.ecommerceContext = ecommerceContext;
             _logger = logger;
             this.configuration = configuration;
             this.filters = filters;
+            this.userManager = userManager;
         }
 
 
@@ -124,6 +128,42 @@ namespace ECommerce.Controllers.Products
             return new JsonResult(message);
         }
 
+        [HttpGet("{id}")]
+        [Route("[action]")]
+        [ActionName("ProductCarts")]
+        public async Task<JsonResult> ProductCarts(int productId, int pageNumber = 1)
+        {
+            var message = new ResponseMessage();
+            int productCount = 50;
+
+            try
+            {
+                var userIds = await ecommerceContext.Carts
+                                    .Where(i => i.ProductId == productId)
+                                    .OrderByDescending(i=>i.UpdatedOn)
+                                    .Select(i => i.UserId)
+                                    .ToListAsync();
+
+                var userDetails = new List<UserDetails>();
+
+                foreach (var id in userIds)
+                {
+                    var usr = await userManager.FindByUserIdAsync(id);
+                    var claims = await userManager.GetClaimsAsync(usr);
+                    userDetails.Add(UserDetails.GetDetails(claims));
+                }
+
+                message.Data = userDetails.AsQueryable().PaginateData(pageNumber, productCount);
+                message.StatusCode = ResponseStatus.SUCCESS;
+            }
+            catch (Exception ex)
+            {
+                message.Data = new PaginatedList<UserDetails>();
+                message.Message = ex.Message;
+                message.StatusCode = ResponseStatus.EXCEPTION;
+            }
+            return new JsonResult(message);
+        }
 
         [HttpPost]
         [Route("[action]")]

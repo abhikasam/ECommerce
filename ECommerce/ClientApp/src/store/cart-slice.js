@@ -33,6 +33,32 @@ export const getCartAsync = createAsyncThunk(
     }
 )
 
+export const getUsersAddedToCart = createAsyncThunk(
+    'cart/getUsersAddedToCart',
+    async ({ productId, pageNumber = 1 }, { dispatch, getState }) => {
+        var queryString = ''
+        queryString += '&productId=' + productId
+        queryString += '&pageNumber=' + pageNumber
+        queryString = '?' + queryString.slice(1)
+
+        const response =
+            await fetch('/cart/productcarts' + queryString)
+                .then(data => {
+                    if (!data.ok) throw data;
+                    return data.json();
+                })
+                .then(result => {
+                    dispatch(productActions.updateSelectedProductCarts(result.data))
+                    return result;
+                })
+                .catch(error => {
+                    return error;
+                })
+        return response;
+    }
+)
+
+
 export const updateProductCartAsync = createAsyncThunk(
     'cart/updateProductCartAsync',
     async (productId, { dispatch, getState }) => {

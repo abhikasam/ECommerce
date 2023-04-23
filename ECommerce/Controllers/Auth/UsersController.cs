@@ -166,7 +166,7 @@ namespace ECommerce.Controllers.Auth
         [HttpGet]
         [Route("[action]")]
         [ActionName("orders")]
-        public async Task<IActionResult> GetOrders(int userId, string dateFilter=null)
+        public async Task<IActionResult> GetOrders(int userId, string dateFilter=null,int? productId=null)
         {
             var message = new ResponseMessage();
             try
@@ -185,7 +185,7 @@ namespace ECommerce.Controllers.Auth
                                         .Where(i => userOrders.Contains(i.ProductId));
 
                 message.Data = await orderedProducts
-                        .GetOrderDtos(userManager, dateFilter, new int[] { userId });
+                        .GetOrderDtos(userManager,productId, dateFilter, new int[] { userId });
 
                 message.StatusCode = ResponseStatus.SUCCESS;
             }

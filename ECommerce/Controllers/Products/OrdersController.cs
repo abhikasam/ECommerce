@@ -34,7 +34,7 @@ namespace ECommerce.Controllers.Products
         }
 
         [HttpGet]
-        public async Task<JsonResult> Get(string dateFilter=null,string selectedUsers=null)
+        public async Task<JsonResult> Get(string dateFilter=null,string selectedUsers=null,int? productId=null)
         {
             var message = new ResponseMessage();
 
@@ -56,7 +56,7 @@ namespace ECommerce.Controllers.Products
 
                 var filterUsers = selectedUsers.GetArray(",");
 
-                var orderDtos = await orders.GetOrderDtos(userManager,dateFilter,filterUsers);
+                var orderDtos = await orders.GetOrderDtos(userManager,productId,dateFilter,filterUsers);
 
 
                 message.Data = orderDtos;

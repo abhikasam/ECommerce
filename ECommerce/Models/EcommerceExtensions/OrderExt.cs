@@ -18,6 +18,7 @@ namespace ECommerce.Models.Ecommerce
         public static async Task<List<OrderItem>> GetOrderDtos(
             this IQueryable<Order> orders,
             UserManager<User> userManager,
+            int? productId=null,
             string dateFilter=null,
             int[] filterUsers=null)
         {
@@ -77,20 +78,29 @@ namespace ECommerce.Models.Ecommerce
                         Products=new List<ProductDto>()
                     };
 
-                    foreach(var order in currentInstances)
+                    if (!productId.HasValue || currentInstances.Select(i=>i.ProductId).Contains(productId.Value))
                     {
-                        var productDto = order.Product.GetProductDto();
-                        productDto.Quantity=order.Quantity;
-                        productDto.SizeId=order.SizeId;
-                        productDto.SizeName = order.Size.SizeName;
-                        orderInstance.Products.Add(productDto);
+                        foreach (var order in currentInstances)
+                        {
+                            var productDto = order.Product.GetProductDto();
+                            productDto.Quantity = order.Quantity;
+                            productDto.SizeId = order.SizeId;
+                            productDto.SizeName = order.Size.SizeName;
+                            orderInstance.Products.Add(productDto);
+                        }
                     }
 
-                    orderInstances.Add(orderInstance);
+                    if(orderInstance.Products.Count > 0)
+                    {
+                        orderInstances.Add(orderInstance);
+                    }
                 }
                 
                 orderItem.OrderInstances = orderInstances;
-                orderItems.Add(orderItem);
+                if(orderInstances.Count > 0)
+                {
+                    orderItems.Add(orderItem);
+                }
             }
 
             return orderItems;

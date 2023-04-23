@@ -2,6 +2,7 @@
 import { createSlice,createAsyncThunk } from '@reduxjs/toolkit';
 import { status } from '../data/status';
 import { paginatedList } from '../data/paginatedList';
+import { productActions } from './product-slice';
 
 const initialValue = {
     products: paginatedList,
@@ -35,14 +36,20 @@ export const getFavouritesAsync = createAsyncThunk(
 
 export const getUsersAddedFavourites = createAsyncThunk(
     'favourite/getUsersAddedFavourites',
-    async (productId, { dispatch, getState }) => {
+    async ({ productId, pageNumber = 1 }, { dispatch, getState }) => {
+        var queryString = ''
+        queryString += '&productId=' + productId
+        queryString += '&pageNumber=' + pageNumber
+        queryString = '?' + queryString.slice(1)
+
         const response =
-            await fetch('/favourites/productfavourites?productId=' + productId)
+            await fetch('/favourites/productfavourites' + queryString)
             .then(data => {
                 if (!data.ok) throw data;
                 return data.json();
             })
             .then(result => {
+                    dispatch(productActions.updateSelectedProductFavourites(result.data))
                 return result;
             })
             .catch(error => {

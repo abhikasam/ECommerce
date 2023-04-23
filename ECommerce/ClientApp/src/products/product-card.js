@@ -8,7 +8,7 @@ import CartQuantity from './cart-quantity';
 import { addFavouriteAsync, removeFavouriteAsync } from '../store/favourite-slice';
 
 
-export default function ProductCard({ product, qantityUpdateHandler,showQuantityUpdater }) {
+export default function ProductCard({ product, qantityUpdateHandler, showQuantityUpdater }) {
 
     const dispatch = useDispatch()
     const history = useHistory()
@@ -22,7 +22,15 @@ export default function ProductCard({ product, qantityUpdateHandler,showQuantity
         if (product.discount >= 50)
             return 'green';
         else if (product.discount >= 15 && product.discount < 50)
-            return 'blue';
+            return 'orange';
+        else return 'red';
+    }
+
+    function getQuantityColor() {
+        if (product.quantity >= 10)
+            return 'green';
+        else if (product.quantity >= 5 && product.quantity < 10)
+            return 'orange';
         else return 'red';
     }
 
@@ -32,15 +40,9 @@ export default function ProductCard({ product, qantityUpdateHandler,showQuantity
         })
     }
 
-    const openProductFavouriteDetails = () => {
-        history.push('/product-favourites', {
-            productId: product.productId
-        })
-    }
-
     const openProductStats = () => {
         history.push('/product-stats', {
-            productId: product.productId
+            product: product
         })
     }
 
@@ -91,9 +93,9 @@ export default function ProductCard({ product, qantityUpdateHandler,showQuantity
                     </img>}
                 {!product.photo &&
                     <>
-                    <div className="text-center" style={{ padding: '3em' }}>
-                        <i className="fa fa-picture-o" style={{ color: 'silver', fontSize:'7em' }} aria-hidden="true"></i>
-                    </div>
+                        <div className="text-center" style={{ padding: '3em' }}>
+                            <i className="fa fa-picture-o" style={{ color: 'silver', fontSize: '7em' }} aria-hidden="true"></i>
+                        </div>
                     </>
                 }
                 <div className={classes.details}>
@@ -130,12 +132,12 @@ export default function ProductCard({ product, qantityUpdateHandler,showQuantity
                     <>
                         <div className="col-6 text-center">
                             {isInCart &&
-                                    <span className="p1 fa-stack fa-1x">
-                                        <i className="p2 fa fa-circle fa-stack-2x"></i>
+                                <span className="p1 fa-stack fa-1x">
+                                    <i className="p2 fa fa-circle fa-stack-2x"></i>
                                     <i className="p3 fa fa-shopping-cart fa-stack-1x fa-inverse" style={{ cursor: 'pointer' }}
                                         onClick={removeProductFromCart}
                                     ></i>
-                                    </span>
+                                </span>
                             }
 
                             {!isInCart &&
@@ -164,45 +166,43 @@ export default function ProductCard({ product, qantityUpdateHandler,showQuantity
                 }
 
                 {
-                    user.isAdmin && showQuantityUpdater &&
+                    user.isAdmin &&
                     <>
-                        <div className="col-4 text-center">
-                            <i className={"fa fa-bar-chart " + classes.icon}
-                                onClick={openProductStats}
-                                aria-hidden="true"></i>
-                        </div>
-                        <div className="col-4 text-center">
-                            <i className={"fa fa-plus-square-o " + classes.icon}
-                                onClick={qantityUpdateHandler}
-                                style={{ cursor: 'pointer' }}
-                                data-bs-toggle="modal" data-bs-target="#quantityChanger"
-                                aria-hidden="true"></i>
-                        </div>
-                        <div className="col-4 text-center">
-                            <i className={"fa fa-gratipay " + classes.icon}
-                                onClick={openProductFavouriteDetails}
-                                aria-hidden="true"></i>
-                        </div>
-                    </>
-                }
-
-                {
-                    user.isAdmin && !showQuantityUpdater &&
-                    <>
-                        <div className="col-6 text-center">
+                        <div className="col-6 text-center" style={{ paddingTop: '0.5rem' }}>
                             <i className={"fa fa-bar-chart " + classes.icon}
                                 onClick={openProductStats}
                                 aria-hidden="true"></i>
                         </div>
                         <div className="col-6 text-center">
-                            <i className={"fa fa-gratipay " + classes.icon}
-                                onClick={openProductFavouriteDetails}
-                                aria-hidden="true"></i>
+                            {product.quantity === 0 &&
+                                <i className={"fa fa-plus-square-o " + classes.icon}
+                                    onClick={qantityUpdateHandler}
+                                    style={{ cursor: 'pointer' }}
+                                    data-bs-toggle="modal" data-bs-target="#quantityChanger"
+                                    aria-hidden="true"></i>
+                            }
+                            {
+                                product.quantity !== 0 &&
+                                <>
+                                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                        <div className="border border-5 fw-bold align-items-center justify-content-center" style={{
+                                            background: getQuantityColor(),
+                                            padding: '1rem',
+                                            color:'white',
+                                            borderRadius: '50%',
+                                            fontSize: '1rem',
+                                            display: 'flex',
+                                            width: '2em',
+                                            height: '2em'
+                                        }}>
+                                            {product.quantity}
+                                        </div>
+                                    </div>
+                                </>
+                            }
                         </div>
                     </>
                 }
-
-
             </div>
         </div>
     )

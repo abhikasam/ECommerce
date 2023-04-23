@@ -79,24 +79,16 @@ namespace ECommerce.Controllers.Products
         [HttpGet("{id}")]
         [Route("[action]")]
         [ActionName("ProductFavourites")]
-        public async Task<JsonResult> ProductFavourites(int productId)
+        public async Task<JsonResult> ProductFavourites(int productId,int pageNumber=1)
         {
             var message = new ResponseMessage();
+            int productCount = 50;
 
             try
             {
-                var product = await ecommerceContext.Products
-                                .Include(i => i.Brand).DefaultIfEmpty()
-                                .Include(i => i.Category).DefaultIfEmpty()
-                                .Include(i => i.IndividualCategory).DefaultIfEmpty()
-                                .Include(i => i.Favorites).DefaultIfEmpty()
-                                .Include(i => i.ProductQuantities).ThenInclude(i => i.Size).DefaultIfEmpty()
-                                .Include(i => i.Carts)
-                                .Where(i => i.ProductId == productId)
-                                .FirstOrDefaultAsync();
-
                 var userIds=await ecommerceContext.Favourites
                                     .Where(i => i.ProductId == productId)
+                                    .OrderByDescending(i=>i.AddedOn)
                                     .Select(i=> i.UserId)
                                     .ToListAsync();
 
@@ -109,15 +101,12 @@ namespace ECommerce.Controllers.Products
                     userDetails.Add(UserDetails.GetDetails(claims));
                 }
 
-                message.Data = new
-                {
-                    UserDetails= userDetails,
-                    Product=product.GetProductDto(this.User)
-                };
+                message.Data = userDetails.AsQueryable().PaginateData(pageNumber, productCount);
                 message.StatusCode=ResponseStatus.SUCCESS;
             }
             catch(Exception ex)
             {
+                message.Data=new PaginatedList<UserDetails>();
                 message.Message= ex.Message;
                 message.StatusCode = ResponseStatus.EXCEPTION;
             }

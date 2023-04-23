@@ -173,6 +173,7 @@ namespace ECommerce.Controllers.Products
             return new JsonResult(message);
         }
 
+
         [HttpPost]
         public async Task<JsonResult> Post([FromBody] object obj)
         {

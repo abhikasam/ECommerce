@@ -162,7 +162,6 @@ export default function UserDetails(props) {
                                     </div>
                                 </>
                             }
-
                         </div>
                     </div>
                 </div>
