@@ -46,7 +46,7 @@ export const ListSelectItem = ({ item, type, search, selected, updateItems}) => 
                 type="checkbox" value={item.key}
                 id={type + "-" + item.key}
                 onChange={updateItems} />
-            <label className={"form-check-label " + classes.label} htmlFor={item.key}>{item.value}</label>
+            <label className={"form-check-label text-break " + classes.label} htmlFor={item.key}>{item.value}</label>
         </li>
     )
 }

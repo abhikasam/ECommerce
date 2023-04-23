@@ -12,9 +12,10 @@ const initialValue = {
 
 export const fetchUsersAsync = createAsyncThunk(
     'user/fetchUsersAsync',
-    async (pageNumber=1, { dispatch, getState }) => {
+    async ({ pageNumber = 1,search='' }, { dispatch, getState }) => {
         var queryString = ''
         queryString += '&pageNumber=' + pageNumber
+        queryString += '&search=' + search
         queryString = '?' + queryString.slice(1)
 
         const response =

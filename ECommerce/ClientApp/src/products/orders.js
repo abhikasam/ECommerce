@@ -5,6 +5,8 @@ import { getProductAsync } from "../store/product-slice"
 import { useHistory } from "react-router-dom"
 import { fetchUsersAsync } from "../store/user-slice"
 import ListSelect from "../shared/list-select"
+import DateFilter from "../shared/date-filter"
+import { setUser } from "../store/auth-slice"
 
 
 
@@ -14,12 +16,14 @@ export default function Orders() {
     const { orders } = useSelector(state => state.order)
     const [users,setUsers]=useState([])
 
+    const [dateFilter,setDateFilter]=useState()
+
     useEffect(() => {
         dispatch(fetchOrdersAsync({ dateFilter: null, selectedUsers:[] }))        
     }, [dispatch])
 
     useEffect(() => {
-        const response = dispatch(fetchUsersAsync())
+        const response = dispatch(fetchUsersAsync({}))
         response.then((result) => {
             let userResults = result.payload.data.result
             setUsers(userResults.map(user => {
@@ -32,7 +36,7 @@ export default function Orders() {
     }, [dispatch])
 
 
-    function applyFilters(dateFilter, selectedUsers) {
+    function applyFilters(selectedUsers) {
         dispatch(fetchOrdersAsync({ dateFilter, selectedUsers }))
     }
 
@@ -44,6 +48,7 @@ export default function Orders() {
                 </div>
                 <div className="col-10">
                     <div className="row">
+                        <DateFilter updateDateRange={setDateFilter}></DateFilter>
                     </div>
                     <div className="row">
                         <div className="col">
@@ -73,7 +78,7 @@ const OrderListFilter = ({ applyFilters,users }) => {
     const { user }=useSelector(state=>state.auth)
 
     const [dateFilter, setDateFilter]=useState('30')
-    const [selectedUsers,setSelectedUsers]=useState([])
+    const [selectedUsers, setSelectedUsers] = useState([])
 
     function updateSelected(value) {
         if (selectedUsers.includes(value)) {
@@ -91,22 +96,8 @@ const OrderListFilter = ({ applyFilters,users }) => {
                     <div className="col-6">
                         <button type="button"
                             className="btn btn-primary"
-                            onClick={() => applyFilters(dateFilter, selectedUsers)}
+                            onClick={() => applyFilters(selectedUsers)}
                         >Update</button>
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col">
-                        <label>Order with in :</label>
-                        <select className="form-control"
-                            value={dateFilter}
-                            onChange={(event) => setDateFilter(event.target.value)}
-                        >
-                            <option value="30">Last 30 days</option>
-                            <option value="90">Last 90 days</option>
-                            <option value="180">Last 180 days</option>
-                            <option value="365">Last 365 days</option>
-                        </select>
                     </div>
                 </div>
                 {user.isAdmin && 

@@ -20,12 +20,12 @@ export const UserCard = ({ user }) => {
                 </div>
             </div>
             <div className="row">
-                <div className="col text-center p-1">
+                <div className="col text-break text-center p-1">
                     {user.fullName}
                 </div>
             </div>
             <div className="row">
-                <div className="col text-center p-1">
+                <div className="col text-break text-center p-1">
                     {user.email}
                 </div>
             </div>

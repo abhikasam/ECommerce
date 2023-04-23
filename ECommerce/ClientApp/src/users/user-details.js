@@ -7,6 +7,7 @@ import { UserCard } from "./user-card"
 import ProductCard from "../products/product-card"
 import { DateItem } from "../products/orders"
 import Pagination from "../shared/pagination"
+import DateFilter from "../shared/date-filter"
 
 
 
@@ -26,8 +27,7 @@ export default function UserDetails(props) {
         dispatch(fetchUserCartDetailsAsync({ userId: user.userId }))
         dispatch(fetchUserOrderDetailsAsync({ userId: user.userId, dateFilter: dateRange }))
     }, [user.userId, dispatch])
-
-
+    
     return (
         <div className="row">
             <div className="col-2">
@@ -126,22 +126,11 @@ export default function UserDetails(props) {
                         role="tabpanel"
                         aria-labelledby="order-tab"
                         tabIndex="0">
-                        <div className="row mt-4 align-items-center">
-                            <div className="col-2 text-end">
-                                <label className="fw-bold">Range :</label>
+                        <div className="row">
+                            <div className="col-10">
+                                <DateFilter updateDateRange={setDateRange}></DateFilter>
                             </div>
-                            <div className="col-3">
-                                <select className="form-control"
-                                    value={dateRange}
-                                    onChange={(event) => setDateRange(event.target.value)}
-                                >
-                                    <option value="30">Last 30 days</option>
-                                    <option value="90">Last 90 days</option>
-                                    <option value="180">Last 180 days</option>
-                                    <option value="365">Last 365 days</option>
-                                </select>
-                            </div>
-                            <div className="col-2">
+                            <div className="col-2 text-start align-self-center">
                                 <button type="button"
                                     className="btn btn-primary"
                                     onClick={() => dispatch(fetchUserOrderDetailsAsync({ userId: user.userId, dateFilter: dateRange }))}
@@ -157,7 +146,7 @@ export default function UserDetails(props) {
                             {(!user || !orders || orders.datedOrderItems.length === 0) &&
                                 <>
                                     <div className="col p-4 fw-bold fs-4" style={{ color: 'orange' }}>
-                                        No product added to cart.
+                                        No product found.
                                     </div>
                                 </>
                             }

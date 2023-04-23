@@ -33,13 +33,14 @@ namespace ECommerce.Controllers.Auth
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get(int? pageNumber)
+        public async Task<IActionResult> Get(int? pageNumber,string search)
         {
             var message = new ResponseMessage();
             var productCount = 50;
-
+            search=!string.IsNullOrWhiteSpace(search)?search.ToLowerInvariant(): string.Empty;
             try
             {
+                var names=search.Split(new string[] { " " },StringSplitOptions.RemoveEmptyEntries);
                 pageNumber= pageNumber ?? 1;
                 var isAdmin= this.User.Claims.Any(i=>i.Type=="Admin");
                 var userDetails = new List<UserDetails>();
@@ -49,15 +50,23 @@ namespace ECommerce.Controllers.Auth
                     foreach (var user in users)
                     {
                         var userClaims = await userManager.GetClaimsAsync(user);
-                        if(!userClaims.Any(i=>i.Type=="Admin"))
-                            userDetails.Add(UserDetails.GetDetails(userClaims));
+                        var userDetail = UserDetails.GetDetails(userClaims);
+                        if (!userClaims.Any(i=>i.Type=="Admin") && 
+                            (names.Length==0 ||  names.Any(name=> userDetail.FullName.ToLowerInvariant().Contains(name))) )
+                        {
+                            userDetails.Add(userDetail);
+                        }
                     }
                 }
                 else
                 {
                     var user = await userManager.FindByUserIdAsync(this.User.GetUserId());
                     var claims=await userManager.GetClaimsAsync(user);
-                    userDetails.Add(UserDetails.GetDetails(claims));
+                    var userDetail = UserDetails.GetDetails(claims);
+                    if (names.Length==0 || names.Any(name => userDetail.FullName.ToLowerInvariant().Contains(name)))
+                    {
+                        userDetails.Add(userDetail);
+                    }
                 }
                 message.Data = userDetails.AsQueryable().PaginateData(pageNumber.Value,productCount);
                 message.StatusCode = ResponseStatus.SUCCESS;

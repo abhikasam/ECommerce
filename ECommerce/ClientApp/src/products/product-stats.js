@@ -9,6 +9,7 @@ import Pagination from "../shared/pagination"
 import { getUsersAddedToCart } from "../store/cart-slice"
 import { fetchProductOrdersAsync } from "../store/order-slice"
 import { DateItem } from "./orders"
+import DateFilter from "../shared/date-filter"
 
 export default function ProductStats(props) {
     const dispatch = useDispatch()
@@ -24,6 +25,7 @@ export default function ProductStats(props) {
         dispatch(fetchProductOrdersAsync({ dateFilter: dateRange, productId: product.productId }))
     }, [dispatch, product.productId])
 
+   
     return (
         <>
             <div className="row">
@@ -108,22 +110,11 @@ export default function ProductStats(props) {
                                 role="tabpanel"
                                 aria-labelledby="order-tab"
                                 tabIndex="0">
-                                <div className="row mt-4 align-items-center">
-                                    <div className="col-2 text-end">
-                                        <label className="fw-bold">Range :</label>
+                                <div className="row">
+                                    <div className="col-10">
+                                        <DateFilter updateDateRange={setDateRange}></DateFilter>
                                     </div>
-                                    <div className="col-3">
-                                        <select className="form-control"
-                                            value={dateRange}
-                                            onChange={(event) => setDateRange(event.target.value)}
-                                        >
-                                            <option value="30">Last 30 days</option>
-                                            <option value="90">Last 90 days</option>
-                                            <option value="180">Last 180 days</option>
-                                            <option value="365">Last 365 days</option>
-                                        </select>
-                                    </div>
-                                    <div className="col-2">
+                                    <div className="col-2 text-start align-self-center">
                                         <button type="button"
                                             className="btn btn-primary"
                                             onClick={() => dispatch(fetchProductOrdersAsync({ dateFilter: dateRange, productId: product.productId }))}

@@ -28,21 +28,51 @@ namespace ECommerce.Models.Ecommerce
                 orders = orders.Where(i => filterUsers.Contains(i.UserId));
             }
 
-            switch (dateFilter)
+            if(productId!=null)
             {
-                case "365":
-                    orders = orders.Where(i => EF.Functions.DateDiffDay(i.PlacedOn.Date, DateTime.Today) <= 365);
-                    break;
-                case "180":
-                    orders = orders.Where(i => EF.Functions.DateDiffDay(i.PlacedOn.Date, DateTime.Today) <= 180);
-                    break;
-                case "90":
-                    orders = orders.Where(i => EF.Functions.DateDiffDay(i.PlacedOn.Date, DateTime.Today) <= 90);
-                    break;
-                case "30":
-                default:
-                    orders = orders.Where(i => EF.Functions.DateDiffDay(i.PlacedOn.Date, DateTime.Today) <= 30);
-                    break;
+                orders = orders.Where(i => i.ProductId == productId);
+            }
+
+            if(dateFilter!=null)
+            {
+                var dates=dateFilter.Split('-');
+                var startDate = dates[0].Split('/');
+                var endDate = dates[1].Split('/');
+
+                if (startDate[0] != "dd")
+                {
+                    var day = Convert.ToInt32(startDate[0]);
+                    orders = orders.Where(i => i.PlacedOn.Date.Day >= day);
+                }
+
+                if (startDate[1] != "MM")
+                {
+                    var month = Convert.ToInt32(startDate[1]);
+                    orders = orders.Where(i => i.PlacedOn.Date.Month >= month+1);
+                }
+
+                if (startDate[2] != "yy")
+                {
+                    var year = Convert.ToInt32(startDate[2]);
+                    orders = orders.Where(i => i.PlacedOn.Date.Year >= year);
+                }
+                if (endDate[0] != "dd")
+                {
+                    var day = Convert.ToInt32(endDate[0]);
+                    orders = orders.Where(i => i.PlacedOn.Date.Day <= day);
+                }
+
+                if (endDate[1] != "MM")
+                {
+                    var month = Convert.ToInt32(endDate[1]);
+                    orders = orders.Where(i => i.PlacedOn.Date.Month <= month+1);
+                }
+
+                if (endDate[2] != "yy")
+                {
+                    var year = Convert.ToInt32(endDate[2]);
+                    orders = orders.Where(i => i.PlacedOn.Date.Year <= year);
+                }
             }
 
             var allOrderedDates = orders.Select(i => i.PlacedOn.Date).Distinct().ToList();
@@ -78,29 +108,20 @@ namespace ECommerce.Models.Ecommerce
                         Products=new List<ProductDto>()
                     };
 
-                    if (!productId.HasValue || currentInstances.Select(i=>i.ProductId).Contains(productId.Value))
+                    foreach (var order in currentInstances)
                     {
-                        foreach (var order in currentInstances)
-                        {
-                            var productDto = order.Product.GetProductDto();
-                            productDto.Quantity = order.Quantity;
-                            productDto.SizeId = order.SizeId;
-                            productDto.SizeName = order.Size.SizeName;
-                            orderInstance.Products.Add(productDto);
-                        }
+                        var productDto = order.Product.GetProductDto();
+                        productDto.Quantity = order.Quantity;
+                        productDto.SizeId = order.SizeId;
+                        productDto.SizeName = order.Size.SizeName;
+                        orderInstance.Products.Add(productDto);
                     }
 
-                    if(orderInstance.Products.Count > 0)
-                    {
-                        orderInstances.Add(orderInstance);
-                    }
+                    orderInstances.Add(orderInstance);
                 }
-                
+
                 orderItem.OrderInstances = orderInstances;
-                if(orderInstances.Count > 0)
-                {
-                    orderItems.Add(orderItem);
-                }
+                orderItems.Add(orderItem);
             }
 
             return orderItems;
