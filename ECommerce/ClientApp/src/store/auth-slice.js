@@ -13,7 +13,8 @@ const initialAuthentication = {
     isAuthenticated: false,
     user: {},
     expiresIn: 0,
-    userId:0,
+    userId: 0,
+    dashboard: {},
     status: status    
 }
 
@@ -123,6 +124,26 @@ export const setUser = (data) => {
     }
 }
 
+export const fetchAdminDashBoardAsync = createAsyncThunk(
+    'auth/fetchAdminDashBoardAsync',
+    async (_, { dispatch, getState }) => {
+        const response =
+            await fetch('/users/admindashboard')
+                .then(data => {
+                    if (!data.ok) throw data;
+                    return data.json();
+                })
+                .then(result => {
+                    dispatch(authActions.updateDashboard(result.data))
+                    return result;
+                })
+                .catch(error => {
+                    return error;
+                })
+        return response;
+    }
+)
+
 const authSlice = createSlice({
     name: 'auth',
     initialState: initialAuthentication,
@@ -138,6 +159,9 @@ const authSlice = createSlice({
             state.user = {};
             state.expiresIn = 0
             state.userId=0
+        },
+        updateDashboard(state, action) {
+            state.dashboard = action.payload
         },
         clearStatus(state) {
             state.status = { message:'',type:'' }

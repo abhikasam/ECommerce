@@ -19,6 +19,8 @@ export default function UserDetails(props) {
     const state = props.location.state
     const [user] = useState(state?.user)
 
+    const [selectedTab,setSelectedTab] = useState((state?.selectedTab)??'favourites')
+
     const { favourites, cart,orders } = useSelector(state => state.user.selectedUser)
     const [dateRange,setDateRange]=useState('')
 
@@ -27,7 +29,19 @@ export default function UserDetails(props) {
         dispatch(fetchUserCartDetailsAsync({ userId: user.userId }))
         dispatch(fetchUserOrderDetailsAsync({ userId: user.userId, dateFilter: dateRange }))
     }, [user.userId, dispatch])
-    
+
+    function getSelectedTabClassNames(selector) {
+        if (selector === selectedTab) {
+            return " show active ";
+        }
+        else
+            return "";
+    }
+
+    function isTabSelected(selector) {
+        return selector === selectedTab ? " active " : "";
+    }
+
     return (
         <div className="row">
             <div className="col-2">
@@ -40,38 +54,40 @@ export default function UserDetails(props) {
             <div className="col-10">
                 <ul className="nav nav-tabs" id="myTab" role="tablist">
                     <li className="nav-item" role="presentation">
-                        <button className="nav-link active"
+                        <button className={"nav-link " + isTabSelected("favourites")}
                             id="fav-tab"
                             data-bs-toggle="tab"
                             data-bs-target="#fav-tab-pane"
                             type="button" role="tab"
                             aria-controls="fav-tab-pane"
+                            onClick={() => setSelectedTab('favourites')}
                             aria-selected="true">Favourites</button>
                     </li>
                     <li className="nav-item" role="presentation">
-                        <button className="nav-link"
+                        <button className={"nav-link " + isTabSelected("cart")}
                             id="cart-tab"
                             data-bs-toggle="tab"
                             data-bs-target="#cart-tab-pane"
                             type="button"
                             role="tab"
                             aria-controls="cart-tab-pane"
+                            onClick={() => setSelectedTab('cart')}
                             aria-selected="false">Cart</button>
                     </li>
                     <li className="nav-item" role="presentation">
-                        <button
-                            className="nav-link"
+                        <button className={"nav-link " + isTabSelected("orders")}
                             id="order-tab"
                             data-bs-toggle="tab"
                             data-bs-target="#order-tab-pane"
                             type="button"
                             role="tab"
                             aria-controls="order-tab-pane"
+                            onClick={()=>setSelectedTab('orders') }
                             aria-selected="false">Orders</button>
                     </li>
                 </ul>
                 <div className="tab-content" id="myTabContent">
-                    <div className="tab-pane fade show active"
+                    <div className={"tab-pane fade " + getSelectedTabClassNames('favourites')}
                         id="fav-tab-pane"
                         role="tabpanel"
                         aria-labelledby="fav-tab"
@@ -96,7 +112,7 @@ export default function UserDetails(props) {
                             }
                         </div>
                     </div>
-                    <div className="tab-pane fade"
+                    <div className={"tab-pane fade " + getSelectedTabClassNames('cart')}
                         id="cart-tab-pane"
                         role="tabpanel"
                         aria-labelledby="cart-tab"
@@ -121,7 +137,7 @@ export default function UserDetails(props) {
                             }
                         </div>
                     </div>
-                    <div className="tab-pane fade"
+                    <div className={"tab-pane fade " + getSelectedTabClassNames('orders')}
                         id="order-tab-pane"
                         role="tabpanel"
                         aria-labelledby="order-tab"
