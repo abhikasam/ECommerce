@@ -1,8 +1,9 @@
 ﻿
-import { createSlice,createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { status } from '../data/status';
 import { paginatedList } from '../data/paginatedList';
 import { productActions } from './product-slice';
+import { cartActions, getCartAsync } from './cart-slice';
 
 const initialValue = {
     products: paginatedList,
@@ -11,25 +12,34 @@ const initialValue = {
 
 export const getFavouritesAsync = createAsyncThunk(
     'favourite/getFavouritesAsync',
-    async (pageNumber=1, { dispatch, getState }) => {
+    async (pageNumber, { dispatch, getState }) => {
+
+        let products = getState().favourite.products.result;
+
+        if (!pageNumber && products.length) {
+            return products;
+        }
+
         var queryString = ''
-        queryString += '&pageNumber=' + pageNumber
+        if (pageNumber) {
+            queryString += '&pageNumber=' + pageNumber
+        }
         queryString = '?' + queryString.slice(1)
 
-        const response=
-        await fetch('/favourites' + queryString)
-            .then(data => {
-                if (!data.ok) throw data;
-                return data.json();
-            })
-            .then(result => {
-                dispatch(favouriteActions.updateProducts(result.data))
-                return result;
-            })
-            .catch(error => {
-                dispatch(favouriteActions.updateProducts([{ result: [], pageNumber: 1, totalPages: 1 }]))
-                return error;
-            })
+        const response =
+            await fetch('/favourites' + queryString)
+                .then(data => {
+                    if (!data.ok) throw data;
+                    return data.json();
+                })
+                .then(result => {
+                    dispatch(favouriteActions.updateProducts(result.data))
+                    return result;
+                })
+                .catch(error => {
+                    dispatch(favouriteActions.updateProducts([{ result: [], pageNumber: 1, totalPages: 1 }]))
+                    return error;
+                })
         return response;
     }
 )
@@ -44,17 +54,17 @@ export const getUsersAddedFavourites = createAsyncThunk(
 
         const response =
             await fetch('/favourites/productfavourites' + queryString)
-            .then(data => {
-                if (!data.ok) throw data;
-                return data.json();
-            })
-            .then(result => {
+                .then(data => {
+                    if (!data.ok) throw data;
+                    return data.json();
+                })
+                .then(result => {
                     dispatch(productActions.updateSelectedProductFavourites(result.data))
-                return result;
-            })
-            .catch(error => {
-                return error;
-            })
+                    return result;
+                })
+                .catch(error => {
+                    return error;
+                })
         return response;
     }
 )
@@ -71,17 +81,30 @@ export const addFavouriteAsync = createAsyncThunk(
                     'Content-Type': 'application/json;'
                 }
             })
-            .then(data => {
-                if (!data.ok) throw data;
-                return data.json();
-            })
-            .then(result => {
-                dispatch(favouriteActions.addProduct(result.data))
-                return result;
-            })
-            .catch(error => {
-                return error;
-            })
+                .then(data => {
+                    if (!data.ok) throw data;
+                    return data.json();
+                })
+                .then(result => {
+
+                    let cartProducts = getState().cart.products
+                    let products = getState().product.products
+
+                    if (cartProducts.result.map(i => i.productId).includes(productId)) {
+                        dispatch(cartActions.addFavourite(productId))
+                    }
+
+                    dispatch(getFavouritesAsync(1))
+
+                    if (products.result.map(i => i.productId).includes(productId)) {
+                        dispatch(productActions.addFavourite(productId))
+                    }
+
+                    return result;
+                })
+                .catch(error => {
+                    return error;
+                })
 
         return response;
     }
@@ -99,17 +122,34 @@ export const removeFavouriteAsync = createAsyncThunk(
                     'Content-Type': 'application/json;'
                 }
             })
-            .then(data => {
-                if (!data.ok) throw data;
-                return data.json();
-            })
-            .then(result => {
-                dispatch(favouriteActions.removeProduct(result.data))
-                return result;
-            })
-            .catch(error => {
-                return error;
-            })
+                .then(data => {
+                    if (!data.ok) throw data;
+                    return data.json();
+                })
+                .then(result => {
+
+                    let cartProducts = getState().cart.products
+                    let favouriteProducts = getState().favourite.products
+                    let products = getState().product.products
+
+                    if (cartProducts.result.map(i => i.productId).includes(productId)) {
+                        dispatch(cartActions.removeFavourite(productId))
+                    }
+                    if (favouriteProducts.result.map(i => i.productId).includes(productId)) {
+                        dispatch(getFavouritesAsync(favouriteProducts.pageNumber))
+                    }
+                    else {
+                        dispatch(getFavouritesAsync(1))
+                    }
+                    if (products.result.map(i => i.productId).includes(productId)) {
+                        dispatch(productActions.removeFavourite(productId))
+                    }
+
+                    return result;
+                })
+                .catch(error => {
+                    return error;
+                })
 
         return response;
 
@@ -127,18 +167,25 @@ const favouriteSlice = createSlice({
         updatePageNumber(state, action) {
             state.products.pageNumber = action.payload
         },
-        updateProduct(state, action) {
-            let productIds = state.products.result.map(i => i.productId)
-            if (productIds.includes(action.payload.productId)) {
-                let index = state.products.result.findIndex(x => x.productId == action.payload.productId)
-                state.products.result[index] = action.payload
-            }
+        addFavourite(state, action) {
+            let index = state.products.result.findIndex(i => i.productId == action.payload)
+            state.products.result[index].isFavourite = true
         },
-        addProduct(state, action) {
-            state.products.result = [...state.products.result, action.payload]
+        removeFavourite(state, action) {
+            let index = state.products.result.findIndex(i => i.productId == action.payload)
+            state.products.result[index].isFavourite = false
         },
-        removeProduct(state, action) {
-            state.products.result = state.products.result.filter(i => i.productId != action.payload)
+        addCart(state, action) {
+            let index = state.products.result.findIndex(i => i.productId == action.payload)
+            state.products.result[index].isInCart = true
+        },
+        removeCart(state, action) {
+            let index = state.products.result.findIndex(i => i.productId == action.payload)
+            state.products.result[index].isInCart = false
+        },
+        clear(state, action) {
+            state.products = paginatedList
+            state.status = status
         }
     },
     extraReducers: (builder) => {

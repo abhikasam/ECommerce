@@ -31,6 +31,13 @@ const initialValue = {
 export const getProductsAsync = createAsyncThunk(
     'product/getProductsAsync',
     async ({ filters, pageNumber }, { dispatch, getState }) => {
+
+        let products = getState().product.products.result;
+
+        if (!pageNumber && products.length) {
+            return products;
+        }
+
         var queryString = ''
         if (filters.productCount)
             queryString += '&productCount=' + filters.productCount
@@ -169,6 +176,22 @@ const productSlice = createSlice({
         },
         updateSortOrder(state, action) {
             state.filters.sortOrder = action.payload
+        },
+        addFavourite(state, action) {
+            let index = state.products.result.findIndex(i => i.productId == action.payload)
+            state.products.result[index].isFavourite = true
+        },
+        removeFavourite(state, action) {
+            let index = state.products.result.findIndex(i => i.productId == action.payload)
+            state.products.result[index].isFavourite = false
+        },
+        addCart(state, action) {
+            let index = state.products.result.findIndex(i => i.productId == action.payload)
+            state.products.result[index].isInCart = true
+        },
+        removeCart(state, action) {
+            let index = state.products.result.findIndex(i => i.productId == action.payload)
+            state.products.result[index].isInCart = false
         },
         updateFilters(state, action) {
             state.filters = action.payload

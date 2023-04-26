@@ -39,7 +39,7 @@ export default function Cart() {
                         <div className="col text-end">
                             <Pagination pageNumber={products.pageNumber}
                                 totalPages={products.totalPages}
-                                setPage={(page) => dispatch(getCartAsync(page))} ></Pagination>
+                                setPage={(page) => dispatch(getCartAsync({ pageNumber: page }))} ></Pagination>
                         </div>
                     </div>
                     <Status status={status}></Status>

@@ -6,17 +6,14 @@ import { useHistory } from "react-router-dom"
 import { updateProductCartAsync } from '../store/cart-slice';
 import CartQuantity from './cart-quantity';
 import { addFavouriteAsync, removeFavouriteAsync } from '../store/favourite-slice';
+import { productActions } from '../store/product-slice';
 
 
-export default function ProductCard({ product, qantityUpdateHandler, showOrderedQuantity=false }) {
+export default function ProductCard({ product, qantityUpdateHandler, showOrderedQuantity = false }) {
 
     const dispatch = useDispatch()
     const history = useHistory()
     const { user } = useSelector(state => state.auth)
-    const { products: favourites } = useSelector(state => state.favourite)
-    const { products: cartProducts } = useSelector(state => state.cart)
-    const [isFavourite, setIsFavourite] = useState(product.isFavourite)
-    const [isInCart, setIsInCart] = useState(product.isInCart)
 
     function getDiscountColor() {
         if (product.discount >= 50)
@@ -50,7 +47,7 @@ export default function ProductCard({ product, qantityUpdateHandler, showOrdered
         const response = dispatch(updateProductCartAsync(product.productId))
         response.then(result => {
             if (result.payload.statusCode === 1) {
-                setIsInCart(true)
+                dispatch(productActions.addCart(product.productId))
             }
         })
     }
@@ -59,7 +56,7 @@ export default function ProductCard({ product, qantityUpdateHandler, showOrdered
         const response = dispatch(updateProductCartAsync(product.productId))
         response.then(result => {
             if (result.payload.statusCode === 1) {
-                setIsInCart(false)
+                dispatch(productActions.removeCart(product.productId))
             }
         })
     }
@@ -69,7 +66,7 @@ export default function ProductCard({ product, qantityUpdateHandler, showOrdered
         const response = dispatch(addFavouriteAsync(product.productId))
         response.then(result => {
             if (result.payload.statusCode === 1) {
-                setIsFavourite(true)
+                dispatch(productActions.addFavourite(product.productId))
             }
         })
     }
@@ -78,7 +75,7 @@ export default function ProductCard({ product, qantityUpdateHandler, showOrdered
         const response = dispatch(removeFavouriteAsync(product.productId))
         response.then(result => {
             if (result.payload.statusCode === 1) {
-                setIsFavourite(false)
+                dispatch(productActions.removeFavourite(product.productId))
             }
         })
     }
@@ -128,28 +125,28 @@ export default function ProductCard({ product, qantityUpdateHandler, showOrdered
             {
                 showOrderedQuantity &&
                 <div className="row">
-                        <div className="col-6 text-center fw-bold text-danger align-self-center">
-                            <span className="">
-                                {product.sizeName}
-                            </span>
-                            <span className="m-1">
-                                ( {product.quantity} )
-                            </span>
+                    <div className="col-6 text-center fw-bold text-danger align-self-center">
+                        <span className="">
+                            {product.sizeName}
+                        </span>
+                        <span className="m-1">
+                            ( {product.quantity} )
+                        </span>
                     </div>
                     <div className="col-6 text-center text-success align-self-center">
-                            <i className="fa fa-inr fs-4" aria-hidden="true"></i>
-                            <span className="ms-1 fs-3 fw-bold">{product.quantity * product.finalPrice}</span>
+                        <i className="fa fa-inr fs-4" aria-hidden="true"></i>
+                        <span className="ms-1 fs-3 fw-bold">{product.quantity * product.finalPrice}</span>
                     </div>
                 </div>
             }
             {
-                !showOrderedQuantity && 
+                !showOrderedQuantity &&
                 <div className={"row align-items-center " + classes.icons}>
                     {
                         !user.isAdmin &&
                         <>
                             <div className="col-6 text-center">
-                                {isInCart &&
+                                {product.isInCart &&
                                     <span className="p1 fa-stack fa-1x">
                                         <i className="p2 fa fa-circle fa-stack-2x"></i>
                                         <i className="p3 fa fa-shopping-cart fa-stack-1x fa-inverse" style={{ cursor: 'pointer' }}
@@ -158,7 +155,7 @@ export default function ProductCard({ product, qantityUpdateHandler, showOrdered
                                     </span>
                                 }
 
-                                {!isInCart &&
+                                {!product.isInCart &&
                                     <i className={"fa fa-shopping-cart " + classes.icon}
                                         style={{ color: 'gray' }}
                                         onClick={addProductToCart}
@@ -167,12 +164,12 @@ export default function ProductCard({ product, qantityUpdateHandler, showOrdered
                             </div>
 
                             <div className="col-6 text-center">
-                                {!isFavourite &&
+                                {!product.isFavourite &&
                                     <i className={"fa fa-heart-o " + classes.icon}
                                         onClick={addProductToFavourites}
                                         aria-hidden="true"></i>
                                 }
-                                {isFavourite &&
+                                {product.isFavourite &&
                                     <i className={"fa fa-heart " + classes.icon}
                                         style={{ color: 'red' }}
                                         onClick={removeProductFromFavourites}

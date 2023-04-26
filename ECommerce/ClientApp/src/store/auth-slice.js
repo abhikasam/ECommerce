@@ -8,6 +8,8 @@ import { individualCategoryActions } from './individual-category-slice';
 import { productActions } from './product-slice';
 import { userProductFilterActions } from './user-product-filter-slice';
 import { orderActions } from './order-slice';
+import { favouriteActions } from './favourite-slice';
+import { cartActions } from './cart-slice';
 
 const initialAuthentication = {
     isAuthenticated: false,
@@ -84,6 +86,8 @@ export const logoutUserAsync = createAsyncThunk(
         dispatch(statusActions.clear())
         dispatch(userProductFilterActions.clear())
         dispatch(orderActions.update([]))
+        dispatch(favouriteActions.clear())
+        dispatch(cartActions.clear())
 
         const response =
         await fetch('logout'

@@ -1,6 +1,6 @@
 ﻿
 import { createSlice,createAsyncThunk } from '@reduxjs/toolkit';
-import { favouriteActions } from "./favourite-slice";
+import { favouriteActions, getFavouritesAsync } from "./favourite-slice";
 import { productActions } from "./product-slice";
 import { status } from '../data/status';
 import { paginatedList } from '../data/paginatedList';
@@ -13,9 +13,18 @@ const initialValue = {
 
 export const getCartAsync = createAsyncThunk(
     'cart/getCartAsync',
-    async ({ pageNumber = 1,getAll=false }, { dispatch, getState }) => {
+    async ({ pageNumber, getAll = false }, { dispatch, getState }) => {
+
+        let products = getState().cart.products.result;
+
+        if (!pageNumber && products.length) {
+            return products;
+        }
+        
         var queryString = ''
-        queryString += '&pageNumber=' + pageNumber
+        if (pageNumber) {
+            queryString += '&pageNumber=' + pageNumber
+        }
         queryString += '&getAll=' + getAll
         queryString = '?' + queryString.slice(1)
 
@@ -91,10 +100,37 @@ export const updateProductCartAsync = createAsyncThunk(
                 if (!data.ok) throw data;
                     return data.json();
             })
-            .then(result => {
-                dispatch(cartActions.updateProduct(result.data))
-                dispatch(favouriteActions.updateProduct(result.data))
-                dispatch(productActions.updateProduct(result.data))
+                .then(result => {
+                    let cartProducts = getState().cart.products
+                    let favouriteProducts = getState().favourite.products
+                    let products = getState().product.products
+
+                    if (result.data.isInCart) {
+
+                        dispatch(getCartAsync({ pageNumber: 1 }))
+
+                        if (favouriteProducts.result.map(i => i.productId).includes(productId)) {
+                            dispatch(favouriteActions.addCart(productId))
+                        }
+                        if (products.result.map(i => i.productId).includes(productId)) {
+                            dispatch(productActions.addCart(productId))
+                        }
+                    }
+                    else {
+                        if (cartProducts.result.map(i => i.productId).includes(productId)) {
+                            dispatch(getCartAsync({ pageNumber: cartProducts.pageNumber }))
+                        }
+                        else {
+                            dispatch(getCartAsync({ pageNumber: 1 }))
+                        }
+                        if (favouriteProducts.result.map(i => i.productId).includes(productId)) {
+                            dispatch(favouriteActions.removeCart(productId))
+                        }
+                        if (products.result.map(i => i.productId).includes(productId)) {
+                            dispatch(productActions.removeCart(productId))
+                        }
+                    }
+
                 return result;
             })
             .catch(error => {
@@ -118,20 +154,26 @@ const cartSlice = createSlice({
         updateAllProducts(state, action) {
             state.allProducts = action.payload
         },
-        updateProduct(state, action) {
-            let productIds = state.products.result.map(i => i.productId)
-            if (productIds.includes(action.payload.productId)) {
-                state.products.result = state.products.result.filter(i => i.productId !== action.payload.productId)
-            }
-            else {
-                state.products.result.push(action.payload)
-            }
+        addFavourite(state, action) {
+            let index = state.products.result.findIndex(i => i.productId == action.payload)
+            state.products.result[index].isFavourite = true
         },
-        removeProduct(state, action) {
-            state.products.result = state.products.result.filter(i => i.productId !== action.payload)
+        removeFavourite(state, action) {
+            let index = state.products.result.findIndex(i => i.productId == action.payload)
+            state.products.result[index].isFavourite = false
         },
-        removeProducts(state, action) {
-            state.products.result = state.products.result.filter(i => !action.payload.includes(i.productId))
+        addCart(state, action) {
+            let index = state.products.result.findIndex(i => i.productId == action.payload)
+            state.products.result[index].isInCart = true
+        },
+        removeCart(state, action) {
+            let index = state.products.result.findIndex(i => i.productId == action.payload)
+            state.products.result[index].isInCart = false
+        },
+        clear(state, action) {
+            state.products = paginatedList
+            state.allProducts=[]
+            state.status = status
         }
     },
     extraReducers: (builder) => {
